@@ -1,0 +1,2 @@
+= Tech Notes =
+* [[vim_plugins]] tricks to use vim plugins

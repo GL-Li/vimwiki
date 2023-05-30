@@ -1,0 +1,8 @@
+= vimwiki =
+
+* All files saved in `~/vimwiki/` and can be edited directly.
+* mapping
+    - `\wl`: open link in vertical split
+    - `\ww`: start vimwiki
+    - `\wd`: delete an wiki file
+    - `\wr`: rename an wiki file
