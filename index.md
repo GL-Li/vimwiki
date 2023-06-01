@@ -3,7 +3,7 @@
 -
 
 # Tech Notes
-- [[ai]]
+- [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
 - [[git]]
