@@ -3,8 +3,6 @@
 - Concept
 - Workflow and SOP
 - Minimal examples
-- Projects: with deliverables
-    - [[docker_vimwiki|docker image for vim with vimwiki installed]]
 - Raw notes
 
 ## Major references

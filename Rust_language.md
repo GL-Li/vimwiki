@@ -10,7 +10,7 @@
 
 ## Major reference ============================================================
 
-- The Rust Programing Language, The Book: https://doc.rust-lang.org/book/#the-rust-programming-language
+- The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
 
 ## Raw notes ==================================================================
 
@@ -27,7 +27,7 @@
     - compile the file with `$ rustc main.rs`, which create an executable file `main`.
     - run the executable with `$ ./main`. It can be run without Rust installed.
 
-### Hello, Cargo
+### 1.3 Hello, Cargo
 
 - [ ] create a project with Cargo
     - Cargo is Rust's build system and package manager
@@ -97,3 +97,30 @@
             └── incremental
 
     - what are in the `release` directory?
+        - only the executable is required to run
+        - all others are artifacts for quick rebuild.
+
+### 2. Programming a guessing game
+
+- [ ] elements in the code
+    - `use std::io;`  use library `io` from standard library `std`
+    - `std::prelude` defines items that are automatically imported
+    - `io` and many standard libraries are also prelude but needs to be imported with `use std::xxx`.
+    - `let mut guess = String::new();`
+        - `let` to create a variable
+        - `mut` specifies a mutable variable. By default a variable is immutable in Rust
+        - `String` is a **string type** provided by `std::prelude` and function `String::new()` generate a new instance of string.
+    - `io::stdin().read_line($mut guess).expect("Failed to read line");`
+        - `io::stdin()` creates an instance of `Stdin` for standard input handle
+        - `read_line(&mut guess)` is a method of standard input handle that read the standard input and append the input in the mutable variable `guess`.
+            - `&` indicates the this argument is a reference to `mut guess`
+        - `expect("Failed to read line")` to handle potential failure
+            - `read_line` also return a **Result** (called **enum**) that can be one of multiple states such as `Ok` and `Err`. Each state is called a **variant**.
+            - `expect()` is a method of Restult type
+        - `println!("You guessed: {guess}");` where `{}` is a placeholder for the values of `guess`
+            - other use of place holder, empty placeholder holds value of expression after it.
+                ```rust
+                let x = 5;
+                let y = 10;
+                println!("x = {x} and y + 2 = {}", y + 2);
+                ```
