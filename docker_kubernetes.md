@@ -3,6 +3,8 @@
 - Concept
 - Workflow and SOP
 - Minimal examples
+- Projects: with deliverables
+    - [[docker_vimwiki|docker image for vim with vimwiki installed]]
 - Raw notes
 
 ## Major references
@@ -74,7 +76,7 @@ https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
     - create an account at dockerhub.com, lglforfun, standard 2nd class password
     - `docker login` from terminal. Will stay logged in.
     - `docker logout` to log out
-    - names image as lglforfun/myimage:0.1.2 to store image to github account.
+    - names image as lglforfun/myimage:0.1.2 to store image to dockerhub account.
         - `docker push lglforfun/myimage:0.1.2` to push an image to Dockerhub.
 
 ## Minimal examples ===========================================================
@@ -259,24 +261,24 @@ Workflow
 #### manage docker images
 - `docker image ls` or `docker images` to list all local docker images
 - `docker rmi image_id` to remove an image by its ID
-    - `-f/--force` to force the removal if an image ID is referenced in tow or more repositories.
+    - `-f/--force` to force the removal if an image ID is referenced in two or more repositories.
 - `docker image inspect image_id` to check the metadata of an image
 
 #### docker run to initiate containers
-- get into the terminal of a container
+- get into the terminal of a container. An ENTRYPOINT in Dockerfile may block this access.
     ```
     docker run --rm -it gl/test:0.0.2 bash
     ```
 - pass an environment variables to a container in a run
     ```
-    docker run -e "PI=3.14" --rm -it gl/learn_docker_cli:latest base
+    docker run -e "PI=3.14" --rm -it gl/learn_docker_cli:latest bash
     ```
 - run comtainer with bind mounted volumes, `-v /path/to/loca/dir/:path/to/container/dir/`
+    docker run does not accept `~` as user home directory, use `$HOME` or absolute path.
     ```
-    # docker run does not accept ~ as user home directory
     docker run --rm -it -v /home/gl/aaaaa/:/home/work/ gl/learn_docker_cli bash
     ```
-- run container with published prots, `-p host_port:container_port`.
+- run container with published ports, `-p host_port:container_port`.
     - Rstudio container has a default user name `rstudio` so its user home directory is `/home/rstudio`. A local directory should be mount under it.
         ```
         docker run -p 8787:8787 -e PASSWORD=1234 -v /home/gl/aaaaa:/home/rstudio/work/ docker_for_r/rstudio:v1.0
