@@ -1,6 +1,6 @@
 # Projects: with deliverables
 - [[docker_vimwiki|docker image for vim with vimwiki installed]]
--
+- [[r_desktop_app_windows|R desktop app for Windows]]
 -
 
 # Tech Notes
