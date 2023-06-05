@@ -12,6 +12,25 @@
 
 - The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
 
+## Workflow and SOP ===========================================================
+
+### SOP: manage project with cargo
+
+- commands
+    - `$ cargo new xxx` to create a new project.
+    - `$ cargo run` to run the project for test purpose
+    - `$ cargo check` to quickly check if the project is compilable.
+    - `$ cargo build --release` to build executable for release. It is an optimized build and is slow than simple `$ cargo build`.
+    - `$ cargo update` to update dependencies
+- files
+    - `Cargo.toml`: specify dependencies and versions. `$ cargo update` will only update to the lastes of the major version. For example, if the version is `8.5.2` in the file, the update only update it to the latest `8.x.x` but not `9.x.x`.
+    - `Cargo.lock`: locks the dependency versions of the project when the project was first build or run. The future `$ cargo run` and `$ cargo build` will use the versions locked in this file unless run `$ cargo update`.
+    - to update the major version, must manually modify `Cargo.toml` file.
+
+## Minimal examples ===========================================================
+
+## Glossaries =================================================================
+
 ## Raw notes ==================================================================
 
 ### 1.2 Hello, World
@@ -21,7 +40,7 @@
     - create file `main.rs`
         ```rust
         fn main() {
-            println!("Hello, world"); # ! indicates macro, not function
+            println!("Hello, world"); // ! indicates macro, not function
         }
         ```
     - compile the file with `$ rustc main.rs`, which create an executable file `main`.
@@ -124,3 +143,17 @@
                 let y = 10;
                 println!("x = {x} and y + 2 = {}", y + 2);
                 ```
+    - crate is a collection of Rust source code files.
+        - binary crate: this guessing game project is to create a binary crate, which is an executable
+        - library crate: like R packages, containing code to be used in other programs.
+    - use library crates
+        - declare dependencies in `Cargo.toml` file
+            ```toml
+            [dependencies]
+            rand = "0.8.5"
+            ```
+        - `$ cargo build` to download crate `rand` and its dependencies
+    - `Cargo.lock` file lock the versions of dependencies the first time they are compiled
+        - the version remains the same as specified by this file in all later build unless the command says otherwise explicitly
+        - `$ cargo update` to update the version of dependencies
+    - `$ cargo doc --open`: Generate documentation for the project, which list help documentation of functions and dependencies of the project.
