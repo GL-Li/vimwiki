@@ -13,3 +13,4 @@
 - [[ubuntu_linux_bash]]
 - [[vim]]: Vim, NeoVim, LunarVim basics
 - [[vim_plugins]]: tricks to use vim plugins
+- tmp
