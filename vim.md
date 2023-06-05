@@ -10,6 +10,7 @@
 - [Udemy course: Vim Masterclass](https://www.udemy.com/course/vim-commands-cheat-sheet/learn/lecture/6606100#overview)
 - [Book: Learn Vim the Smart Way](https://learnvim.irian.to/)
 - [Vim Reference Guide](https://learnbyexample.github.io/vim_reference/cover.html)
+- [Vim Galore](https://github.com/mhinz/vim-galore#completion)
 
 ## Workflow & SOP
 
