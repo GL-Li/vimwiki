@@ -16,6 +16,21 @@
 
 ## Workflow and SOP
 
+### SOP: config a specific repo user.name, user.email, and credentials
+- **use case**: my global configuration is for Bitbucket. Now I have a repo for Github and I want to set config for this repo, what should I do?
+- steps to take:
+    - `$ git config --list` to check current configuration
+    - `git config user.email "xxxx"` to set user.email for this repo
+    - `git config user.name "yyy"` to set user.name for this repo
+    - `git config credential.helper store` to store credentials if not already set. It is most likely has been set globally so no need to run it.
+    - credentials are stored in file `.git-credentials` in which one line for each credential, for example
+        ```
+        https://GL-Li:W46gARaFSAGRSfsadsag4E@github.com
+        https://liguanglai:XsR36yf7hsredfsaf@bitbucket.org
+        ```
+    - git will automatically search for the correct credentials in above file when credentials are needed, for example, for `git push`.
+
+
 ### SOP: force line ending to work across Windows and Linux
 See [Configuring Git to handle line endings](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
 
