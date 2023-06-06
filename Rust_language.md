@@ -1,5 +1,3 @@
-
-
 ## Outline
 
 - Major reference
@@ -22,6 +20,7 @@
     - `$ cargo check` to quickly check if the project is compilable.
     - `$ cargo build --release` to build executable for release. It is an optimized build and is slow than simple `$ cargo build`.
     - `$ cargo update` to update dependencies
+    - `$ cargo doc --open` to generate and view documentation of the project.
 - files
     - `Cargo.toml`: specify dependencies and versions. `$ cargo update` will only update to the lastes of the major version. For example, if the version is `8.5.2` in the file, the update only update it to the latest `8.x.x` but not `9.x.x`.
     - `Cargo.lock`: locks the dependency versions of the project when the project was first build or run. The future `$ cargo run` and `$ cargo build` will use the versions locked in this file unless run `$ cargo update`.
@@ -157,3 +156,31 @@
         - the version remains the same as specified by this file in all later build unless the command says otherwise explicitly
         - `$ cargo update` to update the version of dependencies
     - `$ cargo doc --open`: Generate documentation for the project, which list help documentation of functions and dependencies of the project.
+
+### 3 Common programming concepts
+
+#### 3.1 variables and mutability
+
+**concurrent programming** is a form of programming in which several processes run concurrently during overlapping time periods.
+
+**constant vs immutable variables**: constant will never change
+    - variables are immutable by default, but variable name can be re-declaired. For example after we define `let x = 3`, we cannot simply reassign a value with `x = 9`. However, we can re-declair `x` with `let x = 9`, which is called **shadowning**.
+    - constant can only be declaired once. After declair `const ABC: u32 = 24 * 3600` we cannot declair again with `const ABC: u32 = 24 * 60 * 60`. That is, we cannot assign any value to `ABC` again.
+
+**shadowing and scope**: shadowing is only valid within its scope
+    - curly braces `{...}` define a scope. A shadowing inside it will **NOT** affect the variables outside it
+    - example: in the code below, `let x = x * 2` inside `{}` does not change x value out side it.
+        ```rust
+        fn main() {
+            let x = 5;
+
+            let x = x + 1; //now 6
+
+            {
+                let x = x * 2; // here x is 12
+                println!("The value of x in the inner scope is: {x}");
+            }
+
+            println!("The value of x is: {x}"); // x is still 6 !!!!!
+        }
+        ```
