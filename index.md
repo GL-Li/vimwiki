@@ -4,6 +4,7 @@
 -
 
 # Tech Notes
+- [[R]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
