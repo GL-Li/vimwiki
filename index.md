@@ -4,12 +4,12 @@
 -
 
 # Tech Notes
-- [[R|R language]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
 - [[git]]
 - [[julia]]
+- [[R|R language]]
 - [[regex|Regular Expression]]
 - [[Rust_language]]
 - [[ubuntu_linux_bash]]
