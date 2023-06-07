@@ -1,4 +1,21 @@
-## packages
+## package development
+### non-ASCII code in package
+**Non-ASCII characters are not allowed in package**. They will have to be converted to unicode.
+- use `stringi::stri_escape_unicode(c("ú", "ñ",  "ü"))` to convert non-ASCII code to unicode. Replace "\\" with "\" as shown in following example.
+    ```R
+    special_char <- c(
+        # regex specials
+        "+", "*", "?", "(", ")", "[", "]", "{", "}", "|", "^", "$", "!", "'", '"',
+        "&", "%", "@", "#", "/",
+        # Spanish letters, cannot use non-ASCII in package
+        # "á", "é", "í", "ó", "ú", "ñ",  "ü",
+        "\u00e1", "\u00e9", "\u00ed", "\u00f3", "\u00fa", "\u00f1", "\u00fc",
+        # "Á", "É", "Í", "Ó", "Ú", "Ñ", "Ü"
+        "\u00c1", "\u00c9", "\u00cd", "\u00d3", "\u00da", "\u00d1", "\u00dc"
+    )
+    ```
+
+## third-party packages
 
 ### readr
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.
