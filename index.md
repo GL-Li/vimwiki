@@ -4,12 +4,13 @@
 -
 
 # Tech Notes
-- [[R]]
+- [[R|R language]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
 - [[git]]
 - [[julia]]
+- [[regex|Regular Expression]]
 - [[Rust_language]]
 - [[ubuntu_linux_bash]]
 - [[vim]]: Vim, NeoVim, LunarVim basics
