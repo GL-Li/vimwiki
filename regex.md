@@ -32,7 +32,7 @@
 - character set and ragne in `[]`
     - `[aAcdF]it` matches ait, Ait, cit, dit, and Fit.
     - character range like `[1-7]`, `[a-h]` and `[1-7A-J]`
-    - `[^xxx]` to negate character set or range
+    - `[^xyz]` to negate character set or range
     - meta characters inside `[]` will become literal character except for `^`. To be safe, better still to escape them.
 
 ### regex concepts, mode, anchor, quantifier, greedy, lazy, possessive
@@ -52,7 +52,7 @@
 - repetition with quantifiers `?`, `*`, `+`
     - `?` optional:
         - `cats?` matches "cat" or "cats", zero or one "s"
-            - use "cat(s)?` to make "s" optional explicitly.
+            - use `cat(s)?` to make "s" optional explicitly.
         - `max(imum)?` matches "max" and "maximum".
     - `*` repeat zero or more times
     - `+` repeats one or more times
