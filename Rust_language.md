@@ -9,6 +9,7 @@
 ## Major reference ============================================================
 
 - The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
+- Rust By Example, RBE: https://doc.rust-lang.org/rust-by-example/
 
 ## Workflow and SOP ===========================================================
 
@@ -184,3 +185,224 @@
             println!("The value of x is: {x}"); // x is still 6 !!!!!
         }
         ```
+        
+#### 3.2 data types
+
+**static data type**: As a statically typed language, Rust must know the types of all variables at compile time.
+
+**Literals**: in computer science, a literal represents a fixed value that can be assigned to a variable or constant. For example, `12` is an integer literal, `"abc"` is a string literal, and `["cat", "dog"]` is a list (python) literal.
+
+**scalar types**: A scalar type represents a single value. There four primary scalar types:
+    - integer types like `u32`, `i32`, `u64`, `i64`:
+        - **unsigned integer** has values like 0, 1, 2, .... No negative values.
+        - **signed integer** can have negative, zero, and positive integers.
+        - we can add underscore `_` to integer literals. For example, `12_34_567` is the same as `1234567`.
+        - The default integer type is `i32`.
+        - Integer division returns an integer, truncates toward zero.
+    - floating-point types like `f32` and `f64`. 
+        - Rust's default is `f64`. All floating-point types are signed.
+        - Integer literals cannot be assigned to floating-point variables
+            ```rust
+            let x: f64 = 123; //wrong
+            let x: f64 = 123.0; //correct
+            ```
+    - numerical operations must match types of two numbers
+        ```rust
+        let x: i32 = 5 / 3;  //return 1
+        let x = -5 / 3; //return -1, Rust can guess data type for x, but slow
+        let x = 5.0 / 3; //error, floating-point cannot be devied by integer 
+        let x: f32 = 5 / 3; //error, types mismatch, 5 / 3 is integer
+        let x: f32 = 5.0 / 3.0; //return 1.66666...
+        ```
+    - Boolean type with `true` or `false`
+        ```rust
+        let t: bool = true;
+        ```
+    - character type is a single character (can be unicode) in signle quote. It is NOT string type.
+        ```rust
+        let c: char = 'z';
+        let heart_eyed_cat = '😻';
+        let c: char = "z"; // error in double quote
+        let c: char = 'abc'; //error, more than one character
+       ```
+       
+**Compound types** contain multiple values
+    - tuple type can group different types. A tuple has a fixed length once created. A empty tuple is called `unit` and is written in `()`.
+        ```rust
+        let aaa: (i32, f64, char) = (500, 3.14, 't');
+        let (x, y, z) = aaa; // destructure the tuple into elements
+        println!("aaa has {x}, {y}, {z}");
+        
+        // or use aaa.0, aaa.1, ..., to access element by index
+        let ele_1 = aaa.0
+        println!("aaa first element is {ele_1}");
+        println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
+        ```
+    - array type can only have elements of the same type and have a fixed length
+        ```rust
+        // declair an array of type u32 and 5 elements
+        let arr: [u32; 5] = [1, 2, 3, 4, 5];
+        // array of 100 string "abc"
+        let arr = ["abc": 100];
+        // access array element
+        let x = arr[0]
+        ```
+        
+**Standard library types** from RBE  chapt 19.
+
+### 3.3 Functions
+
+**Statement** performs some action and does not return a value. Therefore a statement cannot be assigned to a variable. Examples
+    ```rust
+    let y = 6;
+    let x = (let y = 6); //error: expected expressioin, found statement ('let')
+    ```
+    
+**Expression** returns a value and can be assigned to a variable.
+    ```rust
+    // 123 is an expression in
+    let x = 123;
+    // a new scope block created with curly brackets is an expression
+    let y = {
+        let x = 3;
+        x + 1 // not ending with ;
+    };
+    // calling a function or macro is an expression
+    let z = my_functions();
+    ```
+    
+**Function with return values**: rules to follow
+    - types of argument must be specified 
+    - type of return must be specified
+    - last statement is the return, or return with `return` keyword
+    - example
+        ```rust
+        // good function
+        fn add_2(x: i32, y: i32) -> i32 {
+            return x + y   // with or without return is ok
+        }
+        
+        // error: return unit (), not i32 as declaired
+        fn add_2(x: i32, y: i32) -> i32 {
+            x + y;   
+        }
+        ```
+        
+### 3.4 control flow
+
+**`if` must use `bool`** data type as condition
+    ```rust
+    fn main() {
+        let number = 6;
+
+        if number % 4 == 0 {
+            println!("number is divisible by 4");
+        } else if number % 3 == 0 {
+            println!("number is divisible by 3");
+        } else if number % 2 == 0 {
+            println!("number is divisible by 2");
+        } else {
+            println!("number is not divisible by 4, 3, or 2");
+        }
+    }
+    ```
+    
+**`if` is an expression** so can be assigned to a variable. The values of the final expressions of each arm must have the same data type, as the compiler needs to determine the variable data type at compiling, NOT at runtime.
+    ```rust
+    fn main() {
+        let condition = true;
+        let number = if condition { 5 } else { 6 };
+
+        println!("The value of number is: {number}");
+    }
+    ```
+    
+**`loop` runs for ever** until stopped by `break`. We can also use `continue` to skip the rest and start from beginning.
+    ```rust
+    fn main() {
+        let mut i: i32 = 0;
+        loop {
+            i = i + 1;
+            if i > 10 {break};
+            println!("again!");
+        }
+    }
+    ```
+    
+**`loop` is an expression** that can be assigned to a variable. The return of a `loop` is the expression after `break`. The ending `;` does not matter.
+    ```rust
+    fn main() {
+        let mut counter = 0;
+
+        let result = loop {
+            counter += 1;
+
+            if counter == 10 {
+                break counter * 2; // return, end with or without ; is ok
+            } // ok with or without ending :
+        };
+
+        println!("The result is {result}");
+    }
+    ```
+    
+**`loop` labels** to disambiguate between multiple loops. If a loop is inside another loop, by default, `break` and `continue` apply to the inner-most loop where they are inside. To break their parent loop, we assign a label to that loop. A label starts with a single quote `'` followed by `:`, eg., `'xxxx: loop` in the example below.
+    ```rust
+    fn main() {
+        let mut count = 0;
+        'counting_up: loop {
+            println!("count = {count}");
+            let mut remaining = 10;
+
+            loop {
+                println!("remaining = {remaining}");
+                if remaining == 9 {
+                    break;
+                }
+                if count == 2 {
+                    break 'counting_up;
+                }
+                remaining -= 1;
+            }
+
+            count += 1;
+        }
+        println!("End count = {count}");
+    }
+    ```
+    
+**`while` loop works the same** as in R
+    ```rust
+    fn main() {
+        let mut number = 3;
+
+        while number != 0 {
+            println!("{number}!");
+
+            number -= 1; // syntax like Python
+        }
+
+        println!("LIFTOFF!!!");
+    }
+    ```
+    
+**`for` loop works the same** as in R
+    ```rust
+    fn main() {
+        let a = [10, 20, 30, 40, 50];
+
+        for element in a {
+            println!("the value is: {element}");
+        }
+    }
+    ```
+    
+**range `(1..4)` for 1, 2, 3, 4**
+    ```rust
+    fn main() {
+        for number in (1..4).rev() {  //.rev() to reverse the range
+            println!("{number}!");
+        }
+        println!("LIFTOFF!!!");
+    }
+    ```
