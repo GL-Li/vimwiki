@@ -3,7 +3,7 @@
 - Major reference
 - Workflow and SOP
 - Minimal examples
-- Glossaries
+- QA - quick answer to specific questions
 - Raw notes
 
 ### Major references
@@ -49,6 +49,16 @@ See [Configuring Git to handle line endings](https://docs.github.com/en/get-star
     git status                 # or git diff to see the difference
     git commit - m "yyyyy"
     ```
+## QA
+
+### QA: how to exclude a specific subdirectory by name?
+
+For example, a large `target/` dicectory is created in each Rust project after each run. We have no reason to git track this subdirectory in any Rust project.
+
+To exclude this subdirectory, we can add a line `**/target/` in `.gitignore`. Unlike widecard `*`, `**` includes `/` in the path. It will exclude all `target/` in the project.
+
+To be more specific, if we only need to exclude those in directory `code/`, we can change it to `**/code/**/target/`.
+
 ## Raw notes
 
 ### git .git directory is the repo
