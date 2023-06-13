@@ -3,12 +3,15 @@
 - Concept
 - Workflow and SOP
 - Minimal examples
+- QA - quick answers to quick questions
 - Raw notes
 
 ## Major references
 
 - Youtube video: [Docker for R users Tutorial](https://www.youtube.com/watch?v=oehhZ98o6Zk)
     - materials saved at `~/OneDrive/learning-resources/docker-user2022-r-for-docker/`
+     
+- Udemy: [Docker & Kubernetes: The Practical Guide](https://www.udemy.com/course/docker-kubernetes-the-practical-guide/)
 
 ## Concept ====================================================================
 
@@ -59,6 +62,13 @@
         - still need `--rm` in docker run.
 
 ## Workflow and SOP ===========================================================
+
+
+### SOP: use host's gui to display graphic interface in docker container
+
+    - `$ xhost + local:` to allow the docker using host's xserver. Run it if system restarted. Keep the `:` at the end of `local`.
+    - `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --net host my/image` to start the container.
+        - for example, `docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --net host r-base R`, make a plot in R to display the figure in a pop up window.
 
 ### SOP: add user to  docker user group so no need to use `sudo` every time
 https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
@@ -120,7 +130,7 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
     docker run -v $HOME/tmp:/data --rm test_volume
     ```
 
-## Glosarries =================================================================
+## QA =================================================================
 
 ## raw notes ==================================================================
 
@@ -579,10 +589,8 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 - [ ] Docker: data and volume
     - annonymous volume: map the volume to a temporary directory in host, which is managed by docker
         - add the volume in Dockerfile with keyword VOLUME
-        - to run it, `docker run -v volume ....
+        - to run it, `docker run -v volume ....`
         - docker volume ls, inspedct, ...
-        -
-    - named volume:
 
 ## 2023-04-17 Mon
 
@@ -612,7 +620,7 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 - [x] Docker: Kubenetes minikube to simulate environment
     - install kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
     - install minikube: https://minikube.sigs.k8s.io/docs/start/
-        - `$ minicube start` to download minikube use docker as driver. Many need Virtualbox if in Mac or Windows.
+        - `$ minikube start` to download minikube use docker as driver. Many need Virtualbox if in Mac or Windows.
         - a docker image called `gcr.io/k8s-minikube/kicbase` is created
         - when started, a container named `minikube` is running.
         - `minikube status` to check status
@@ -629,7 +637,7 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - pod object
         - smallest unit Kubernetes can interact with
         - contains one or more container, shared resources like volumn, and cluster-internal IP, localhost
-        - designed to be ephemeral: to be started, stoppe, replaced as needed managed by Kubernetes.
+        - designed to be ephemeral: to be started, stopped, replaced as needed managed by Kubernetes.
 
     - deployment object
         - created by users
@@ -686,7 +694,3 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 
 ## 2023-05-05 Fri
 
-- [ ] docker gui xserver gedit
-
-    - `$ xhost + local:` to allow the docker using host's xserver
-    - `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --net host my/image` to start the container.

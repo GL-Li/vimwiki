@@ -250,7 +250,7 @@
         
 **Standard library types** from RBE  chapt 19.
 
-### 3.3 Functions
+#### 3.3 FunctionsI
 
 **Statement** performs some action and does not return a value. Therefore a statement cannot be assigned to a variable. Examples
     ```rust
@@ -288,7 +288,7 @@
         }
         ```
         
-### 3.4 control flow
+#### 3.4 control flow
 
 **`if` must use `bool`** data type as condition
     ```rust
@@ -406,3 +406,18 @@
         println!("LIFTOFF!!!");
     }
     ```
+    
+### 4. Understanding ownership
+
+#### What is ownership
+
+**Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory during while running. The programmer must explicitly allocate and free the memory.
+
+**stack, heap, pointer**: memory available to code at **runtime**
+    - **stack stores values of known fixed size** in memory in first-in-first-out order. Adding data is called **pushing on** to the stack. Removing data is called **popping off** the stack.
+    - **heap allocates a space in memory identified by a pointer to an unknown or changing value**. The pointer, whose size is known and fixed, is stored in a stack. To add data, the program first locate the pointer in stack, which then lead to the heap.
+
+**Ownership rules**
+    - Each value in Rust has an owner.
+    - There can only be one owner at a time.
+    - When the owner goes out of scope, the value will be dropped.

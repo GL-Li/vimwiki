@@ -3,7 +3,7 @@
 - Major reference
 - Workflow and SOP
 - Minimal examples
-- Glossaries
+- QA - quick answers to quick questions
 - Raw notes
 
 ## Major reference
@@ -50,7 +50,22 @@
 
 - Run command `aaa` from anywhere.
 
-## Raw notes
+## QA =========================================================================
+
+### QA: how to back up ubuntu system for rerstore
+
+Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To use it
+
+- `$ sudo timeshit --create` to create a snapshot
+- `$ sudo timeshift --list` to list all snapshot
+- `$ sudo timeshift --restore --snapshot "2023-06-13_07-37-08"` to restore to a snapshot named by date created.
+- `$ sudo timeshift --delete --snapshot "2023-06-13_07-37-08"` to delete a snapshot.
+
+### QA: how to back up files 
+
+Using Unison.
+
+## Raw notes ==================================================================
 
 ### Linux brace expansion using {}
 
@@ -96,7 +111,7 @@ $ sudo updatedb         # update database before search by locate
 $ locate abc            # search path name containing "abc"
 
 # to use wildcard in search path, the path must represent full path
-$ locate abc*.md        # the path start with abc and end with .md
+$ locate abc*.md        # the path [start](start) with abc and end with .md
 $ locate *abc*.md       # the path contains abc and end with .md
 ```
 
