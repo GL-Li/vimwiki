@@ -1,4 +1,4 @@
-[#](#) Docker image of vim with vimwiki
+# Docker image of vim with vimwiki
 
 The goal is to build a docker image that includes vim and vimwiki. It will used as a note-taking tools in all my computers.
 
@@ -28,7 +28,13 @@ The goal is to build a docker image that includes vim and vimwiki. It will used 
     RUN rm /etc/vim/vimrc
     WORKDIR /etc/vim
     COPY . .
-    # open vimrc in vim and then run command :PlugInstall then :qa
+    
+    # vim command line options
+    # -E improved exit mode
+    # -s start silently
+    # -u use /etc/vim/vimrc to initialize vim (open vimrc in vim)
+    # -i NONE viminfo.file used 
+    # -c run command :PlugInstall then :qa
     RUN vim -Es -u /etc/vim/vimrc -i NONE -c "PlugInstall" -c "qa"
 
     # create default directory for vimwiki and set it as working directory

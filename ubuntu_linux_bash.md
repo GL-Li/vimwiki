@@ -52,6 +52,10 @@
 
 ## QA =========================================================================
 
+### QA: where to store user-compiled executable files or symlinks?
+
+They should be copied to `/usr/local/bin/`, which is not a part of the OS so they will not be overwritten in system update. And by default, this directory is in $PATH by default.
+
 ### QA: how to back up ubuntu system for rerstore
 
 Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To use it
