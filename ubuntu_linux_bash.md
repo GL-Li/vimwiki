@@ -283,8 +283,8 @@ A cron task include six elements
 - m: minute, 0-60 or * for any. Can be multiple values separated by ","
 - h: hour, 0-24 or *
 - dom: day of month, allowed day in the month or *
-- mon: month, 1-12 or *, or JAN, FEB, ...
-- dow: day of week, 0-6 or *, or SUN, MON, ..., SAT
+- mon: month, 1-12 or `*`, or JAN, FEB, ...
+- dow: day of week, 0-6 or `*`, or SUN, MON, ..., SAT
 - command: command to run
 
 Create a crontab task that
