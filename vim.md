@@ -1001,7 +1001,7 @@ hightlight ColorColumn ctermbg=238
     font='Ubuntu Mono 11'
     foreground-color='rgb(208,207,204)'
     palette=['rgb(23,20,33)', 'rgb(167,107,112)', 'rgb(38,162,105)', 'rgb(162,115,76)', 'rgb(54,117,196)', 'rgb(163,71,186)', 'rgb(136,150,152)', 'rgb(208,207,204)', 'rgb(2,3,98)', 'rgb(151,82,74)', 'rgb(75,77,76)', 'rgb(67,65,60)', 'rgb(168,182,198)', 'rgb(192,97,203)', 'rgb(51,199,222)', 'rgb(255,255,255)']
-    use-system-font=false
+    [use system font](use-system-font)=false
     use-theme-colors=true
     use-theme-transparency=true
     ```
@@ -1047,3 +1047,14 @@ https://github.com/tpope/vim-markdown/issues/21
 
 https://github.com/dccsillag/magma-nvim, remember to use key mappings that do not conflict with nvim-R.
 https://www.youtube.com/watch?v=wzrZPcwh-bE
+
+
+### Lunarvim nerd font
+
+- [ ] Nerd fonts for LunarVim
+    - icons will not displayed correctly without Nerd fonts
+    - to install Nerd fonts
+        - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
+        - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists
+        - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
+        - check if added with `$ fc-list`

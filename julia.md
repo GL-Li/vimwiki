@@ -24,13 +24,6 @@
     - install Julia for LunarVim: https://www.lunarvim.org/docs/features/supported-languages/julia
     - plugins are managed in ~/.config/lvim/config.lua: https://www.lunarvim.org/docs/master/configuration/plugins
 
-- [ ] Nerd fonts for LunarVim
-    - icons will not displayed correctly without Nerd fonts
-    - to install Nerd fonts
-        - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
-        - unzip to /usr/share/fonts/JetBrainsMono, create JetBransMono if not exists
-        - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
-        - check if added with `$ fc-list`
 
 - [ ] work at REPL
     - `>?` to enter help and then type function name
