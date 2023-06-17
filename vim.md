@@ -1058,3 +1058,13 @@ https://www.youtube.com/watch?v=wzrZPcwh-bE
         - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists
         - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
         - check if added with `$ fc-list`
+
+### Lunarvim R programming
+
+**add to Lunarvim's config.lua** 
+    ```lua
+    lvim.plugins = {
+        {"alaviss/nim.nvim},
+        {"jalvesaq/Nvim-R"}
+    }
+    ```
