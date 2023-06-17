@@ -11,7 +11,7 @@
 - Youtube video: [Docker for R users Tutorial](https://www.youtube.com/watch?v=oehhZ98o6Zk)
     - materials saved at `~/OneDrive/learning-resources/docker-user2022-r-for-docker/`
      
-- Udemy: [Docker & Kubernetes: The Practical Guide](https://www.udemy.com/course/docker-kubernetes-the-practical-guide/)
+- Udemy: Docker & Kubernetes: The Practical Guide, https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
 
 ## Concept ====================================================================
 
@@ -692,5 +692,43 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - run container interactively but in detached mode
     - `$ docker exec -it container_name xxx`
 
-## 2023-05-05 Fri
+### Section 4:  Networking: cross-container communication
 
+**container to WWW communication** is as usual
+    - simply use the normal www address such as `"https://swapi.dev/api/films"` as we do it locally.
+    
+**container to local host communication** use `host.docker.internal` as host domain address
+    - local method is not working anymore. We cannot use localhost like in `'mongodb://localhost:27017/xxxxxxx'`.
+    - replace `localhost` with `host.docker.internal` for example in
+        - `mongodb://host.docker.internal:27017/xxxx`
+        - `http://host.docker.internal:8787`
+ 
+**container to container communication** by IPAddress
+    - start the container `$ docker run -d --name mongodb mongo` using official mongo image
+    - find its IPAddress under NetworkSettings by running `$ docker inspect mongodb`, which looks like `172.17.0.3` and is recoganized by the docker engine.
+    - Above IPAddress can be used in other containers managed by the ssame docker engine such as in `mongodb://127.17.0.3:27017/xxxx`.
+    - This is NOT a good way to communicate between containers as the IPAddress changes at each start and we have to revise the hardcode IPAddress each time.
+
+**docker networker** is a better choice for container-to-container communication where container name is used as address
+    - create a network named abcd with `$ docker network create abcd`
+        - `$ docker network ls` to view all networks
+    - start a container in the network: `$ docker run -d --name mongodb --network abcd mongo`
+        - `$ docker network inspect abcd` to view containers in the network.
+    - in other container in the same network, we can use the container name as the domain name, for example in `mongodb://mongodb:27017/xxxx`, where `27017` is the default port of mongodb. 
+
+**docker network driver** default as **bridge**
+    - `$ dockr network create --driver driver_name abcd` to specify driver for a docker network.
+    - **bridge** driver allows container to find each other by container names
+    - **host** driver for standalone container to share localhost network resources.
+        - only works on Linux
+        - The container uses host's IP address so port mapping is not required. Options `-p`, `--publish` are ignored.
+        - better performance as it skips network address translation between container and host.
+    - **overlay** driver allows communication between container on different hosts. Only works on swarm mode, which is deprecated.
+    - **macvlan** to use MAC address
+    - **third-party plugins** for additional functionalities
+
+**standalone container with host network**
+    - https://docs.docker.com/network/network-tutorial-host/
+    - The network named `host` is always on when docker engine is started, so we do not need to manually create a docker network with "host" driver.
+    - Simply specify `--network host` in `docker run ...`.
+    - An example 
