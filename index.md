@@ -4,6 +4,7 @@
 - [[run_rstudio_docker|RStudio docer container with option for port]]
 
 # Tech Notes
+- [[tech_essentials]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
@@ -13,5 +14,5 @@
 - [[regex|Regular Expression]]
 - [[Rust_language]]
 - [[ubuntu_linux_bash]]
-- [[vim]]: Vim, NeoVim, LunarVim basics
+- [[vim]] ---- [[NeoVim]] ---- [[LunarVim]]
 - [[vim_plugins]]: tricks to use vim plugins

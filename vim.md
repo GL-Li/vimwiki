@@ -900,24 +900,6 @@ Complete instruction: https://github.com/jamespeapen/Nvim-R/wiki/Use
 
 Nvim-R manual: https://github.com/jalvesaq/Nvim-R/blob/master/doc/Nvim-R.txt
 
-Frequently used after opening a `.R` file in vim 9.0
-
-- `\rf` to start R console
-
-- `\rq` quit R console
-
-- `\ro` open R object browser
-
-- `\d` to run a line
-
-- `\ss` run a selected block of code
-
-- `\aa` run all the script
-
-- `\xx` toggle comment
-
-- `:Rstop`: stop R excution
-
 ### neovim: quick IDE configuration using kickstart.nvim, ignore for now
 
 https://www.youtube.com/watch?v=stqUbv-5u2s
@@ -1043,28 +1025,3 @@ https://github.com/tpope/vim-markdown/issues/21
 - delete a column, \tdc
 - delete row, \tdd
 
-### install python and python notebook plugin for neovim
-
-https://github.com/dccsillag/magma-nvim, remember to use key mappings that do not conflict with nvim-R.
-https://www.youtube.com/watch?v=wzrZPcwh-bE
-
-
-### Lunarvim nerd font
-
-- [ ] Nerd fonts for LunarVim
-    - icons will not displayed correctly without Nerd fonts
-    - to install Nerd fonts
-        - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
-        - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists
-        - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
-        - check if added with `$ fc-list`
-
-### Lunarvim R programming
-
-**add to Lunarvim's config.lua** 
-    ```lua
-    lvim.plugins = {
-        {"alaviss/nim.nvim},
-        {"jalvesaq/Nvim-R"}
-    }
-    ```

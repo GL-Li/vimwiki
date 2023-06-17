@@ -10,6 +10,7 @@
 
 - The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
 - Rust By Example, RBE: https://doc.rust-lang.org/rust-by-example/
+- Udemy: Ultimate Rust Crash Course: https://www.udemy.com/course/ultimate-rust-crash-course/
 
 ## Workflow and SOP ===========================================================
 
