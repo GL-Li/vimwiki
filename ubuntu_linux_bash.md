@@ -52,6 +52,14 @@
 
 ## QA =========================================================================
 
+## How to download a file from terminal?
+For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
+
+- `curl -o $HOME/Downloads/ttttt.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`
+    - `-o` for output file
+- `wget https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv` to download `iris.csv` into current directory
+
+
 ### QA: where to store user-compiled executable files or symlinks?
 
 They should be copied to `/usr/local/bin/`, which is not a part of the OS so they will not be overwritten in system update. And by default, this directory is in $PATH by default.

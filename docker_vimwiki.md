@@ -1,11 +1,12 @@
 # Docker image of vim with vimwiki
 
-The goal is to build a docker image that includes vim and vimwiki. It will used as a note-taking tools in all my computers.
+The goal is to build a docker image that includes vim and vimwiki. It will be used as a note-taking tools in all my computers.
 
 ## references
 
 - The project is adapted from an github project: https://github.com/antoniopantaleo/docker-vim.git, which build a vim docker image from alpine linux base image.
-- cloned into ~/OneDrive/docker-images/docker-vim/
+- The project is on https://GL-Li@bitbucket.org/gl-li/docker-vimwiki.git
+
 
 ## Modification
 
