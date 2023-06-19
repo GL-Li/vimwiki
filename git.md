@@ -51,6 +51,11 @@ See [Configuring Git to handle line endings](https://docs.github.com/en/get-star
     ```
 ## QA
 
+### QA: how to use git show to view a file in other branch or commit?
+
+- `$ git show de304f08:R/pe_dfclass.R` where the path/to/file start from the git project root no matter where the current directory is.
+
+
 ### QA: how to exclude a specific subdirectory by name?
 
 For example, a large `target/` dicectory is created in each Rust project after each run. We have no reason to git track this subdirectory in any Rust project.
