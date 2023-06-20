@@ -52,6 +52,10 @@
 
 ## QA =========================================================================
 
+### QA: how to replace string "abc" to "xyz" in all files in a directory?
+
+- `$ sed -i 's/abc/xyz/g' *`
+
 ### QA: how to view the files and folders of a .zip file before extraction?
 
 - `unzip -l xxx.zip` to list all files and directories
