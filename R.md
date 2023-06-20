@@ -1,4 +1,10 @@
-## package development
+## RStudio tricks =============================================================
+
+### RStudio viewer max columns
+The default `View(df1)` displays 50 columns. To increase the default, run from R console `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` to increase to 500 columns.
+
+## package development ========================================================
+
 ### non-ASCII code in package
 **Non-ASCII characters are not allowed in package**. They will have to be converted to unicode.
 - use `stringi::stri_escape_unicode(c("ú", "ñ",  "ü"))` to convert non-ASCII code to unicode. Replace "\\" with "\" as shown in following example.
@@ -15,7 +21,7 @@
     )
     ```
 
-## third-party packages
+## third-party packages =======================================================
 
 ### readr
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.

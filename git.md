@@ -14,7 +14,7 @@
 - Book: https://git-scm.com/book/en/v2
   - this should be the read after the Udemy course.
 
-## Workflow and SOP
+## Workflow and SOP ===========================================================
 
 ### SOP: config a specific repo user.name, user.email, and credentials
 - **use case**: my global configuration is for Bitbucket. Now I have a repo for Github and I want to set config for this repo, what should I do?
@@ -49,7 +49,7 @@ See [Configuring Git to handle line endings](https://docs.github.com/en/get-star
     git status                 # or git diff to see the difference
     git commit - m "yyyyy"
     ```
-## QA
+## QA =========================================================================
 
 ### QA: how to use git show to view a file in other branch or commit?
 
