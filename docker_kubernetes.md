@@ -17,25 +17,31 @@
 
 ### concept: volumes vs bind mounts
 
-- why need them?
-    - For persistent data storage. Without volume, docker-generated data are stored in the container and destroyed with the removal of the container.
-    - With volume and bind mounts, the data is stored on the host computer. volumes and bind mounts are different mechanisms to store the docker-generated files.
+**summary**
+    - use named volume to share data across containers
+    - use bind mounts to share data between a container and the host computer
 
-- volume: created and managed by docker engine on the host computer.
+**why need them?**
+    - For persistent data storage. Without volume, docker-generated data are stored in the container and destroyed with the removal of the container.
+    - With volume and bind mounts, the data is stored on the host computer. Volumes and bind mounts are different mechanisms to store the docker-generated files.
+
+**volume** is created and managed by docker engine on the host computer. Named volume is very useful to share data across containers.
     - annonymous volumes:
         - used before Docker version 1.9 when named volume was not available.
         - when started with `docker run --rm -v /container/dir ...`, the ananymous volume is removed when container is stopped.
         - created by docker engine and assigned with a randomly generated name,
         - can be checked with `docker volume` command,
         - can be create in Dockerfile or with command `docker run -v /docker/dir`.
-    - name volumes:
-        - good to share among containers
+    - named volumes:
+        - good to share among containers. In the example below, contain1's `/input_data` and container2's `/output_data` are the same.
+            - `$ docker run -v shared_volume:/input_data --name container1  image1`
+            - `$ docker run -v shared_volume:/output_data --name container2 image2`
         - portable to other host computers comparing to bind mounts.
         - can only be created with `docker run -v abcdefg:/container/dir` command, where volume name abcdefg is a string, not a path.
 
-- bind mounts: managed by user
+**bind mounts** is managed by user
     - Good to share with other applications on the host
-    - can be edoted by users.
+    - can be edited by users.
     - `docker run -v /host/dir/path:/container/dir/path`, all paths are absolute,  starting from root.
 
 ### concept: tmpfs vs writable layer
