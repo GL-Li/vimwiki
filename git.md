@@ -51,6 +51,10 @@ See [Configuring Git to handle line endings](https://docs.github.com/en/get-star
     ```
 ## QA =========================================================================
 
+### QA: how to git difftool to show the same file in two commits or branches?
+
+- `$ git difftool HEAD..master file1`
+
 ### QA: how to use git show to view a file in other branch or commit?
 
 - `$ git show de304f08:R/pe_dfclass.R` where the path/to/file start from the git project root no matter where the current directory is.
