@@ -52,7 +52,12 @@
 
 ## QA =========================================================================
 
-## How to download a file from terminal?
+### QA: how to view the files and folders of a .zip file before extraction?
+
+- `unzip -l xxx.zip` to list all files and directories
+- `unzip -p xxx.zip file1` to see file1 in stdout
+
+### How to download a file from terminal?
 For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
 
 - `curl -o $HOME/Downloads/ttttt.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`

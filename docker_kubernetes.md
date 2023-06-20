@@ -736,4 +736,6 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - https://docs.docker.com/network/network-tutorial-host/
     - The network named `host` is always on when docker engine is started, so we do not need to manually create a docker network with "host" driver.
     - Simply specify `--network host` in `docker run ...`.
-    - An example 
+
+### Section 5: Building multi-container application with docker
+

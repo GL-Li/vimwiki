@@ -410,9 +410,9 @@
     
 ### 4. Understanding ownership
 
-#### What is ownership
+#### 4.1 What is ownership
 
-**Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory during while running. The programmer must explicitly allocate and free the memory.
+**Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory while running. The programmer must explicitly allocate and free the memory.
 
 **stack, heap, pointer**: memory available to code at **runtime**
     - **stack stores values of known fixed size** in memory in first-in-first-out order. Adding data is called **pushing on** to the stack. Removing data is called **popping off** the stack.
@@ -422,3 +422,24 @@
     - Each value in Rust has an owner.
     - There can only be one owner at a time.
     - When the owner goes out of scope, the value will be dropped.
+
+**string literals** are fixed string with type `&str`
+    - used when the value of a string is known at compile time
+    - is hard-coded like `"abc"`, must inside double quote!!!!
+    - do not use `mut` as by definition, string literal are immutable
+    ```rust
+    let s1 = "Hello";
+    let s2: &str = "World";
+    let mut s3 = "whatever";   //warning, mut not needed but not an error
+    ```
+
+**String type** provided by standard library
+    - https://linuxhint.com/strings-in-rust/
+    - ways to create String object
+    - `let s = string::from("hello")`: generated from a string literal
+    - methods for string type
+        - `s.push_str(", world")`: to append a string literal to a string
+        - 
+
+**`&String` type is a reference to a `String`**
+    - It has no ownership. It exists as long as the `String` it points to is not out of scope.

@@ -144,3 +144,8 @@
 ## 2023-04-06 Fri
 
 - [x] API: swagger, create and deploy API on AWS
+
+## postman API platform tutorial
+https://www.postman.com/postman/workspace/15-days-of-postman-for-testers/collection/1559645-032fb22a-9afb-4c56-b8f0-4042db96a4f3
+
+
