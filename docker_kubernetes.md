@@ -138,6 +138,10 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
 
 ## QA =================================================================
 
+### QA: kubernetes pod with two containers
+
+- https://kubernetes.io/docs/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume/
+
 ## QA: how to get into the terminal of running container?
 
 - `$ docker exec -it bash` for Ubuntu based container
@@ -744,4 +748,34 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - Simply specify `--network host` in `docker run ...`.
 
 ### Section 5: Building multi-container application with docker
+
+**The question**: Given a project that runs locally, how to containerize it? In this case, we have a front-end JS page that connects to a back-end node server to read and write data from a database. The goal is to build three containers for front-end, back-end, and database respectively and run the project using the containers.
+
+**Container 1: database**: we use mongoose database which has an official Docker image to run a container
+    - `$ docker run --name mongodb --rm -d -p 27017:27017 mongo` where 27017 is the default port of the image.
+    - This container works for local node application. Need change for node app container
+
+**Container 2: node app**: we already have all the files that run locally. In this step, they are moved into a container. 
+    - To build the docker image, we first need to create a Dockerfile
+        ```dockerfile
+        FROM node
+        WORKDIR /app
+        
+        # install dependencies
+        COPY package.json
+        RUN npm install
+        
+        # moving in all files of the project to working directory
+        COPY . . 
+        
+        # port that match what in app.js
+        EXPOSE 80
+        
+        # run the app
+        CMD [ "node", "app.js" ]
+        ```
+    - build image `$ docker build -t test/s6_backend` with name goals-node
+    - 
+    
+
 
