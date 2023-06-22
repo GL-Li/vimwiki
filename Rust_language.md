@@ -9,6 +9,7 @@
 ## Major reference ============================================================
 
 - The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
+    - with quiz: https://rust-book.cs.brown.edu/experiment-intro.html
 - Rust By Example, RBE: https://doc.rust-lang.org/rust-by-example/
 - Udemy: Ultimate Rust Crash Course: https://www.udemy.com/course/ultimate-rust-crash-course/
 

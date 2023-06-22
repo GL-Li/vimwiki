@@ -139,8 +139,8 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
 ## QA =================================================================
 
 ### QA: kubernetes pod with two containers
-
-- https://kubernetes.io/docs/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume/
+- https://minikube.sigs.k8s.io/docs/tutorials/multi_node/ to create two nodes in minikube
+- https://kubernetes.io/docs/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume/ to create a pod with two containers
 
 ## QA: how to get into the terminal of running container?
 
