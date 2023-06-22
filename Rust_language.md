@@ -3,7 +3,7 @@
 - Major reference
 - Workflow and SOP
 - Minimal examples
-- Glossaries
+- QA
 - Raw notes
 
 ## Major reference ============================================================
@@ -31,7 +31,18 @@
 
 ## Minimal examples ===========================================================
 
-## Glossaries =================================================================
+## QA ======= =================================================================
+
+### QA: how to read input from terminal?
+    
+    ```rust
+    use std::io;
+    let mut aaa = String.new();
+    io::stdin().read_line(&mut aaa).expect("Fail to read line");
+    println!("aaa is {aaa}");
+    ```
+
+
 
 ## Raw notes ==================================================================
 
@@ -50,7 +61,7 @@
 
 ### 1.3 Hello, Cargo
 
-- [ ] create a project with Cargo
+- [x] create a project with Cargo
     - Cargo is Rust's build system and package manager
     - `$ cargo new hello_cargo` to create a new project and change directory to this project.
     - The initial files and directories
@@ -123,7 +134,7 @@
 
 ### 2. Programming a guessing game
 
-- [ ] elements in the code
+- [x] elements in the code
     - `use std::io;`  use library `io` from standard library `std`
     - `std::prelude` defines items that are automatically imported
     - `io` and many standard libraries are also prelude but needs to be imported with `use std::xxx`.
