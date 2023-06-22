@@ -51,6 +51,13 @@ See [Configuring Git to handle line endings](https://docs.github.com/en/get-star
     ```
 ## QA =========================================================================
 
+### QA: how to search commits by string abcd in commit message
+
+- `$ git log --grep=abcd` to show full log message
+- `$ git grep abcd` to show the lines with abcd
+- `$ git grep -E "abc|xyz"` use regex to search any of multiple keywords
+- `$ git grep abc | grep xyz` search for all of multiple keywords
+
 ### QA: how to git difftool to show the same file in two commits or branches?
 
 - `$ git difftool HEAD..master file1`
