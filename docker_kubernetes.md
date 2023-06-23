@@ -774,8 +774,28 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
         # run the app
         CMD [ "node", "app.js" ]
         ```
-    - build image `$ docker build -t test/s6_backend` with name goals-node
-    - 
+    - build image `$ docker build . -t test/s5_backend` with name goals-node
+    - create container `$ docker run --rm -d --name goals-node -p 80:80 test/s5_backend`, which communicate to host by port 80
     
-
-
+    
+**Container 3: react SPA**: 
+    - Dockerfile
+        ```dockerfile
+        FROM node
+        WORKDIR /app
+        
+        # install dependencies
+        COPY package.json
+        RUN npm install
+        
+        # moving in all files of the project to working directory
+        COPY . . 
+        
+        # port that match react application
+        EXPOSE 3000
+        
+        # run the app
+        CMD [ "npm", "start" ]
+        ```
+    - `$ docker build -t test/s5_frontend` to build image
+    - `$ docker run --rm -it -d -p 3000:3000 --name goals-frontend test/s5_frontend` to start a container that communicate to host
