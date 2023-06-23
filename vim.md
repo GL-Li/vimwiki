@@ -3,7 +3,7 @@
 - Major reference
 - Workflow and SOP
 - Minimal examples
-- Glossaries
+- QA
 - Raw notes
 
 ## major references
@@ -12,7 +12,7 @@
 - [Vim Reference Guide](https://learnbyexample.github.io/vim_reference/cover.html)
 - [Vim Galore](https://github.com/mhinz/vim-galore#completion)
 
-## Workflow & SOP
+## Workflow & SOP =============================================================
 
 ### SOP: manage plugins with vim-plug plugnin manager
 
@@ -51,6 +51,12 @@ https://github.com/tpope/vim-markdown/issues/21
     hi link markdownError NONE
     ```
 - this new line will overwrite what already in the loaded `markdown.vim` but keep all other settings.
+
+## QA =========================================================================
+
+### QA: how to search special characters in vim, like [, * and ^?
+
+Use escape `\` to escape them. For example to search for `[ ]`, use `/\[ \]`.
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++++ raw notes +++++++++++++++++++++++++++++++++++++
