@@ -1,8 +1,8 @@
 ## Outline
 - Major reference
 - Concept
-- Workflow and SOP
-- Minimal examples
+- SOP: Workflow and SOP
+- MinEx: Minimal Examples
 - QA - quick answers to quick questions
 - Raw notes
 
@@ -93,9 +93,46 @@ https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
     - names image as lglforfun/myimage:0.1.2 to store image to dockerhub account.
         - `docker push lglforfun/myimage:0.1.2` to push an image to Dockerhub.
 
-## Minimal examples ===========================================================
+## MinEx: Minimal Examples ===========================================================
 
-### example: volume, mount local directory to container directory
+### MinEx: Run R container in Docker swarm mode
+
+**repo**: https://bitbucket.org/gl-li/docker-swarm-minimal-example/src/main/
+
+**Dockerfile**:
+    ```
+    FROM r-base
+
+    USER root
+    WORKDIR /tmp
+    COPY test.R .
+
+    RUN mkdir data
+    RUN chmod -R 777 /tmp/data
+
+    # tail -f /dev/null is to keep the container running. Otherwise swarm will
+    # keep starting the node after R script completed.
+    ENTRYPOINT [ "sh", "-c", "Rscript test.R && tail -f /dev/null" ]
+    ```
+**test.R**:
+    ```
+    print("start")
+    write.csv(mtcars, file = "/tmp/data/test.csv")
+    print("file saved")
+    ```
+**build.sh**: remember to push to dockerhub as docker service will use that one.
+    ```sh
+    docker build . -t lglforfun/swarm-r
+    ```
+**swarm.sh**: run this after `$docker swarm init` if swarm has not been initiated. 
+    ```sh
+    docker service create \
+        --name bbb \
+        --mount type=bind,source="$HOME"/aaaaa/swarm,target=/tmp/data \
+        lglforfun/swarm-r
+    ```
+
+### MinEx: volume, mount local directory to container directory
 This example mounts a local directory `$HOME/tmp` to a container, reads a text file `ttt.txt` from local directory and saves a text file `bbb.txt` to `$HOME/tmp`
 
 - Build image. The directory contains two files: Dockerfile and test.py
@@ -799,3 +836,32 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
         ```
     - `$ docker build -t test/s5_frontend` to build image
     - `$ docker run --rm -it -d -p 3000:3000 --name goals-frontend test/s5_frontend` to start a container that communicate to host
+
+
+
+
+
+### docker swarm
+
+Official tutorial: https://docs.docker.com/engine/swarm/
+
+**What is docker swarm**:
+    - a container orchestration toll that runs on the Docker platform.
+    - uses the standard Docker API to communicate with docker Engine.
+    - Docker swarm mode is built into docker engine. The Classic Swarm is outdated.
+    - a swarm consists of multiple Docker hosts running in swarm mode.
+
+**when to use swarm mode**
+    - if you intend to use Swarm as a production runtime environment
+    
+**create a swarm**
+    - When create a swarm with `$ docker swarm init`, the Docker Engine starts running in swarm mode. The docke engine is in swarm mode even if you restart computer, unless you `docker swarm leave` the swarm mode.
+    - `$docker system info` and look for docker `Swarm: active`.
+    - `$ docker swarm leave` to leave the swarm. Use option `--force` if you are on the manager node.
+
+**create a service**
+    - Service is used to deploy an application image when Docker Engine is in swarm mode.
+    - Examples of services: an HTTP server, a database, or any type of executable program you wish to run in a distributed environment.
+    - `$ docker service create --name xxxx image-name` to create a service
+    - `$ docker service ls` to list all services
+    - `$ docker service rm xxxx` to remove service by name

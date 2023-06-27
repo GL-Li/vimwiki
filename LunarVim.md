@@ -1,5 +1,13 @@
 # LunarVim
 
+- QA
+
+## QA =========================================================================
+
+### QA: how to close current buffer?
+
+<space> c where space is the leader key
+
 
 ### Lunarvim nerd font - JetBrainsMono
 
