@@ -1,12 +1,17 @@
 # LunarVim
 
+### install LunarVim on WSL of Windows
+
+Remember to set `git config --global core.autocrlf=input`. Vim clones plugins from github, which may have line ending issue.
+
 
 ### Lunarvim nerd font - JetBrainsMono
 
 - icons will not displayed correctly without Nerd fonts
 - to install Nerd fonts
     - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
-    - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists
+    - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists with
+        - `$ sudo unzip JetBrainsMono.zip /usr/share/fonts/JetBrainsMono`
     - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
     - check if added with `$ fc-list`
 
