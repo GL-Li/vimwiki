@@ -846,7 +846,7 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 Official tutorial: https://docs.docker.com/engine/swarm/
 
 **What is docker swarm**:
-    - a container orchestration toll that runs on the Docker platform.
+    - a container orchestration tool that runs on the Docker platform.
     - uses the standard Docker API to communicate with docker Engine.
     - Docker swarm mode is built into docker engine. The Classic Swarm is outdated.
     - a swarm consists of multiple Docker hosts running in swarm mode.
