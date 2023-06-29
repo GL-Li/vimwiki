@@ -6,10 +6,25 @@ Remember to set `git config --global core.autocrlf=input`. Vim clones plugins fr
 
 ## QA =========================================================================
 
+### QA: how to install nerd fonts in Windows for LunarVim?
+
+Use Window Terminal installed from Windows store.
+
+- Youtube: Beyond Code Live X: NerdFonts in Windows Terminal & WSL
+    - go to `https://webinstall.dev/nerdfont/`. It is `nerdfont`, not `neerdfonts`.
+    - select windows and copy the code for installation
+    - open a Window terminal which is default at Powershell (get it from windows store, it is not powershell), paste the command, and run
+        - if failed, just repeat it. Who knows.
+    - close and reopen Windows terminal
+        - from dropdown, select setting
+        - select Ubuntu from left panel
+        - scroll down and select Appearance
+        - from Font face select `DroidSansMon NF` and save. NF stands for nerd fonts.
+        - from dropdown select Ubuntu to start Ubuntu terminal. Nerdfonts works from this terminal, not from the WSL terminal.
+
 ### QA: how to close current buffer?
 
 <space> c where space is the leader key
->>>>>>> 56384f3184ff49cc9aa9ddf74201fec9a6cf0f59
 
 ### Lunarvim nerd font - JetBrainsMono
 
