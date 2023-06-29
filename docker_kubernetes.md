@@ -13,6 +13,8 @@
      
 - Udemy: Docker & Kubernetes: The Practical Guide, https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
 
+- Udemy: Docer-swarm-hands-on-devops: https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
+
 ## Concept ====================================================================
 
 ### concept: volumes vs bind mounts
@@ -865,3 +867,60 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - `$ docker service create --name xxxx image-name` to create a service
     - `$ docker service ls` to list all services
     - `$ docker service rm xxxx` to remove service by name
+
+## Docker compose
+
+**Docker compose versions**: 
+    - need to specify version in `docker-compose.yml` file
+    - from version 2, all containers are in the same network by default
+    - version 3 is for docker swarm
+
+**docker-compose.yml** example
+    ```yaml
+    version: '3'
+    services:
+      redis:
+        image: redis
+        networks:
+          - back-end
+        volumes:
+          - redis-data:/var/lib/redis
+
+      db:
+        image: postgres:9.4
+        networks:
+            - back-end
+        volumes:
+            - db-data:/var/lib/postgresql/data
+
+      vote:
+        image: voting-app
+        ports:
+          - "5000:80"
+        networks:
+            - back-end
+            - front-end
+
+      result:
+        image: result-app
+        ports:
+            - 5001:80
+        networks:
+            - back-end
+            - front-end
+
+      worker:
+        image: worker-app
+        networks:
+            - back-end
+
+    networks:
+      front-end:
+        driver: bridge
+      back-end:
+        driver: bridge
+
+    volumes:
+      redis-data:
+      db-data:
+    ```
