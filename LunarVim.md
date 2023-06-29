@@ -4,6 +4,12 @@
 
 Remember to set `git config --global core.autocrlf=input`. Vim clones plugins from github, which may have line ending issue.
 
+## QA =========================================================================
+
+### QA: how to close current buffer?
+
+<space> c where space is the leader key
+>>>>>>> 56384f3184ff49cc9aa9ddf74201fec9a6cf0f59
 
 ### Lunarvim nerd font - JetBrainsMono
 
@@ -18,13 +24,13 @@ Remember to set `git config --global core.autocrlf=input`. Vim clones plugins fr
 ### Lunarvim for R programming
 Only need to install Nvim-R plugin. All other plugins are already managed by Lunarvim, which much easier than Vim or NeoVim.
 
-**add to Lunarvim's config.lua** 
+**add to Lunarvim's config.lua**
     ```lua
     lvim.plugins = {
         {"jalvesaq/Nvim-R"}
     }
     ```
-    
+
 **Nvim-R** key bindings
 
     - `\rf` to start R console
@@ -43,4 +49,4 @@ Only need to install Nvim-R plugin. All other plugins are already managed by Lun
 
     - `:Rstop`: stop R excution
 
-**R language server protocol**: to add R lsp, open any R file in LunarVim, start R with `\rf`, then from the R console `install.packages("languageserver")`. Check for dependencies at https://github.com/REditorSupport/languageserver/. 
+**R language server protocol**: to add R lsp, open any R file in LunarVim, start R with `\rf`, then from the R console `install.packages("languageserver")`. Check for dependencies at https://github.com/REditorSupport/languageserver/.
