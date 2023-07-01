@@ -1,5 +1,17 @@
 # LunarVim
 
+## Installation:
+
+- install `nvm` with `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`. Ref: https://github.com/nvm-sh/nvm.
+- Follow terminal instruction after installation to start using it
+    ```
+    [root@236f9c57ea50 /]# export NVM_DIR="$HOME/.nvm"
+    [root@236f9c57ea50 /]# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [root@236f9c57ea50 /]# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" 
+    ```
+- install LTS version nodejs with `nvm install --lts`
+- for Rust dependency when install LunarVim, install `sudo dnf groupinstall "Development Tools"`.
+
 - QA
 
 ## QA =========================================================================
