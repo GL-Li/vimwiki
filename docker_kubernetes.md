@@ -11,9 +11,9 @@
 - Youtube video: [Docker for R users Tutorial](https://www.youtube.com/watch?v=oehhZ98o6Zk)
     - materials saved at `~/OneDrive/learning-resources/docker-user2022-r-for-docker/`
      
-- Udemy: Docker & Kubernetes: The Practical Guide, https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
+- Udemy: Docker & Kubernetes: The Practical Guide (DK), https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
 
-- Udemy: Docer-swarm-hands-on-devops: https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
+- Udemy: Docer-swarm-hands-on-devops (DS): https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
 
 ## Concept ====================================================================
 
@@ -868,7 +868,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - `$ docker service ls` to list all services
     - `$ docker service rm xxxx` to remove service by name
 
-## Docker compose
+## Docker compose (DS - section 2)
 
 **Docker compose versions**: 
     - need to specify version in `docker-compose.yml` file
@@ -924,3 +924,19 @@ Official tutorial: https://docs.docker.com/engine/swarm/
       redis-data:
       db-data:
     ```
+    
+### Docker swarm (DS - section 3)
+
+**component of a docker swarm**: a docker swarm is a cluster of docker hosts
+
+- swarm manager initiated with `$ docker swarm init`. There can be multiple managers. The manager team has a leader, but the decision is made by majority votes. Docker recommend no more than 7 managers.
+    - to add a node as a leader, first create token for manage with `docker swarm joint-token manager` and then copy the output from another computer. 
+    - `docker swarm rm node_name` to kick out a worker
+- worker node 1 with `docker swarm join`
+    - `docker swarm leave` to leave a swarm
+- worker node 2 with `docker swarm join`
+    - `docker swarm leave` to leave a swarm
+
+### Docker services (DS - section 4)
+
+
