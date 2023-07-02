@@ -16,6 +16,7 @@
 
 ## Workflow and SOP ===========================================================
 
+
 ### SOP: config a specific repo user.name, user.email, and credentials
 - **use case**: my global configuration is for Bitbucket. Now I have a repo for Github and I want to set config for this repo, what should I do?
 - steps to take:
@@ -30,18 +31,24 @@
         ```
     - git will automatically search for the correct credentials in above file when credentials are needed, for example, for `git push`.
 
-
+,
 ### SOP: force line ending to work across Windows and Linux
-See [Configuring Git to handle line endings](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
 
-- create a file `.gitattrubutes` at root of the repository, which defined line ending for a given file type, for example:
-    ```
-    * text=auto                # all text file automatic line ending
-    *.bat text eol=crlf        # Windows .bat files have crlf ending
-    *.sh text eol=lf           # Linux bash scripts have lf ending
-    ```
+**Line ending is a headache** when switching between Windows and Linux, but especially painful when using WSL on Windows. In WSL, the automatic line ending is Windows' crlf instead of Linux's lf. So when you clone a git repository in WSL, all line ending will changed to crlf. Some file will not run in WSL, such as `.sh` files. 
 
-- if `.gitattribute` is added after files created, force existing file with line ending defined in `.gitattributes` by running
+**A real example**: when install vim plugins in WSL, the plugin code files are first git cloned to the computer and then installed. Some plugins fail to install due the line ending issues.
+
+**solution to line ending issue**: 
+    - `$ git config --global core.autocrlf=input` to stop git from changing line ending when switching between Windows and Linux. Instead, the line ending will be enforced by file `.gitattribute`.
+    - When creating a new git repository, create file `.gitattribute` file to force line ending of selected filetypes. (See https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings), for example: 
+
+        ```
+        * text=auto                # all text file automatic line ending
+        *.bat text eol=crlf        # Windows .bat files have crlf ending
+        *.sh text eol=lf           # Linux bash scripts have lf ending
+        ```
+
+**if `.gitattribute` is added after files created**, force existing file with line ending defined in `.gitattributes` by running
     ```sh
     git add . -u               # -u to update all files
     git commit -m "xxxxx"

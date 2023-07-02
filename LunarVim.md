@@ -2,24 +2,14 @@
 
 ## Installation:
 
-- install `nvm` with `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`. Ref: https://github.com/nvm-sh/nvm.
-- Follow terminal instruction after installation to start using it
-    ```
-    [root@236f9c57ea50 /]# export NVM_DIR="$HOME/.nvm"
-    [root@236f9c57ea50 /]# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [root@236f9c57ea50 /]# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    ```
-- install LTS version nodejs with `nvm install --lts`
-- for Rust dependency when install LunarVim, install `sudo dnf groupinstall "Development Tools"`.
+**LurnaVim depends** on several programs, among them NeoVim and node.js are tricky to install.
 
-- QA
-## Installation
+**NeoVim**: do not install NeoVim with snap on Ubuntu. It may not run when starting LunarVim. Instead using appImage to install and create a soft link to a $PATH.
 
-### install LunarVim on Ubuntu
-
-- **Install Neovim** from AppImage and create link to `/usr/bin/nvim`.
-- Follow the instruction to install LunarVim
-
+**node.js**: use nvm to install node and npm 
+    - install `nvm` with `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`. Ref: https://github.com/nvm-sh/nvm.
+    - install LTS version nodejs with `nvm install --lts`
+    - update npm with `npm install -g npm`
 
 ### install LunarVim on WSL of Windows
 
