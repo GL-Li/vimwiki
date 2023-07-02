@@ -13,6 +13,14 @@
 - for Rust dependency when install LunarVim, install `sudo dnf groupinstall "Development Tools"`.
 
 - QA
+## Installation
+
+### install LunarVim on Ubuntu
+
+- **Install Neovim** from AppImage and create link to `/usr/bin/nvim`.
+- Follow the instruction to install LunarVim
+
+
 ### install LunarVim on WSL of Windows
 
 Remember to set `git config --global core.autocrlf=input`. Vim clones plugins from github, which may have line ending issue.
@@ -45,7 +53,7 @@ Use Window Terminal installed from Windows store.
 - to install Nerd fonts
     - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
     - unzip to /usr/share/fonts/JetBrainsMono, create `JetBransMono/` if not exists with
-        - `$ sudo unzip JetBrainsMono.zip /usr/share/fonts/JetBrainsMono`
+        - `$ sudo unzip JetBrainsMono.zip -d /usr/share/fonts/JetBrainsMono`
     - run `$ sudo fc-cache -fv` to add the new fonts to system, https://ostechnix.com/install-nerd-fonts-to-add-glyphs-in-your-code-on-linux/
     - check if added with `$ fc-list`
 
