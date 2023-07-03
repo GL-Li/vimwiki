@@ -52,6 +52,16 @@
 
 ## QA =========================================================================
 
+### QA: how to set up computer so can be connected with ssh
+
+- `$ sudo apt install openssh-server` on the host computer
+- `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
+
+### QA: how to check hostname and ip address
+
+- `$ hostname` to show hostname
+- `$hostname -I` to show all IP addresses of this computer in local networks. They are not public IP addresses.
+
 ### QA: how to replace string "abc" to "xyz" in all files in a directory?
 
 - `$ sed -i 's/abc/xyz/g' *`
