@@ -11,9 +11,9 @@
 - Youtube video: [Docker for R users Tutorial](https://www.youtube.com/watch?v=oehhZ98o6Zk)
     - materials saved at `~/OneDrive/learning-resources/docker-user2022-r-for-docker/`
      
-- Udemy: Docker & Kubernetes: The Practical Guide (DK), https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
+- ref1 -- Udemy: Docker & Kubernetes: The Practical Guide (DK), https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
 
-- Udemy: Docer-swarm-hands-on-devops (DS): https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
+- ref2 -- Udemy: Docer-swarm-hands-on-devops (DS): https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
 
 ## Concept ====================================================================
 
@@ -868,7 +868,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - `$ docker service ls` to list all services
     - `$ docker service rm xxxx` to remove service by name
 
-## Docker compose (DS - section 2)
+## Docker compose (ref2 - section 2)
 
 **Docker compose versions**: 
     - need to specify version in `docker-compose.yml` file
@@ -925,18 +925,83 @@ Official tutorial: https://docs.docker.com/engine/swarm/
       db-data:
     ```
     
-### Docker swarm (DS - section 3)
+### Docker swarm (ref2 - section 3)
 
 **component of a docker swarm**: a docker swarm is a cluster of docker hosts
+    - swarm manager initiated with `$ docker swarm init`. There can be multiple managers. The manager team has a leader, but the decision is made by majority votes. Docker recommend no more than 7 managers.
+        - to add a node as a leader, first create token for manage with `docker swarm joint-token manager` and then copy the output from another computer. 
+        - `docker swarm rm node_name` to kick out a worker
+    - worker node 1 with `docker swarm join`
+        - `docker swarm leave` to leave a swarm
+    - worker node 2 with `docker swarm join`
+        - `docker swarm leave` to leave a swarm
 
-- swarm manager initiated with `$ docker swarm init`. There can be multiple managers. The manager team has a leader, but the decision is made by majority votes. Docker recommend no more than 7 managers.
-    - to add a node as a leader, first create token for manage with `docker swarm joint-token manager` and then copy the output from another computer. 
-    - `docker swarm rm node_name` to kick out a worker
-- worker node 1 with `docker swarm join`
-    - `docker swarm leave` to leave a swarm
-- worker node 2 with `docker swarm join`
-    - `docker swarm leave` to leave a swarm
+**example**: a demo to create a swarm cluster
+    - start a docker swarm
+        - `docker swarm init` from master computer. Use --advertise-addr if the computer has multiple IP addresses on different interface such as eth0 and eth1.
+    - joint as a worker
+        - ssh to another computer and copy paste `docker swarm join --token SWMTKN-1-0d4cmdmc0fmfxo85ysomlxkt1wfzkj738kud48chcfcz5pva33-2ed1gm70p7dplwc7iv0jmmq8d 192.168.1.102:2377` for that computer to join the swarm as a worker.
+    - join as a manager
+        - from the manage create a join-token for manage with `docker swarm join-token manager`
+        - copy and paste the token from another computer: `docker swarm join --token SWMTKN-1-0d4cmdmc0fmfxo85ysomlxkt1wfzkj738kud48chcfcz5pva33-0slvphz45xwslktbi6f3wmd4n 192.168.1.102:2377`.
+    - promote a worker node to manager node
+        - `docker node promote t590` where t590 is the hostname
+    - restore a swarm cluster
+        - a manager node is not free to leave as the leave may break the Raft quorum of the swarm, which makes the swarm inaccessible.
+        - to restore the inaccessible cluster, run `docker swarm init --force-new-cluster`. The previously left manager node now is a worker.
+    - what happens when rebooting a computer 
+        - the node is down when the computer is off
+        - the node is up automatically when the computer is on.
+    - manage the nodes
+        - `docker node ls` from the master to check the status of all nodes.
+        - `docker node rm 2z8S` to remove a node if its status is down due to `docker swarm leave`.
 
-### Docker services (DS - section 4)
 
+### Docker services (ref2 - section 4)
 
+**docker service** must be created on the manager node.
+    - `$ docker xervice create --replicas 3 my-app-image` to create 3 copies of work nodes, each for the same task.
+    - `$ docker service create --mode global my-monitoring-image` to create a global service applied to all nodes in the cluster.
+    - `$ docker service create --replicas 3 --name web-server web-server-image` to name the worker node as web-server-1, web-server-2, and web-server-3.
+    - `$ docker service update --replica 4 my-app-image` to change the replicas to 4.
+
+**example demo**:
+    - simple demo
+        - `docker service create nginx` to create a service
+        - `docker service ls` to list all running services
+        - `docker service ps yjf2` to list the tasks on service ic3y
+        - update with port to the nginx server
+            - `docker service update yjf2 --publish-add 5000:80` to publish service yjf2 at port 5000, which can be viewed at `localhost:5000/` in a web browser.
+    - more options
+        - `docker service create --replicas 2 --name nginx nginx` to give a name to the service and make 2 replicas
+        - as the cluster has two nodes, each node will have one repoica of the running instance of nginx
+            - on the manager, `docker service ps nginx` lists two running instance
+            - on the worker, `docker ps` list the task running on it. `docker service` does not run on a work node.
+### Docker advanced networking (ref2 - section 5)
+
+**host network share ports with host** so that the exposed port of the container is the same as the host port so no publish needed. Set with `$ docker run --network=host`. 
+
+**bridge network is created and managed by Docker**. It is the default network. In a swarm clusters, the same service may have different IP in each nodes.
+
+**overlay network create a network shared by all nodes and services**
+    ```sh
+    docker network create --driver overlay --subnet 10.0.9.0/24 my-overlay-network
+    docker service create --replicas 2 --network my-overlay-network nginx
+    ```
+
+**ingress network created automatically by swarm**. It maps one host port to the containers in all nodes. It is a type of overlay network.
+
+**embedded DNS use container name for DNS** so that no hard-coded address used, which does not work after system rebooting.
+
+### Docker stacks (ref2 - section 6)
+
+**docker run vs docker service**: 
+    - `docker run` works on single host while `docker service` works in a docker swarm
+    - multiple containers created by `docker run` can be placed in a `docker-compose.yml` so they can share the same network. 
+        - `$ docker-compose up` to start all the containers
+    - nultiple services created by `docker service` can also be placed in a `docker-compose.yml` file to allocate resources, which is call stack.
+        - `docker stack deploy` to start all the services
+
+**docker stack consists of multiple services** for a specific application.
+
+**demo example**
