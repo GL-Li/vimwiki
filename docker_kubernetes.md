@@ -868,7 +868,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - `$ docker service ls` to list all services
     - `$ docker service rm xxxx` to remove service by name
 
-## Docker compose (ref2 - section 2)
+### Docker compose (ref2 - section 2)
 
 **Docker compose versions**: 
     - need to specify version in `docker-compose.yml` file
