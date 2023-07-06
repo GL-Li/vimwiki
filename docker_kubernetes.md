@@ -875,7 +875,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - from version 2, all containers are in the same network by default
     - version 3 is for docker swarm
 
-**docker-compose.yml** example
+**docker-compose.yml** example showing the major components, not running
     ```yaml
     version: '3'
     services:
@@ -925,6 +925,33 @@ Official tutorial: https://docs.docker.com/engine/swarm/
       db-data:
     ```
     
+**docker-compose.yml** working example. postgres needs login. Go to localhost 8009 and 8001 to use the app.
+    ```yaml
+    version: '3'
+    services:
+      redis:
+        image: redis
+
+      db:
+        image: postgres:9.4
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+
+      vote:
+        image: dockersamples/examplevotingapp_vote
+        ports:
+          - 8009:80
+
+      worker:
+        image: dockersamples/examplevotingapp_worker
+
+      result:
+        image: dockersamples/examplevotingapp_result
+        ports:
+          - 8001:80
+    ```
+
 ### Docker swarm (ref2 - section 3)
 
 **component of a docker swarm**: a docker swarm is a cluster of docker hosts
@@ -1005,3 +1032,33 @@ Official tutorial: https://docs.docker.com/engine/swarm/
 **docker stack consists of multiple services** for a specific application.
 
 **demo example**
+    - `docker-stack.yml`:
+        ```yaml
+        version: '3'
+        services:
+          redis:
+            image: redis
+
+          db:
+            image: postgres:9.4
+            environment:
+              POSTGRES_USER: postgres
+              POSTGRES_PASSWORD: postgres
+
+          vote:
+            image: dockersamples/examplevotingapp_vote
+            ports:
+              - 8009:80
+
+          worker:
+            image: dockersamples/examplevotingapp_worker
+
+          result:
+            image: dockersamples/examplevotingapp_result
+            ports:
+              - 8001:80
+        ```
+    - `docker stack deploy voting-app-stack --compose-file docker-stack.yml` to start the stack
+    - `docker service ls` to check all the running  services
+    - `docker service ps voring-app-stack_vote` to inspect service vote.
+    - After making some changes to the `docker-stack.yml` file, just run above deploy command again. No need to destroy it before redploy. It will update the existing deployment.
