@@ -1044,14 +1044,26 @@ Official tutorial: https://docs.docker.com/engine/swarm/
             environment:
               POSTGRES_USER: postgres
               POSTGRES_PASSWORD: postgres
+            deploy:
+              replicas: 1
+              placement:
+                constraints: [node.role == manager]
 
           vote:
             image: dockersamples/examplevotingapp_vote
             ports:
               - 8009:80
+            deploy:
+              replicas: 2
+              update_config:
+                parallelism: 2 # update container one at a time
 
           worker:
             image: dockersamples/examplevotingapp_worker
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 10s
 
           result:
             image: dockersamples/examplevotingapp_result
