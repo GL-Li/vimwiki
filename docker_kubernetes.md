@@ -1074,3 +1074,21 @@ Official tutorial: https://docs.docker.com/engine/swarm/
     - `docker service ls` to check all the running  services
     - `docker service ps voring-app-stack_vote` to inspect service vote.
     - After making some changes to the `docker-stack.yml` file, just run above deploy command again. No need to destroy it before redploy. It will update the existing deployment.
+
+### Docker registry (ref2 - section 7): internal registry for images
+
+**docker registry itself has a image** and is easy to install and use
+    - `$ docker run -d -p 5000:5000 --restart always --name regist registry:2` to start a registry container
+        - the registry is at `localhost:5000/` 
+    - `$ docker tag r-base:4.2.3 localhost:5000/r-base:4.2.3` to re-tag a image under the registry addrtess
+    - `$ docker push localhost:5000/r-base:4.2.3` to push the image to the local registry
+        - by default the images are stored in container's `/var/lib/registry/docker/registry/v2/repositories/`. 
+    - `$ docker pull localhost:5000/r-base:4.2.3` to pull image from local registry
+
+**use docker volume or binding mounts for persistent storage of local registry**
+    - `$ docker volume create local-registry` to create a volume
+    - `$ docker run -d -p 5000:5000 --restart always -v local-registry:/var/lib/registry --name registry registry:2` to start the container
+
+**inspect docker images in local registry** from terminal
+    - `$ curl http://localhost:5000/v2/_catalog` to see names of all images
+    - `$ curl http://localhost:5000/v2/r-base/tags/list` to list the tags of an image 
