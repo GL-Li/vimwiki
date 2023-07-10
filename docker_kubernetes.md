@@ -17,6 +17,15 @@
 
 ## Concept ====================================================================
 
+### concept: single container and multiple containers
+
+**single container** 
+    - `$ docker run ..` to start a single container and use the container
+    - `$ docker service create ...` can also start a sigle container but must be in swarm mode
+
+**multiple containers**
+    - `$ docker-compose up` to start multiple comtainers using a `docker-compose.yml` file. These containers are in the same network but each only has one copy.
+
 ### concept: volumes vs bind mounts
 
 **summary**
