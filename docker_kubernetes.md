@@ -17,18 +17,24 @@
 
 ## Concept ====================================================================
 
-### concept: single container and multiple containers
+### concept: docker for development and deployment
 
-**single container** 
-    - `$ docker run ..` to start a single container and use the container
-    - `$ docker service create ...` can also start a sigle container but must be in swarm mode
+**for development**: docker provide a consistent environment so the development can be done on any computer in which docker engine can be installed.
+    - single container 
+        - `$ docker run ..` to start a single container and use the container
+    - multiple containers, each for a specific service. They work together to provide a environment for development.
+        - `$ docker-compose up` to start multiple comtainers using a `docker-compose.yml` file. These containers are in the same network but each only has one copy.
 
-**multiple containers**
-    - `$ docker-compose up` to start multiple comtainers using a `docker-compose.yml` file. These containers are in the same network but each only has one copy.
+**for deployment**: a project development in containers can be packaged into containers for easy deployment
+    - test a single container for deployment if it does not depends on other containers
+        - `$ docker service create ...` can also start a sigle container but must be in swarm mode
+    - deploy a project consisting of multiple containers using `docker-stack.yml` file
+        - `docker stack deploy voting-app-stack --compose-file docker-stack.yml` to start the stack
 
 ### concept: volumes vs bind mounts
 
 **summary**
+    - The purpose of volume is to store files outside of a container. A volume is mounts to a directory of 
     - use named volume to share data across containers
     - use bind mounts to share data between a container and the host computer
 
@@ -48,7 +54,8 @@
             - `$ docker run -v shared_volume:/input_data --name container1  image1`
             - `$ docker run -v shared_volume:/output_data --name container2 image2`
         - portable to other host computers comparing to bind mounts.
-        - can only be created with `docker run -v abcdefg:/container/dir` command, where volume name abcdefg is a string, not a path.
+        - can be created with `docker run -v abcdefg:/container/dir` command, where volume name abcdefg is a string, not a path.
+        - `docker volume create` can create a named volume with configurations, for example, to use network storage.
 
 **bind mounts** is managed by user
     - Good to share with other applications on the host
@@ -57,12 +64,19 @@
 
 ### concept: tmpfs vs writable layer
 
-- why need them?
+**what is tmpfs mounts?**
+    - mount host memory to a container directory with `docker run --tmpfs /container/dir1 --tmpfs /container/dir2 ...`. 
+    - Deleted when the container is stopped. 
+    - Keep in mind that tmpfs may exaust host memory.
+
+**why need tmpfs?**
     - For temporary storage for this container
+    - Very fast in writing and reading.
 
-- writable layer: a thin layer on top of a container. All files to container directories without being mounted to host will be written here. These files co-exist with the container until the container is deleted.
+**what is writable layer**?
+    - a thin layer on top of a container. All files to container directories without being mounted to host will be written here. These files co-exist with the container until the container is deleted.
+    - it is part of hard drive where the container is stored, so read and write is slow compared to tmpfs
 
-- tmpfs mounts: mount host memory to a container directory. Deleted when the container is stopped. Keep in mind that tmpfs may exaust host memory.
 
 ### concept: protect container subdirectory from bind mounts
 
