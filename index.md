@@ -13,6 +13,6 @@
 - [[R|R language]]
 - [[regex|Regular Expression]]
 - [[Rust_language]]
-- [[ubuntu_linux_bash]]
+- Linux ---[[ubuntu_linux_bash]]---
 - [[vim]] ---- [[NeoVim]] ---- [[LunarVim]]
 - [[vim_plugins]]: tricks to use vim plugins

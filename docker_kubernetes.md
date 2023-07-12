@@ -34,9 +34,9 @@
 ### concept: volumes vs bind mounts
 
 **summary**
-    - The purpose of volume is to store files outside of a container. A volume is mounts to a directory of 
-    - use named volume to share data across containers
-    - use bind mounts to share data between a container and the host computer
+    - The purpose of volume is to store files outside of a container. Although files are stored outside of the container, they are used as if they are in the container directory.
+    - Use named volume to share data across containers
+    - Use bind mounts to share data between a container and the host computer
 
 **why need them?**
     - For persistent data storage. Without volume, docker-generated data are stored in the container and destroyed with the removal of the container.
@@ -80,17 +80,18 @@
 
 ### concept: protect container subdirectory from bind mounts
 
-- what happened
+**what happened**
     When we bind mount with `docker run -v /host/dir:/container/dir ...`, the first step is that the `/host/dir` overwrites `/container/dir`. Any subdirectories in the latter but not in the former are deleted.
 
-- protect container subdirectories with annonymous volume
-    - if the container has subdir_1 under `/container/dir/` but not under `/host/dir/`, we can add a second mount to the docker run
+**protect container subdirectories with annonymous volume**
+    - if the container has subdir_1 under `/container/dir/` but not under `/host/dir/`, we can add a second mount in the docker run
         - `docker run -v /host/dir:/container/dir -v /container/dir/subdir_1 --rm ...`
         - The rule is that container's subdirectories has priority over its parent directory over volume mounting. In this case subdir_1 is first mounted to an annonymous volume and will not be overwritten by the bind mounts.
         - remember to use `--rm` to delete the annonymous volume after stopping the container
     - alternatively, we can add a line in Dockerfile
         - `VOLUME /container/dir/subdir_1`
         - still need `--rm` in docker run.
+    - The best way is to avoid this situation by restructure the directories and files.
 
 ## Workflow and SOP ===========================================================
 
@@ -98,8 +99,8 @@
 ### SOP: use host's gui to display graphic interface in docker container
 
     - `$ xhost + local:` to allow the docker using host's xserver. Run it if system restarted. Keep the `:` at the end of `local`.
-    - `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --net host my/image` to start the container.
-        - for example, `docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --net host r-base R`, make a plot in R to display the figure in a pop up window.
+    - `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host my/image` to start the container.
+        - for example, `docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host r-base R`, make a plot in R to display the figure in a pop up window.
 
 ### SOP: add user to  docker user group so no need to use `sudo` every time
 https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
