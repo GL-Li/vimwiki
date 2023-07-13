@@ -1,5 +1,11 @@
 ## RStudio tricks =============================================================
 
+### lintr and RStudio session
+
+**Problem found**: lintr may report issues in Bitbucker Pipelines that not found in local run. 
+
+**Solution**: The reason is that a local RStudio session caches some objects that may affect lintr's outcome. For a safe lintr check, always start a new R session (not restart R).
+
 ### RStudio viewer max columns
 The default `View(df1)` displays 50 columns. To increase the default, run from R console `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` to increase to 500 columns.
 
