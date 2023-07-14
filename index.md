@@ -16,3 +16,6 @@
 - Linux ---[[ubuntu_linux_bash]]---
 - [[vim]] ---- [[NeoVim]] ---- [[LunarVim]]
 - [[vim_plugins]]: tricks to use vim plugins
+
+# Sample project study - learn best practice from good project
+- Docker [[example-voting-app]]
