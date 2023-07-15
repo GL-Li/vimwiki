@@ -54,6 +54,13 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+### QA: how to run vim command from Linux terminal
+
+**vim c command_name** where command_name is a command that, if in vim editor, would be run in normal mode. Examples
+    - `$ vim -c VimwikiIndex` to start VimWiki, which is equivalent to run `:VimwikiIndex` in normal mode.
+    - `$ vim -c "%s/foo/bar/g | wq" file1` which replaces all `foo` with `bar` and then save and quit with `:wq`.
+    - `$ vim -c "set number" file1` which open the file with line numbers.
+
 ### QA: how to search special characters in vim, like [, * and ^?
 
 Use escape `\` to escape them. For example to search for `[ ]`, use `/\[ \]`.
