@@ -17,6 +17,26 @@ Remember to set `git config --global core.autocrlf=input`. Vim clones plugins fr
 
 ## QA =========================================================================
 
+### QA: how to setup chatGPT.nvim plugin for LunarVim?
+
+- **Add chatGPT key to .bashrc** with a new line `export OPENAI_API_KEY="xh348f9afjf"`
+- Add to `config.lua` inside `lvim.plugins = {}` to install chatgpt plugin and its dependencies.
+    ```
+    {
+      "jackMort/ChatGPT.nvim",
+        event = "VeryLazy",
+        config = function()
+          require("chatgpt").setup()
+        end,
+        dependencies = {
+          "MunifTanjim/nui.nvim",
+          "nvim-lua/plenary.nvim",
+          "nvim-telescope/telescope.nvim"
+        }
+    }
+    ```
+- Start lvim and run `:ChatGPT` to start using it.
+
 ### QA: how to install nerd fonts in Windows for LunarVim?
 
 Use Window Terminal installed from Windows store.
