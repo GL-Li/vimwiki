@@ -18,3 +18,9 @@
 **determine the right port in localhost**: the result container published several ports. When run `docker ps` we can see for this container a list of port: `0.0.0.0:5858->5858/tcp, :::5858->5858/tcp, 0.0.0.0:5001->80/tcp, :::5001->80/tcp`. We need to know which port is for view the results at localhost. How?
     - check the `README` file
     - `$ grep -r EXPOSE` to search for exposed ports in Dockerfiles. A good Dockerfile will explicitly expose the ports.
+
+## App design
+
+### How voting passed to result
+
+
