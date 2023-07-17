@@ -19,7 +19,7 @@
     - `\\d` matches digits
     - `\\D` matches non-digits
     - `\\w` matches any word characters (alphanumeric and underscore)
-        - only `a-zA-Z0-9`, not other language letters
+        - only `a-zA-Z0-9_`, not other language letters
     - `\\W` matches any non-word characters
     - `\\s` matches any whitespace character (spaces, tabs, line breaks)
     - `\\S` matches any non-whitespace characters
@@ -65,7 +65,7 @@
 - greedy lazy possessive repetition
     - `?` `*` and `+` are greedy, returns all matches
     - `??` `*?` and `+?` are lazy, returns few matches as possible
-        ```R
+        ```r
         x <- "<h1> heading one </h1>"
         # .+> matches all until hitting the last >
         str_extract_all(x, "<.+>")
@@ -80,7 +80,7 @@
 
         ```
     - `?+`, `*+`, and `++` are possessive that does not backtrack. It is faster than lazy and greedy search.
-        ```R
+        ```r
         y = "this is a dog"
         str_extract(y, ".+dog")
         # [1] "this is a dog"
@@ -88,7 +88,7 @@
 
         str_extract(y, ".++dog")
         # [1] NA
-        # .++ include dog but will not tack back so cannot find match for dog in the patern and returns nothing.
+        # .++ include dog but will not track back so cannot find match for dog in the patern and returns nothing.
 
         ```
 
