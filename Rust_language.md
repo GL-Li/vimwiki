@@ -424,6 +424,39 @@
 
 #### 4.1 What is ownership
 
+**Safety is the absence of undefined behavior**: any unexpected action by the code potentially causses security problems. 
+    - A foundational goal of Rust is to ensure codes never have undefined behavior.
+    - A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
+
+**Frames are where variables live**: a frame is a mapping from variables to values within a single scope. A scope is defined by `{...}`, for example:
+    ```rust
+    fn main() {     // frame for function main holds the following:
+        let n = 5;  //n:5 (L1, location 1)
+        let y = plus_one(n); // y:6, (L3)
+        println!("The value of y is: {y}");
+    }
+
+    fn plus_one(x: i32) -> i32 {  // frame for plus_one holds:
+        x + 1  // x:5 as x is assigned with n in main() (L2)
+    }
+    ```
+
+**Frames are organized into a stack of currently-called-functions**: in above example, two frames are involved in a stack when function `plus_one` is called, This stack can be shown as:
+    ```
+    main() frame, dropped after last line executed
+    plus_one frame, dropped after return in main()
+    ```
+
+**Box stores data in heap**: box is a construct in Rust for putting data in heap. In the example below, only one copy of the one million array lives in heap, which is not in any stack frame. Instead, two pointers for a and b are in the stack frame of main.
+    ```rust
+    fn main() {
+        let a = Box::new([0; 1_000_000]); // create a box in array with pointer a
+        let b = a; // move the pointer to b. Pointer a deleted
+    }
+    ```
+    
+**data structure Vec, String, and HashMap are boxes**: they are stored in heap when created with a pointer stored in stack frames.
+
 **Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory while running. The programmer must explicitly allocate and free the memory.
 
 **stack, heap, pointer**: memory available to code at **runtime**
