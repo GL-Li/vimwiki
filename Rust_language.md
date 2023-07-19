@@ -46,9 +46,17 @@
 
 ## Raw notes ==================================================================
 
+### 1.1 Installation using rustup
+
+**rustup** is a tool that manage Rust installation, update, and uninstallation.
+    - `$ sudo apt purge rustc` to uninstall the old version that is not installed with rustup
+    - reinstall Rust with rustup, may change overtime, always use the latest command. Just an example: `$ $ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
+    - `$ rustup update` to update to a new version
+    - `$ rustup self uninstall` to uninstall Rust and rustup.
+
 ### 1.2 Hello, World
 
-- [x] writing and running a Rust program
+**rustc is a compiler** that generates an executable file
 
     - create file `main.rs`
         ```rust
