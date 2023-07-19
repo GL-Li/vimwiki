@@ -52,6 +52,13 @@
 
 ## QA =========================================================================
 
+### QA: how to set up ssh key from terminal and use it for github?
+
+- `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
+- `$ cat .ssh/id_rsa.pub` to view and copy the public key.
+- To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
+- The computer is ready to clone repos in your github account
+
 ### QA: how to set up computer so can be connected with ssh
 
 - `$ sudo apt install openssh-server` on the host computer
