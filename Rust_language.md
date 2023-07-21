@@ -186,8 +186,9 @@
 **concurrent programming** is a form of programming in which several processes run concurrently during overlapping time periods.
 
 **constant vs immutable variables**: constant will never change
-    - variables are immutable by default, but variable name can be re-declaired. For example after we define `let x = 3`, we cannot simply reassign a value with `x = 9`. However, we can re-declair `x` with `let x = 9`, which is called **shadowning**.
+    - variables are immutable by default, but variable name can be re-declaired as a **new** variable. For example after we define `let x = 3`, we cannot simply reassign a value with `x = 9`. However, we can re-declair `x` with `let x = 9`, which is called **shadowning**.
     - constant can only be declaired once. After declair `const ABC: u32 = 24 * 3600` we cannot declair again with `const ABC: u32 = 24 * 60 * 60`. That is, we cannot assign any value to `ABC` again.
+    - `let` can only be used in a function scope to declair variables but `const` can also be used in global scope.
 
 **shadowing and scope**: shadowing is only valid within its scope
     - curly braces `{...}` define a scope. A shadowing inside it will **NOT** affect the variables outside it
