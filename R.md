@@ -1,5 +1,9 @@
 ## RStudio tricks =============================================================
 
+### QA: How to update R version in Windows?
+
+Use `installr::updateR()` from a R console. Only works in Windows as `installr` is not available in Linux.
+
 ### lintr and RStudio session
 
 **Problem found**: lintr may report issues in Bitbucker Pipelines that not found in local run. 
