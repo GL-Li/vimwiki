@@ -260,7 +260,7 @@
         println!("aaa first element is {ele_1}");
         println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
         ```
-    - array type can only have elements of the same type and have a fixed length
+    - array type can only have elements of the same type and have a fixed length. Arrays live in stack, not heap as the length is fixed.
         ```rust
         // declair an array of type u32 and 5 elements
         let arr: [u32; 5] = [1, 2, 3, 4, 5];
@@ -272,7 +272,7 @@
         
 **Standard library types** from RBE  chapt 19.
 
-#### 3.3 FunctionsI
+#### 3.3 Functions
 
 **Statement** performs some action and does not return a value. Therefore a statement cannot be assigned to a variable. Examples
     ```rust
@@ -306,7 +306,7 @@
         
         // error: return unit (), not i32 as declaired
         fn add_2(x: i32, y: i32) -> i32 {
-            x + y;   
+            x + y;   // not an expression because of ending ;
         }
         ```
         
