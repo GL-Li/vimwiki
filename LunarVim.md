@@ -17,6 +17,12 @@ Remember to set `git config --global core.autocrlf=input`. Vim clones plugins fr
 
 ## QA =========================================================================
 
+## QA: how to enable clipboard in LunarVim to copy and paste from one lvim to another?
+
+- `sudo apt install xclip` to install a third party clipboard provider as NeoVim does not provide one.
+- add line `lvim.builtin.terminal.clipboard = true` to LunarVim's `config.lua` to enable the clipboard.
+- Restart terminals and lvim and it's ready to `y` in one and `p` to another Lvim session.
+
 ### QA: how to setup chatGPT.nvim plugin for LunarVim?
 
 - **Add chatGPT key to .bashrc** with a new line `export OPENAI_API_KEY="xh348f9afjf"`
