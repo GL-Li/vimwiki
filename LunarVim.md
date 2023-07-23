@@ -2,11 +2,25 @@
 
 ## Installation:
 
-**LurnaVim depends** on several programs, among them NeoVim and node.js are tricky to install.
+**To reinstall LunarVim**, 
+    - first use uninstall script to uninstall. Follow instructions here: https://www.lunarvim.org/docs/installation
+    - then delete `~/.config/lvim/` directory, which stores the setting of the last installation.
 
-**NeoVim**: do not install NeoVim with snap on Ubuntu. It may not run when starting LunarVim. Instead using appImage to install and create a soft link to a $PATH.
+**Do not use a package manager to install NeoVim** as it may have default setting for Nvim which then LunarVim will have to modify, resulting in a crowed `config.lua` file. It is always good to start with clean config file.
 
-**node.js**: use nvm to install node and npm 
+**Install NeoVim from appImage** and create a soft link to a $PATH.
+    - Download appImage from  https://github.com/neovim/neovim/wiki/Installing-Neovim
+    - Extract and set path
+        ```sh
+        ./nvim.appimage --appimage-extract
+        ./squashfs-root/AppRun --version
+
+        # Optional: exposing nvim globally.
+        sudo mv squashfs-root /
+        sudo ln -s /squashfs-root/AppRun /usr/bin/nvim
+        nvim
+        ```
+**Use nvm to install node and npm**
     - install `nvm` with `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`. Ref: https://github.com/nvm-sh/nvm.
     - install LTS version nodejs with `nvm install --lts`
     - update npm with `npm install -g npm`

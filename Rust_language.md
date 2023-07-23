@@ -497,3 +497,6 @@
 
 **`&String` type is a reference to a `String`**
     - It has no ownership. It exists as long as the `String` it points to is not out of scope.
+
+### 4.2 referrence and borrowing
+
