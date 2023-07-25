@@ -500,3 +500,18 @@
 
 ### 4.2 referrence and borrowing
 
+**When ownership moved?** 
+    - only applied to varaibles in heap not in stack
+        ```rust
+        // for varaibles in stack, ownership not moved
+        let x = 5;
+        let y = x; // value of x, 5, is copied to y. Two copies of 5.  Both x and y exist
+        println!("x is {x} and y is {y}")  // no problem
+        
+        // for variables in heap, ownership moved
+        let a = String::from("xyz");
+        let b = a;  // ownership of "xyz" moved to b. Only one "xyz" in heap. 
+                    // variable a is not valid anymore
+        printlin!("a is {a} and b is {b}")  // error as a does not exists anymore
+        ```
+    - heap varaible ownership move happens when reassigned or used in a function call
