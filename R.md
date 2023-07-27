@@ -1,22 +1,29 @@
 ## RStudio tricks =============================================================
 
-### QA: how to use package renv to manage package version in a project and work from terminal?
+### HOW: how to use package renv to manage package version in a project and work from terminal?
 
 **project .Rprofile**: add a line to the project .Rprofile so disable global package cache so that all packages are saved within the project to enable quick restore if copied to another computer. 
     ```
     options(renv.config.cache.enabled = FALSE)
     ```
-**renv::restore from the project directory**: assuming the project is copied to another computer, go to the project directory and run from terminal
+**renv::restore from the project directory**: assuming the project is copied to another computer, go to the project directory and run from terminal. Run `Rscript` from this directory, it automatically picks up `.Rprofile` and installs `renv` and other packages.
     ```shell
     $ Rscript -e "renv::restore()"
     ```
     
-**renv::run() from terminal anywhere**: 
+**renv::run() from terminal anywhere**: this requires `renv` package installed in the global library. If run from the project directory, the project `renv` package is used.
     ```shell
     $ Rscript -e 'renv::run("/path/to/main.R")`
     ```
 
-### QA: How to update R version in Windows?
+### HOW: how to use renv package to restore package installed from local source file
+
+After generating the `renv.lock` file, manually modify the source from "Unknown" to the path to the source file, for example
+    ```
+    "Source": "payParity_0.3.03.tar.gz"
+    ```
+
+### HOW: How to update R version in Windows?
 
 Use `installr::updateR()` from a R console. Only works in Windows as `installr` is not available in Linux.
 
