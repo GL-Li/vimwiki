@@ -1,4 +1,5 @@
-## RStudio tricks =============================================================
+
+## General R settings =========================================================
 
 ### HOW: how to install packages from local files for Windows?
 
@@ -36,18 +37,23 @@ After generating the `renv.lock` file, manually modify the source from "Unknown"
 
 Use `installr::updateR()` from a R console. Only works in Windows as `installr` is not available in Linux.
 
-### lintr and RStudio session
+### WHY: why local lintr run and Bitbucket Pipelines lintr run give different reports although using the same Docker image?
 
 **Problem found**: lintr may report issues in Bitbucker Pipelines that not found in local run. 
 
 **Solution**: The reason is that a local RStudio session caches some objects that may affect lintr's outcome. For a safe lintr check, always start a new R session (not restart R).
 
-### RStudio viewer max columns
+### HOW: how to view more columns in RStudio viewer?
+
 The default `View(df1)` displays 50 columns. To increase the default, run from R console `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` to increase to 500 columns.
 
+-
+-
+-
 ## package development ========================================================
 
-### non-ASCII code in package
+### HOW: how to handel  non-ASCII code in package
+
 **Non-ASCII characters are not allowed in package**. They will have to be converted to unicode.
 - use `stringi::stri_escape_unicode(c("ú", "ñ",  "ü"))` to convert non-ASCII code to unicode. Replace "\\" with "\" as shown in following example.
     ```R
@@ -63,11 +69,17 @@ The default `View(df1)` displays 50 columns. To increase the default, run from R
     )
     ```
 
-## third-party packages =======================================================
+### HOW: how to exclude files and lines from coverage check using covr?
 
-### readr
+- `covr::package_coverage(line_exclusions = "R/xxxx.R")` to exclude a file from coverage check.
+- `cover::package_coverage(line_exclusion = list("R/xxxx.R", "R/zzzz.R" = c(1:10, 15, 16)))` to exclude a file and selected lines of another file from coverage check.
+
+-
+-
+-
+## R coding ===================================================================
+
+### HOW: how to suppress message in readr::read_csv functon?
+
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.
 
-### covr
-- `covr::package_coverage(line_exclusions = "R/xxxx.R")` to exclude functions in a file from coverage check.
-- `cover::package_coverage(line_exclusion = list("R/xxxx.R", "R/zzzz.R" = c(1:10, 15, 16)))` to exclude a file and selected lines of another file from coverage check.
