@@ -1,5 +1,11 @@
 ## RStudio tricks =============================================================
 
+### WHY: why install an old version of a package is much slower than install current version in Windows?
+
+**Current version**: when installing a current version from CRAN, Windows download an `.zip` file that can be installed very quickly.
+
+**Old version**: when install a past version, Windows 
+
 ### HOW: how to use package renv to manage package version in a project and work from terminal?
 
 **project .Rprofile**: add a line to the project .Rprofile so disable global package cache so that all packages are saved within the project to enable quick restore if copied to another computer. 
