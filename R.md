@@ -1,10 +1,13 @@
 ## RStudio tricks =============================================================
 
-### WHY: why install an old version of a package is much slower than install current version in Windows?
+### HOW: how to install packages from local files for Windows?
 
-**Current version**: when installing a current version from CRAN, Windows download an `.zip` file that can be installed very quickly.
+**Use windows binary files** is much faster and does not need RTools
+    - Window binaries can be downloaded from CRAN. There are three versions for r-devel, r-release, and r-oldrel, for different R releases, for example, R-4.4, 4.3, and 4.2. 
+    - No older Windows binaries, but can be converted from source file using https://win-builder.r-project.org/
+    - Install with `install.packages("/path/to/my_package.zip", repos = NULL, type = "win.binary")`
 
-**Old version**: when install a past version, Windows 
+**Use source file** is slow and need RTools if the build contains `C/C++/Fortran` code as they need `make` to compile.
 
 ### HOW: how to use package renv to manage package version in a project and work from terminal?
 
