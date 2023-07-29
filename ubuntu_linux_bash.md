@@ -52,6 +52,23 @@
 
 ## QA =========================================================================
 
+### QA: how to set up WSL and enable systemd for Linux distros?
+
+Following these steps:
+
+- Enable Windows Virtual Machine Platform and Windows Subsystem for Linux. In Windows 11, click in the following order: Control Panel --> Program --> Turn Windows features on and off (under Programs and Features) --> then check the box for the above two features.
+- Install WSL from Windows App Store.
+- Install Fedora from Windows App Store. OK to install multiple Linux distros
+- Start a Fedora terminal from Windows Terminal. Download Windows Terminal from Windows App Store if not having it.
+- Enable `systemd` at start. To do so, create a new config file with `$ sudo vim /etc/wsl.conf` and add the following:
+    ```
+    [boot]
+    systemd=true
+    ```
+- Exit Fedora terminal
+- From Windows Powershell, run `wsl --shutdown` to completely shutdown WSL.
+- From Windows Terminal, start a new terminal of Fedora. Now `systemd` is ready.
+
 ### QA: how to set up ssh key from terminal and use it for github?
 
 - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
