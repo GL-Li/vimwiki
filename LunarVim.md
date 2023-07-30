@@ -27,7 +27,7 @@
 
 ### install LunarVim on WSL of Windows
 
-Remember to set `git config --global core.autocrlf=input`. Vim clones plugins from github, which may have line ending issue.
+Remember to set `git config --global core.autocrlf input`. Vim clones plugins from github, which may have line ending issue.
 
 ## QA =========================================================================
 
