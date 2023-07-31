@@ -58,6 +58,38 @@
     ```
 ## QA =========================================================================
 
+### QA: how to delete a file or directory from git history and from remote repo?
+
+This happens when we do not need a large fies or directory anymore and we want to remove it from .git, in order to reduce the repo size.
+
+**Solution**: using BFG repo-cleaner
+    - prepare to use bfg repo-cleaner
+        - Make sure Java is installed with `$ java -version`, if not install with `$ sudo apt install default-jre`.
+        - Download `.jar` file from `https://rtyley.github.io/bfg-repo-cleaner/` and save it to, for example, `~/Downloads/`.
+    - delete files from a repo
+        - git clone a bare repo to `~/Downloads/`. **Do not** use your the repo in your computer you are working one.
+            ```sh
+            git clone --mirror xxxx.git
+            ```
+        - from `~/Downloads/` run  to delete file `renv.loc`. Do not run the command inside the repo.
+            ```sh
+            java -jar bfg-1.14.0.jar --delete-files renv.lock xxxx.git
+            ```
+            - current commit is protected so `renv.lock` will not be deleted from the current commit.Mannually delete it before commit and push to make sure `renv.lock` is deleted from current and past commit.
+        - go to the directory of the bare repo and run to update the remote repo
+          ```sh
+          # delete the file identified by bfg
+          git reflog expire --expire=now --all && git gc --prune=now --aggressive
+          # push to github
+          git push
+          ```
+    - delete the bare repo and go to local repo and git pull to update local repo.
+    - other ways to delete
+        ```sh
+        java -jar bfg-xxx.jar --delete-folders dir1 xxx.git
+        java -jar bfg-xxx.jar --strip-blobs-bigger-than 50M xxx.git
+        ```
+
 ### QA: how to search commits by string abcd in commit message
 
 - `$ git log --grep=abcd` to show full log message
@@ -78,7 +110,7 @@
 
 For example, a large `target/` dicectory is created in each Rust project after each run. We have no reason to git track this subdirectory in any Rust project.
 
-To exclude this subdirectory, we can add a line `**/target/` in `.gitignore`. Unlike widecard `*`, `**` includes `/` in the path. It will exclude all `target/` in the project.
+To exclude this subdirectory, we can add a line `**/target/` in `.gitignore`. Unlike wildcard `*`, `**` includes `/` in the path. It will exclude all `target/` in the project.
 
 To be more specific, if we only need to exclude those in directory `code/`, we can change it to `**/code/**/target/`.
 
