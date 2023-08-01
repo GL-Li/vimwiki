@@ -515,3 +515,44 @@
         printlin!("a is {a} and b is {b}")  // error as a does not exists anymore
         ```
     - heap varaible ownership move happens when reassigned or used in a function call
+
+**References are non-owning pointers** prefixed with ampersand operator `&`. It borrows value from a heap variables but does not take the ownership of the value.
+    ```rust
+    fn main() {
+        let m1 = String::from("Hello");
+        let m2 = String::from("world");
+        greet(&m1, &m2); // note the ampersands
+        let s = format!("{} {}", m1, m2);
+    }
+
+    fn greet(g1: &String, g2: &String) { // note the ampersands
+        println!("{} {}!", g1, g2); // as g1 and g2 does not own "Hello" and 
+                                    // "World", when they dropped after the 
+                                    // funcdtion call in main, the values persist
+    }
+    ```
+    
+**Dereferencing a pointer to get its value** of a mutable heap variable
+    - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
+       ```rust
+      let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
+      let a: i32 = *x;  
+        // x is a pointer-value pair. The * removes the pointer, which is called
+        //   dereferencing, so *x is the value only
+        // let a = *x; assigns the value to a. As a has no pointer, it lives in stack.
+        //   This assignment is possible as x is a i32 value. Not valid is x is a
+        //   str type.
+      *x += 1;  // modify the value of x to 6
+      
+      let r1: &Box<i32> = &x;  
+        // &Box<i32> means reference to a value of type Box<i32>.
+        // &x is the value of x through reference of the pointer of x
+        // let r1 = &x; assign x's value to r1 through reference
+        // r1's value is 6 but does not own the value
+      let b: i32 = **r1;  
+        // *r1 --> *&x --> x so **r1 --> *x
+        // b is 6 and lives in stack
+                          
+      let r2: &i32 = &*x; 
+        // r2 is a reference to a i32 object, which has value 
+      ```
