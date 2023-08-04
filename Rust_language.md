@@ -536,23 +536,50 @@
     - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
        ```rust
       let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
-      let a: i32 = *x;  
+      let a = *x;  
         // x is a pointer-value pair. The * removes the pointer, which is called
         //   dereferencing, so *x is the value only
         // let a = *x; assigns the value to a. As a has no pointer, it lives in stack.
-        //   This assignment is possible as x is a i32 value. Not valid is x is a
+        //   This assignment is possible as x is a i32 value. Not valid if x is a
         //   str type.
       *x += 1;  // modify the value of x to 6
       
-      let r1: &Box<i32> = &x;  
+      let r1: &Box<i32> = &x;  // shared borrowing 
         // &Box<i32> means reference to a value of type Box<i32>.
-        // &x is the value of x through reference of the pointer of x
-        // let r1 = &x; assign x's value to r1 through reference
-        // r1's value is 6 but does not own the value
+        // &x is the value of x through reference of the pointer of x.
+        // let r1 = &x; assign x's value to r1 through reference.
+        // The operator `=` assigns value, not pointer. `&x` means assign
+        //   value through pointer.
+        // r1's value is 6 but does not own the value.
+      
       let b: i32 = **r1;  
         // *r1 --> *&x --> x so **r1 --> *x
         // b is 6 and lives in stack
                           
       let r2: &i32 = &*x; 
-        // r2 is a reference to a i32 object, which has value 
+        // r2 is a reference to a i32 object, which has value. 
+        // &* create an immutable reference. A heap value cannot have two or
+        //   more mutable references but can have multiple references, 
+        //   including 0 or 1 mutable reference.
       ```
+      
+**Inexplicit dereference and reference** in `.` method. Depends on how the method and function are defined. Below are just a few specific examples.
+    ```rust
+    let x: Box<i32> = Box::new(-1);
+    let abs1 = i32::abs(*x);
+        // explicit dereference, otherwise type error
+        // function i32::abs() only takes i32 integers
+        
+    let abs2 = x.abs(); 
+    let abs3 = &x.abs();
+        // inexplicit deferencing, the .abs() will corce the type to
+        //   match the method
+    
+    let abs4 = *x.abs();
+        // error, *x is a value without any reference so it cannot be 
+        //  dereferenced
+    ```
+    
+**Ponter safety principle**: data should never be aliased and mutated at the same time.
+    - Alasing is accessing the same data with different variable.
+    - when a data is mutated, its reference may also change, so the alias could loses reference.
