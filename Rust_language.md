@@ -583,3 +583,66 @@
 **Ponter safety principle**: data should never be aliased and mutated at the same time.
     - Alasing is accessing the same data with different variable.
     - when a data is mutated, its reference may also change, so the alias could loses reference.
+    - example with error
+        ```rust
+        fn main() {
+            let mut vec: Vec<i32> = vec![1, 2, 3];
+            let num: &i32 = &vec[2];
+            printlin!("num is {num}")
+                // no problem to use num here
+            
+            vec.push(4);
+            println!("print num again: {num}");
+                // error when access num again, vec has been altered by the
+                //   push and num may lose reference to &vec[2]
+        }
+        ```
+        
+**Read, Write, and Own permisions**: relationship between variables and their data
+    - The relationship is checked within compiler, not during runtime.
+    - example
+        ```rust
+        fn main() {
+            let mut vec: Vec<i32> = vec![1, 2, 3];
+                // initiate vec with RWO permision
+            
+            let num: &i32 = &vec[2];
+                // initiate num with RO as immutable. It borrows data from vec
+                // so vec becomes R only
+                
+            println!("Third element of vec is {}", *num);
+                // This is the line where num is last used, returning borrowed
+                // data from vec and then dropped. After the return, vec re-gain
+                // RWO of the data.
+                
+            println!("This is the last time use vec, whose first element is {}",
+                     vec[0]);
+                // vec dropped as it will out of scope.
+        }
+        ```
+    - permissions are defined on paths that include variables. Paths are things like `x`, `&x`, `*x`, `y[0]`, `z.1`, and `*&x`, ...
+        ```rust
+        // when vec is inmmutable
+        let vec: Vec<i32> = vec![1, 2, 3];
+        let mut x1: i32 = vec[2];
+        x1 += 100;
+            // x1 is a regular mutable i32 varaible
+            
+        let x2: &i32 = &vec[2];
+            // &i32 is reference, which is immutable as vec is immutable
+        
+        // when vec is mutable
+        let mut vec: Vec<i32> = vec![1, 2, 3];
+        let x3: &mut i32 = &mut vec[2];
+        *x3 += 100;
+            // &mut indicate mutable reference 
+            // *x3 has write permission to data. 
+            // both x3 and vec[2] changed to 103.
+            // vec is not accessible until x3 is dropped
+        ```
+
+**Borrow checker finds permission violations**: Creating an immutable reference to a data cause the data to be temporarily read-only until the reference dropped.
+    - in plain English: I borrow it with no intention to change it. You can use it but do not change it either until I return it.
+
+**Mutable references allows mutation but prevents aliasing**: When a mutable reference is created the original variable loses access to the data until the reference dropped.
+    - in plain English: I borrow it and will change it. You please do not touch it until I return it.
