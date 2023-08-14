@@ -1,7 +1,11 @@
-
 ## General R settings =========================================================
 
-### HOW: how to install packages from local files for Windows?
+### QA: how to access system info from R?
+
+`> .Platform$OS.type` to show OS, return "windows", "unix", or ...
+`> R.home()` to show where is R installed.
+
+### QA: how to install packages from local files for Windows?
 
 **Use windows binary files** is much faster and does not need RTools
     - Window binaries can be downloaded from CRAN. There are three versions for r-devel, r-release, and r-oldrel, for different R releases, for example, R-4.4, 4.3, and 4.2. 
@@ -10,7 +14,7 @@
 
 **Use source file** is slow and need RTools if the build contains `C/C++/Fortran` code as they need `make` to compile.
 
-### HOW: how to use package renv to manage package version in a project and work from terminal?
+### QA: how to use package renv to manage package version in a project and work from terminal?
 
 **project .Rprofile**: add a line to the project .Rprofile so disable global package cache so that all packages are saved within the project to enable quick restore if copied to another computer. 
     ```
@@ -26,14 +30,14 @@
     $ Rscript -e 'renv::run("/path/to/main.R")`
     ```
 
-### HOW: how to use renv package to restore package installed from local source file
+### QA: how to use renv package to restore package installed from local source file
 
 After generating the `renv.lock` file, manually modify the source from "Unknown" to the path to the source file, for example
     ```
     "Source": "payParity_0.3.03.tar.gz"
     ```
 
-### HOW: How to update R version in Windows?
+### QA: How to update R version in Windows?
 
 Use `installr::updateR()` from a R console. Only works in Windows as `installr` is not available in Linux.
 
@@ -43,7 +47,7 @@ Use `installr::updateR()` from a R console. Only works in Windows as `installr` 
 
 **Solution**: The reason is that a local RStudio session caches some objects that may affect lintr's outcome. For a safe lintr check, always start a new R session (not restart R).
 
-### HOW: how to view more columns in RStudio viewer?
+### QA: how to view more columns in RStudio viewer?
 
 The default `View(df1)` displays 50 columns. To increase the default, run from R console `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` to increase to 500 columns.
 
@@ -52,7 +56,7 @@ The default `View(df1)` displays 50 columns. To increase the default, run from R
 -
 ## package development ========================================================
 
-### HOW: how to handel  non-ASCII code in package
+### QA: how to handel  non-ASCII code in package
 
 **Non-ASCII characters are not allowed in package**. They will have to be converted to unicode.
 - use `stringi::stri_escape_unicode(c("ú", "ñ",  "ü"))` to convert non-ASCII code to unicode. Replace "\\" with "\" as shown in following example.
@@ -69,7 +73,7 @@ The default `View(df1)` displays 50 columns. To increase the default, run from R
     )
     ```
 
-### HOW: how to exclude files and lines from coverage check using covr?
+### QA: how to exclude files and lines from coverage check using covr?
 
 - `covr::package_coverage(line_exclusions = "R/xxxx.R")` to exclude a file from coverage check.
 - `cover::package_coverage(line_exclusion = list("R/xxxx.R", "R/zzzz.R" = c(1:10, 15, 16)))` to exclude a file and selected lines of another file from coverage check.
@@ -79,7 +83,10 @@ The default `View(df1)` displays 50 columns. To increase the default, run from R
 -
 ## R coding ===================================================================
 
-### HOW: how to suppress message in readr::read_csv functon?
+### QA: how to suppress message in readr::read_csv functon?
 
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.
 
+### QA: how to check memory usage in a R process?
+
+Use `bench::bench_process_memory()` to retrieve current and maximum memory from the R process. The reported number include all memory relevant to the R process.
