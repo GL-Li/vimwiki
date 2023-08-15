@@ -646,3 +646,27 @@
 
 **Mutable references allows mutation but prevents aliasing**: When a mutable reference is created the original variable loses access to the data until the reference dropped.
     - in plain English: I borrow it and will change it. You please do not touch it until I return it.
+
+**Data must outlive all of its references** especially when a function returns a reference, make sure the data the reference point to is still alive after function return.
+
+
+### 4.3 Fixing ownership errors
+
+**When creating a reference, always keep in mind when the value is going to be returned**. Most ownership errors are caused by fogetting this.
+
+**Error Case study: returning a reference to the stack**
+    ```rust
+    fn return_a_string() -> &String {
+        let s = String::from("Hello world");
+        &s  // s is dropped after function return so the returned reference
+            // points to nowhere
+    }
+    ```
+**Error case study: not enough permissions**
+    ```rust
+    fn stringify_name_with_title(name: &Vec<String>) -> String {
+        name.push(String::from("Esq."));  // name is immutable
+        let full = name.join(" ");
+        full
+    }
+    ```
