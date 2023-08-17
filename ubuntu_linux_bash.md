@@ -52,6 +52,14 @@
 
 ## QA =========================================================================
 
+### QA: how to fix not playing videos after waking up from suspension in Ubuntu?
+
+- Run `$ pulseaudio -k && pulseaudio --start` to restart PulseAudio sound server.
+- To prevent it from occurring again, disable PulseAudo server suspension:
+    - `$ sudo nano /etc/pulse/default.pa` to open PulseAudio config file
+    - comment out line `load-module module-suspend-on-idle` and save and exit
+    - restart PulseAutio with `pulseaudio -k && pulseaudio --start`
+
 ### QA: how to set up WSL and enable systemd for Linux distros?
 
 Following these steps:
