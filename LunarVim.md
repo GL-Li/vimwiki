@@ -31,7 +31,11 @@ Remember to set `git config --global core.autocrlf input`. Vim clones plugins fr
 
 ## QA =========================================================================
 
-## QA: how to enable clipboard in LunarVim to copy and paste from one lvim to another?
+### QA: how to autofomat code in LunarVim?
+
+- Add `lvim.format_on_save = true` to `config.lua`. Code will be auto-formatted at save.
+
+### QA: how to enable clipboard in LunarVim to copy and paste from one lvim to another?
 
 - `sudo apt install xclip` to install a third party clipboard provider as NeoVim does not provide one.
 - add line `lvim.builtin.terminal.clipboard = true` to LunarVim's `config.lua` to enable the clipboard.
