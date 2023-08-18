@@ -100,6 +100,7 @@ Only need to install Nvim-R plugin. All other plugins are already managed by Lun
         {"jalvesaq/Nvim-R"}
     }
     ```
+**Turn off Nvim-R underscore to <- conversion** by adding `vim.g.R_assign = 0` to LunarVim's `config.lua` file.
 
 **Nvim-R** key bindings
 
