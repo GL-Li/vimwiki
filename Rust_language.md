@@ -12,6 +12,7 @@
     - with quiz: https://rust-book.cs.brown.edu/experiment-intro.html
 - Rust By Example, RBE: https://doc.rust-lang.org/rust-by-example/
 - Udemy: Ultimate Rust Crash Course: https://www.udemy.com/course/ultimate-rust-crash-course/
+- Easy Rust: https://dhghomon.github.io/easy_rust/Chapter_21.html
 
 ## Workflow and SOP ===========================================================
 
@@ -32,6 +33,30 @@
 ## Minimal examples ===========================================================
 
 ## QA ======= =================================================================
+
+### QA: what are the ways of print with formatter {}?
+
+- `println!("x is {x}");` - the basic if x is a varaible
+- `println!("x is {}", x);` - the basic if x has trait of display
+- `println!("x is {:?}", x);` - debugging print, print as is
+- `println!("x is {:?}", x);` - beautified print
+- `println!("x is {:p}", x);` - print memory address
+- `println!("x is {} and y is {}", x, y);` - print two object
+- `println!("x is {1} and y is {0}", y, x);` - print two objects with order, the index starts from 0, **not** 1.
+- name expressions in print
+    ```rust
+    let x = 1;
+    let y = 2;
+    println!("xplus is {xplus} and yplus is {yplus}",
+             xplus = x + 1,  // name expression x + 1 with xplus
+             yplus = y + 1);
+    ```
+- format inside {}
+    ```rust
+    let x = 1;
+    let y = 2;
+    println!("three * at each side of x: {:*^3} and 3 = to the left of y: {:=>3}", x, y)
+    ```
 
 ### QA: how to read input from terminal?
     
@@ -646,3 +671,27 @@
 
 **Mutable references allows mutation but prevents aliasing**: When a mutable reference is created the original variable loses access to the data until the reference dropped.
     - in plain English: I borrow it and will change it. You please do not touch it until I return it.
+
+**Data must outlive all of its references** especially when a function returns a reference, make sure the data the reference point to is still alive after function return.
+
+
+### 4.3 Fixing ownership errors
+
+**When creating a reference, always keep in mind when the value is going to be returned**. Most ownership errors are caused by fogetting this.
+
+**Error Case study: returning a reference to the stack**
+    ```rust
+    fn return_a_string() -> &String {
+        let s = String::from("Hello world");
+        &s  // s is dropped after function return so the returned reference
+            // points to nowhere
+    }
+    ```
+**Error case study: not enough permissions**
+    ```rust
+    fn stringify_name_with_title(name: &Vec<String>) -> String {
+        name.push(String::from("Esq."));  // name is immutable
+        let full = name.join(" ");
+        full
+    }
+    ```
