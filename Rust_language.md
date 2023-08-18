@@ -12,6 +12,7 @@
     - with quiz: https://rust-book.cs.brown.edu/experiment-intro.html
 - Rust By Example, RBE: https://doc.rust-lang.org/rust-by-example/
 - Udemy: Ultimate Rust Crash Course: https://www.udemy.com/course/ultimate-rust-crash-course/
+- Easy Rust: https://dhghomon.github.io/easy_rust/Chapter_21.html
 
 ## Workflow and SOP ===========================================================
 
@@ -32,6 +33,30 @@
 ## Minimal examples ===========================================================
 
 ## QA ======= =================================================================
+
+### QA: what are the ways of print with formatter {}?
+
+- `println!("x is {x}");` - the basic if x is a varaible
+- `println!("x is {}", x);` - the basic if x has trait of display
+- `println!("x is {:?}", x);` - debugging print, print as is
+- `println!("x is {:?}", x);` - beautified print
+- `println!("x is {:p}", x);` - print memory address
+- `println!("x is {} and y is {}", x, y);` - print two object
+- `println!("x is {1} and y is {0}", y, x);` - print two objects with order, the index starts from 0, **not** 1.
+- name expressions in print
+    ```rust
+    let x = 1;
+    let y = 2;
+    println!("xplus is {xplus} and yplus is {yplus}",
+             xplus = x + 1,  // name expression x + 1 with xplus
+             yplus = y + 1);
+    ```
+- format inside {}
+    ```rust
+    let x = 1;
+    let y = 2;
+    println!("three * at each side of x: {:*^3} and 3 = to the left of y: {:=>3}", x, y)
+    ```
 
 ### QA: how to read input from terminal?
     
