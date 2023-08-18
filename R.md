@@ -14,6 +14,14 @@
 
 **Use source file** is slow and need RTools if the build contains `C/C++/Fortran` code as they need `make` to compile.
 
+### QA: how to create Windows binary files for private packages?
+
+- `devtools::build_win_release(email = "xxxx@yyyy.com", manual = FALSE)`
+- The command create a `tar.gz` source file and sends the file to https://win-builder.r-project.org/, where Window binary file is built
+- Once the Window binary file is ready, an email will be sent to the provided email address.
+- Follow the link in  the address to download the binary file.
+
+
 ### QA: how to use package renv to manage package version in a project and work from terminal?
 
 **project .Rprofile**: add a line to the project .Rprofile so disable global package cache so that all packages are saved within the project to enable quick restore if copied to another computer. 
