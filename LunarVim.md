@@ -31,9 +31,22 @@ Remember to set `git config --global core.autocrlf input`. Vim clones plugins fr
 
 ## QA =========================================================================
 
-### QA: how to autofomat code in LunarVim?
+### QA: how to autoformat code in LunarVim?
 
 - Add `lvim.format_on_save = true` to `config.lua`. Code will be auto-formatted at save.
+
+### QA: what are some most common LunarVim keybindings?
+
+Below `M-` for key `Alt`, `C-` for key `Ctrl`, and `S-` for key `Shift`.
+- `M-t` and `M-k` to move current line or selected lines up and down
+- `C-` plus `jkhl` to move between windows
+- `C-` plus `Down`, `Up`, left and right arrow to move the border of current window
+- `C-t` toggle terminal
+- `<leader>/` comment or uncomment current line or selected lines
+- `<leader>e` to toggle file exploror
+- `<leader>f` search for file
+- `<leader>h` clear search highlight
+
 
 ### QA: how to enable clipboard in LunarVim to copy and paste from one lvim to another?
 
