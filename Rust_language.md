@@ -34,6 +34,31 @@
 
 ## QA ======= =================================================================
 
+### QA: What are the differences between String and &str?  --- not completed
+
+**String is a data structure stored in heap**
+    - used for dynamic string manipulation.
+    - access through a pointer (reference) whose size is 24 bytes, including pointer, length and capacity of the string. The actual string data have variable size.
+    - create with ways like:
+        - `let aaa = String::from("aaa")`
+        - `let bbb = "bbb".to_string()`
+        - using macro `format!`
+            ```rust
+            let a = "aaa";
+            let b = "bbb";
+            let c = "ccc";
+            let abc = format!("String {}{}{}", a, b, c)
+                // a new String with data "String aaabbbccc"
+            ```
+
+**&str is a borrowed reference to a string literal or a slice of String**. 
+    - used it whenever possible as it is faster and simple than `String`.
+    - It does not own the data and is immutable.
+        ```rust
+        let x = "xxx";  // a &str type with fixed data and lives in stack
+        let xs - "xxx".to_string(); // a string type and "xxx" is in heap
+        ```
+
 ### QA: what are the ways of print with formatter {}?
 
 - `println!("x is {x}");` - the basic if x is a varaible
