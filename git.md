@@ -58,6 +58,11 @@
     ```
 ## QA =========================================================================
 
+### QA: how to check edit history of a file?
+
+- `$ git log -p path/to/file`
+    - It will print out commit info and changes in that commit of all commits when changes were made to that file.
+
 ### QA: how to delete a file or directory from git history and from remote repo?
 
 This happens when we do not need a large fies or directory anymore and we want to remove it from .git, in order to reduce the repo size.
