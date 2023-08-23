@@ -133,4 +133,8 @@ Only need to install Nvim-R plugin. All other plugins are already managed by Lun
 
     - `:Rstop`: stop R excution
 
-**R language server protocol**: to add R lsp, open any R file in LunarVim, start R with `\rf`, then from the R console `install.packages("languageserver")`. Check for dependencies at https://github.com/REditorSupport/languageserver/.
+**R language server**: if r_language_server is not automatically detected in LunarVim after opening a `.R` file, add the following line to `config.lua`:
+    ```lua
+    -- require install.packages("languageserver") in R
+    require'lspconfig'.r_language_server.setup{}
+    ```

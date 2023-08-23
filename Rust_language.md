@@ -84,7 +84,7 @@
 **rustc is a compiler** that generates an executable file
 
     - create file `main.rs`
-        ```rust
+        ```[rust](rust)
         fn main() {
             println!("Hello, world"); // ! indicates macro, not function
         }
