@@ -4,6 +4,7 @@
 - Workflow and SOP
 - Minimal examples
 - QA
+- Snippets 
 - Raw notes
 
 ## Major reference ============================================================
@@ -92,6 +93,19 @@
     println!("aaa is {aaa}");
     ```
 
+
+## Snippets ==============================================================
+
+### snippet: std::env::args().nth(1).unwrap_or_else(||{println!("something")}) to read the first argument in `cargo run arg1 arg2`
+
+    ```rust
+    fn main() {
+      let arg: String = std::env::args().nth(1).unwrap_or_else(|| {
+        println!("Please supply an argument to this program")
+      };
+      println!("The input is {arg}");
+    }
+    ```
 
 
 ## Raw notes ==================================================================
