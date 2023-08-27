@@ -354,8 +354,8 @@ Create a crontab task that
 
 - save "Hello World!" to hello.txt every Friday at 23:15.
 - at 0 min and 30 min, set m to 0,15
-- every three days, set dom to */3
-- every two hours, set h to */2
+- every three days, set dom to `*/3`
+- every two hours, set h to `*/2`
 
 ```shell
 $ crontab -e                 # open crontab to edit tasks, use full path to bash scripts
@@ -391,7 +391,7 @@ $ crontab -e                 # open crontab to edit tasks, use full path to bash
 
   All information of packages in above repositories is cached in files in `/var/lib/apt/lists`.
 
-  ```shell
+  ```sh
   $ apt-cache search docx   # list packages related to docx file
   $ apt-cache search "pdf viewer"
   $ apt-cache show antiword # show more details of a package
@@ -399,7 +399,7 @@ $ crontab -e                 # open crontab to edit tasks, use full path to bash
 
   To view all packages stored in a file in `/var/lib/apt/lists`.
 
-  ```shell
+  ```sh
   $ vim /var/lib/apt/lists/us.archive.ubuntu.com_ubuntu_dists_jammy_main_binary-amd64_Packages
   ```
 
