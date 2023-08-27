@@ -367,67 +367,6 @@ $ crontab -e                 # open crontab to edit tasks, use full path to bash
 0,30  */4      *      *    FRI    ~/bin/backup_onedrive
 ```
 
-### Linux: install packages with apt (advanced package tool)
-
-- Understand  `/etc/apt/sources.list` file
-
-  This file lists repositories of packages from which Ubuntu can use `apt` to install packages. There are four types of repositories: main, restricted, universe, and multiverse for each Linux distribution (`$ lsb_release -a`)
-
-  ```
-  deb http://us.archive.ubuntu.com/ubuntu/ jammy main restricted
-  ```
-
-  A new Linux installation has  official repositories in the file. Users can add other respositories to this file, but are recommended to add them under `/etc/apt/sources.list.d`.
-
-- Add repositories under directory `/etc/apt/sources.list.d`
-
-  When install packages not in the repos listed in `sources.list` file, often a repo is added to directory `/etc/apt/sources.list.d` by default. For example, when I install `onedrive` package, a file `onedrive.list` is created which has one line of text
-
-  ```
-  deb [arch=amd64 signed-by=/usr/share/keyrings/obs-onedrive.gpg] https://download.opensuse.org/repositories/home:/npreining:/debian-ubuntu-onedrive/xUbuntu_22.04/ ./
-  ```
-
-- search packages by keywords with `apt-cache` .
-
-  All information of packages in above repositories is cached in files in `/var/lib/apt/lists`.
-
-  ```sh
-  $ apt-cache search docx   # list packages related to docx file
-  $ apt-cache search "pdf viewer"
-  $ apt-cache show antiword # show more details of a package
-  ```
-
-  To view all packages stored in a file in `/var/lib/apt/lists`.
-
-  ```sh
-  $ vim /var/lib/apt/lists/us.archive.ubuntu.com_ubuntu_dists_jammy_main_binary-amd64_Packages
-  ```
-
-  The cached files in computer is updated to match online repository server with
-
-  ```shell
-  $ sudo apt update
-  ```
-
-  After update, we can upgrade packages that were installed with `apt` with
-
-  ```shell
-  $ sudo apt upgrade
-  ```
-
-- install packages
-
-  ```shell
-  $ sudo apt install pkg1 pkg2 pkg3
-  ```
-
-### Linux: delete packages and configurations
-
-```shell
-$ sudo apt purge xxxx # Remove a package completely
-$ sudo apt autormove  # Remove dependencies that is not required by any other packages
-$ sudo apt autoclean  # clean package .deb files saved in /var/cache/apt/archives/ but keep those not available on server
-```
 
 ### comments best practice: 5 pieces of information to start a script
 
@@ -587,7 +526,8 @@ time=$(date +%H:%m:%S)  # use time to substitute command date and its format
 echo "Hello $USER, the time right now is $time"
 ```
 
-### Ubuntu: mount and unmount a drive
+### mount and unmount a drive
+In a Linux without desktop enable, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
 
 **View mounted drives**:
 
@@ -767,7 +707,7 @@ $ unset IFS    # to cancel IFS=","
 
 ### Bash: globbing, wildcards in filenames
 
-Globbing is only performed on words. see section [Linux command wildcards \*, ?, and [ in file / directory names]
+Globbing is only performed on words. see section [Linux command wildcards `*`, `?`, and `[` in file / directory names]
 
 ### Bash: quote removal, use quote whenever possible
 
@@ -878,7 +818,7 @@ $ cd /root &> stdoutstderr.txt
                                # The third parameter is 999
   ```
 
-### Bash: special parameters $#, $0, $#, $@, "$@", $\*, "S\*" for script and positional paramers
+### Bash: special parameters $#, $0, $#, $@, "$@", $*, "S*" for script and positional paramers
 
 **$#**: number of positional parameters, can be used to specify number of positional parameters as condition
 
@@ -909,10 +849,10 @@ touch $@     # create four files: monthly, sales, annual, report, allow word spl
 touch "$@"   # create two files" `monthly sales` and `annual report`
 ```
 
-**$\***:   unquoted $\* is the same as $@. Quoted "$\*" represent "S1,$2,..,$N"
+**`$*`**:   unquoted `$*` is the same as `$@`. Quoted `"$*"` represent "S1,$2,..,$N"
 
 ```bash
-echo $\*      # print monthly sales annual report
+echo $*      # print monthly sales annual report
 IFS=,
 echo "$*"    # print monthly sales,annual report. Separate by IFS instead of space, no splitting
 ```
@@ -1281,7 +1221,7 @@ $ crontab -e
 00 02 * * * run-parts path/to/cron.daily.2am --report
 ```
 
-### Ubuntu, reboot required after package upgrade
+### reboot required after package upgrade
 
 Check /var/run/reboot-required.pkgs for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
 
@@ -1309,7 +1249,7 @@ For t his to take effect, run
 $ sudo service cron restart
 ```
 
-### Ubuntu: anacron
+### anacron
 
 cron requires machine to be on at the scheduled time. anacron can pickup missed job when computer is turned on. anacron is scheduled in system file `/etc/anacrontab`. There is no user specific anacrontab. Edit this file
 
@@ -1339,10 +1279,3 @@ $ scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
 $ scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
 ```
 
-### Linux: upgrade error The following packages have been kept back
-
-The reason is that the latest version of an installed package has new dependencies which are not installed and the system refuses to install those dependencies during `sudo apt upgrade`. To fix the problem, install the kept-back packages with
-
-```shell
-$ sudo apt install --only-upgrade package1 package2 package3
-```
