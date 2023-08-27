@@ -17,8 +17,7 @@
 - [[regex|Regular Expression]]
 - [[Rust_language]]
 - [[Linux]] --- [[ubuntu]] --- [[fedora]]
-- [[vim]] ---- [[NeoVim]] ---- [[LunarVim]]
-- [[vim_plugins]]: tricks to use vim plugins
+- [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
 
 # Sample project study - learn best practice from good project
 - Docker [[example-voting-app]]
