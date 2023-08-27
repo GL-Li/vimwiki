@@ -16,7 +16,7 @@
 - [[R|R language]]
 - [[regex|Regular Expression]]
 - [[Rust_language]]
-- Linux ---[[ubuntu_linux_bash]]--- [[fedora]]
+- [[Linux]] ---[[ubuntu_linux_bash]]--- [[fedora]]
 - [[vim]] ---- [[NeoVim]] ---- [[LunarVim]]
 - [[vim_plugins]]: tricks to use vim plugins
 
