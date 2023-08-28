@@ -8,9 +8,9 @@
 ### QA: how to install packages from local files for Windows?
 
 **Use windows binary files** is much faster and does not need RTools
-    - Window binaries can be downloaded from CRAN. There are three versions for r-devel, r-release, and r-oldrel, for different R releases, for example, R-4.4, 4.3, and 4.2. 
-    - No older Windows binaries, but can be converted from source file using https://win-builder.r-project.org/
-    - Install with `install.packages("/path/to/my_package.zip", repos = NULL, type = "win.binary")`
+- Window binaries can be downloaded from CRAN. There are three versions for r-devel, r-release, and r-oldrel, for different R releases, for example, R-4.4, 4.3, and 4.2. 
+- No older Windows binaries, but can be converted from source file using https://win-builder.r-project.org/
+- Install with `install.packages("/path/to/my_package.zip", repos = NULL, type = "win.binary")`
 
 **Use source file** is slow and need RTools if the build contains `C/C++/Fortran` code as they need `make` to compile.
 
@@ -29,11 +29,12 @@
     options(renv.config.cache.enabled = FALSE)
     ```
 **renv::restore from the project directory**: assuming the project is copied to another computer, go to the project directory and run from terminal. Run `Rscript` from this directory, it automatically picks up `.Rprofile` and installs `renv` and other packages.
-    ```shell
+    ```sh
     $ Rscript -e "renv::restore()"
     ```
-    
+
 **renv::run() from terminal anywhere**: this requires `renv` package installed in the global library. If run from the project directory, the project `renv` package is used.
+
     ```shell
     $ Rscript -e 'renv::run("/path/to/main.R")`
     ```
@@ -49,7 +50,7 @@ After generating the `renv.lock` file, manually modify the source from "Unknown"
 
 Use `installr::updateR()` from a R console. Only works in Windows as `installr` is not available in Linux.
 
-### WHY: why local lintr run and Bitbucket Pipelines lintr run give different reports although using the same Docker image?
+### QA: why local lintr run and Bitbucket Pipelines lintr run give different reports although using the same Docker image?
 
 **Problem found**: lintr may report issues in Bitbucker Pipelines that not found in local run. 
 
@@ -57,11 +58,12 @@ Use `installr::updateR()` from a R console. Only works in Windows as `installr` 
 
 ### QA: how to view more columns in RStudio viewer?
 
-The default `View(df1)` displays 50 columns. To increase the default, run from R console `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` to increase to 500 columns.
+The default `View(df1)` displays 50 columns. To increase the default, run from R console
 
--
--
--
+ `> rstudioapi::writeRStudioPreference("data_viewer_max_columns", 500L)` 
+
+to increase to 500 columns.
+
 ## package development ========================================================
 
 ### QA: how to handel  non-ASCII code in package
