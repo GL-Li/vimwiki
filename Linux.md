@@ -59,6 +59,12 @@
 
 ## QA =========================================================================
 
+### QA: how to set system time?
+
+- `$ timedatectl` to show system time
+- `$ sudo timedatectl set-time 2023-02-29` to set date
+- `$ sudo timedatectl set-time 17:23:55` to set time
+
 ### QA: how to use systemd to automatically start docker when computer starts?
 **Use case**: docker is not automatically started at some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
 
