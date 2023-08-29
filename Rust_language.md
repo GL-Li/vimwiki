@@ -96,6 +96,15 @@
 
 ## Snippets ==============================================================
 
+### snippet: s.as_bytes().iter().enumerate() to iterate bytes of a String
+
+```rust
+let s = String::from("abc def ghi");
+for (i, &item) in s.as_bytes().iter().enumerate() {
+  println!("{i}: {item}");
+};
+```
+
 ### snippet: std::env::args().nth(1).unwrap_or_else(||{println!("something")}) to read the first argument in `cargo run arg1 arg2`
 
     ```rust
@@ -734,3 +743,7 @@
         full
     }
     ```
+
+### 4.4 the slice type
+
+
