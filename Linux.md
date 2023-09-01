@@ -81,12 +81,16 @@
     - `$ sudo systemctl disable docker` to stop starting the service when computer starts
 
 
-### QA: how to set up ssh key from terminal and use it for github?
+### QA: how to set up ssh key from terminal and use it for github or any Linux server?
 
-- `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
-- `$ cat .ssh/id_rsa.pub` to view and copy the public key.
-- To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
-- The computer is ready to clone repos in your github account
+**ssh for github**:
+    - `$ ssh-keygen -t rsa` to generate public key. Just press enter when asked for setting passwords. The key file is saved in `~/.ssh/` by default
+    - `$ cat .ssh/id_rsa.pub` to view and copy the public key.
+    - To use it in github, for example, go to github seetings --> SSH and GPG keys to add a new SSH key and paste the public key.
+    - The computer is ready to clone repos in your github account
+**ssh public key for linux server**:
+    - `$ ssh-copy-id xxx@192.168.1.111` to copy this computer's ssh public key to file `autorized_keys` in server's `~/.ssh/` directory. Need password.
+    - `ssh xxx@192.168.1.111` to connect. No password asked.
 
 ### QA: how to set up computer so can be connected with ssh
 
