@@ -24,3 +24,21 @@
 - create shortcut: settings --> Keyboard --> Keyboard Shorts at the bottom --> Custom Shortcuts at bottom --> click on + need to know the actual command 
     - map terminal to `Ctrl Alt t`: command is `gnome-terminal`
 - Useful builtin shortcut: Windows-a to show all app
+
+### Fedora default shortcut
+
+**Terminal**
+- Windows and tabs
+    - `Ctr Shift N` to start a new terminal --- use `Ctrl Alt T` if the it used by other applications such Google Chrome
+    - `Ctr Shift T` to add a new tab to current terminal
+    - `Ctr Shift W` to close a tab
+    - `Ctr Shift Q` to close terminal window
+    - `Alt 3` to switch to tab 3
+    - In **Terminal Preference - general**, set new tab position to "Next" instead of last
+    - Make sure line `source /etc/profile.d/vte.sh` is in `.bashrc`, which opens new tab in current directory
+- Search and find in terminal
+    - `Ctr Shift F` search in the window, `Esc` to close the search box
+    - `Ctr Shit J` to clear search highligh
+- 
+
+
