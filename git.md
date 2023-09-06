@@ -58,6 +58,14 @@
     ```
 ## QA =========================================================================
 
+## QA: how to push, delete, and modify a tag in remote?
+
+- `$ git tag v0.1.23` to add a tag to current commit
+- `$ git push origin v0.1.23` to push a tag to origin
+- `$ git push --delete origin v0.1.23` to delete tag from origin
+- `$ git tag -d v0.1.23` to delete a local tag
+ 
+
 ### QA: how to check edit history of a file?
 
 - `$ git log -p path/to/file`
