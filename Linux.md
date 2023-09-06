@@ -61,6 +61,10 @@
 
 ### QA: how to set system time?
 
+The ultimate solution is to install ntp
+- `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
+
+Ways to check and manually set
 - `$ timedatectl` to show system time
 - `$ sudo timedatectl set-time 2023-02-29` to set date
 - `$ sudo timedatectl set-time 17:23:55` to set time
