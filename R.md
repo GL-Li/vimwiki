@@ -66,6 +66,12 @@ to increase to 500 columns.
 
 ## package development ========================================================
 
+### QA: how to use and write package vignettes?
+
+- `> browseVignettes(package = "dplyr")` to open all vignettes of a package in web brower
+- `browseVignettes()` to open vignettes of all installed packages
+- Vignettes are R markdown file in subdirectory `vignetters/`. Example: https://github.com/tidyverse/dplyr/tree/main/vignettes
+
 ### QA: how to handel  non-ASCII code in package
 
 **Non-ASCII characters are not allowed in package**. They will have to be converted to unicode.
