@@ -93,6 +93,17 @@ to increase to 500 columns.
 -
 ## R coding ==================================================
 
+### QA: R is a very flexible with types, which potentially causes unexpected results without showing any errors or warnings. What are the common functions have this kind of danger?
+
+- `length(levels(x))`: the code is supposed to check the number of levels of a factor. It also works when `x` is a character. This will give incorrect results as shown in the code snippet below:
+    ```r
+    x <- c("aaa", "bbb", "ccc")
+    if (length(levels(x)) < 2) {   # expect nothing happen but since levels(x) is NULL
+        # do something             # and length(NULL) is 0. The code will do sth.
+    }
+    ```
+    
+
 ### QA: how to suppress message in readr::read_csv functon?
 
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.
