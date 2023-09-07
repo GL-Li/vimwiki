@@ -98,8 +98,14 @@ Ways to check and manually set
 
 ### QA: how to set up computer so can be connected with ssh
 
-- `$ sudo apt install openssh-server` on the host computer
-- `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
+- Install on Ubuntu host:
+    - `$ sudo apt install openssh-server` on the host computer
+    - `$ sudo systemctl enable openssh` if not enabled automatically after installation
+- Install on Fedora host: 
+    - `$ sudo dnf install openssh-server`
+    - `$ sudo systemctl enable sshd`. It is named as `sshd`
+- From client
+    - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
 
 ### QA: how to check hostname and ip address
 
