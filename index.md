@@ -7,7 +7,7 @@
 - [[run_rstudio_docker|RStudio docker container with option for port]]
 
 # Tech Notes
-- [[tech_essentials]]
+- [[tech_essentials|Essensial Tools]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
