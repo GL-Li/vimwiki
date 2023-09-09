@@ -1,5 +1,18 @@
 # Tech Essentials
 
+**Oracle Cloud always free tier**
+- https://cloud.oracle.com/?region=us-ashburn-1
+- Account:
+    - User name: liguanglai@gmail.com, 
+    - pw: standard
+- webpage virtual machine
+    - Public IP: 150.136.25.2
+    - User: ubuntu
+    - t590 ssh public key added
+    - `$ ssh ubuntu@150.136.25.2` to ssh login.
+- Tutorials
+    - how to host a website on free tier: https://yoursunny.com/t/2020/OracleCloud-website/ 
+
 **OneDrive for Linux**
 - Instructions: use Docker image https://github.com/abraunegg/onedrive/blob/master/docs/Docker.md
 - Step-by-step
