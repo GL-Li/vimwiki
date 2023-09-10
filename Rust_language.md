@@ -40,6 +40,7 @@
 **String is a data structure stored in heap**
     - used for dynamic string manipulation.
     - access through a pointer (reference) whose size is 24 bytes, including pointer, length and capacity of the string. The actual string data have variable size.
+    - When talking about the size of a String object like in `let s = String::from("abc")`, is 24 bytes, it is the size of the pointer, not the actual data in heap. Actually `s` lives in stack and has a value of a pointer. The pointer points to the data in heap. `s` is just the pointer.
     - create with ways like:
         - `let aaa = String::from("aaa")`
         - `let bbb = "bbb".to_string()`
@@ -97,6 +98,7 @@
 ## Snippets ==============================================================
 
 ### snippet: s.as_bytes().iter().enumerate() to iterate bytes of a String
+The byte of a character is an integer, for example, `b'a'` is 97, `b' '` is 32. In the example, `b` and single quote of a charater gives the byte representation of the character.
 
 ```rust
 let s = String::from("abc def ghi");
@@ -746,4 +748,50 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
 
 ### 4.4 the slice type
 
+**Range syntex** `&s[..3]`, `&s[2..5]`, `&s[3..]`, `&s[..]`
+- To get the `&str` type of whole String `s`, we can use `&s` and `&s[..]` interchangebly. `&s[..]` is explicitly as a `&str` and so is prefered.
+- example 1
+    ```rust
+    let s = String::from("hello world!");
+    let len = s.len();
+    let s1 = &s[3..len];
+    let s2 = &s[3..]
+    
+    let aaa = &s[..];  // type &str
+    let bbb = &s;      // type &String but also &str
+    ```
+- example 2 in function
+    ```rust
+    fn test(s: &String) -> &str {
+      let s1 = &s[..];  // type &str
+      let s2 = &s;      // type &&String also &tr
+      s1
+    }
+    ```
+ 
+ **&String vs &str**
+ - A `&String` is a normal reference to a String and takes 8 bytes in stack
+ - A `&str` is a reference to a slice of a String. It takes 16 bytes in stack, 8 for the reference and 8 for the length of the slice.
 
+### 4.5 Ownership recap
+
+**Example showing various pointers**
+- code:
+    ```rust
+    fn main() {
+      let mut a_num = 0;   // lives in stack
+      inner(&mut a_num);
+    }
+
+    fn inner(x: &mut i32) {  // x is a ponter poiting to the value of a_num
+      let another_num = 1;  // lives in stack
+      let a_stack_ref = &another_num;  // ponter to value of another_num
+
+      let a_box = Box::new(2);  // a pointer poiting to a heap data
+      let a_box_stack_ref = &a_box;  // a pointer poiting to the pointer of a_box
+      let a_box_heap_ref = &*a_box;  // a pointer poiting to the heap value, it has
+                                     // no ownership and is a immutable borrowing
+
+      *x += 5;
+    }
+    ```
