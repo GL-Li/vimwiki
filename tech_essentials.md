@@ -3,13 +3,14 @@
 **Oracle Cloud always free tier**
 - https://cloud.oracle.com/?region=us-ashburn-1
 - Account:
+    - Account name: liguanglai 
     - User name: liguanglai@gmail.com, 
     - pw: standard
 - webpage virtual machine
     - Public IP: 150.136.25.2
     - User: ubuntu
     - t590 ssh public key added
-    - `$ ssh ubuntu@150.136.25.2` to ssh login.
+    - `$ ssh ubuntu@150.136.25.2` to ssh login
 - Tutorials
     - how to host a website on free tier: https://yoursunny.com/t/2020/OracleCloud-website/ 
 
