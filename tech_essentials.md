@@ -1,6 +1,12 @@
-# Tech Essentials
+## Tech Essentials
 
-**Oracle Cloud always free tier**
+### tools: Bitbucket Pipelins
+
+- https://blog.programster.org/bitbucket-pipeline-cheatsheet
+- 
+
+### tools: **Oracle Cloud always free tier**
+
 - https://cloud.oracle.com/?region=us-ashburn-1
 - Account:
     - User name: liguanglai@gmail.com, 
@@ -13,7 +19,9 @@
 - Tutorials
     - how to host a website on free tier: https://yoursunny.com/t/2020/OracleCloud-website/ 
 
-**OneDrive for Linux**
+
+### tools: **OneDrive for Linux**
+
 - Instructions: use Docker image https://github.com/abraunegg/onedrive/blob/master/docs/Docker.md
 - Step-by-step
     - Turn off SELinux (Security Enhanced Linux, which will stop onedrive from running) by set `SELINUX=disabled` in `/etc/selinux/config`.
