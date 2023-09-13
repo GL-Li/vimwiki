@@ -59,6 +59,17 @@
 
 ## QA =========================================================================
 
+### QA: how to burn an iso image onto a USB drive from terminal?
+
+- Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
+- `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
+    - be extremely careful. If a wrong disc, the data on the disc will be wiped out
+    - explain:
+        - bs: block size
+        - if: input file
+        - of: output file. Device is a file in Linux
+
+
 ### QA: how to set system time?
 
 The ultimate solution is to install ntp

@@ -795,3 +795,113 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
       *x += 5;
     }
     ```
+    
+## 5. Use Structs to structure related data
+
+### 5.1 Defining and instantialing Structs
+
+**What is a struct**: a collection of different types of data.
+
+- **Define a struct**
+    ```rust
+    struct User {
+        active: bool,
+        username: String,
+        email: String,
+        sign_in_count: u64,
+    }
+    ```
+
+- **Instantiate a struct**
+    ```rust
+    let user1 = User {
+        email: String::from("someone@example.com"),
+        username: String::from("someusername123"),
+        active: true,
+        sign_in_count: 1,
+    };
+    ```
+- **Mutate a struct instance**: must initiate the whole struct as mutable, not individual field.
+    ```rust
+    let mut user1 = User {
+        email: String::from("someone@example.com"),
+        username: String::from("someusername123"),
+        active: true,
+        sign_in_count: 1,
+    };
+    user1.email = String::from("aaa@gmail.com");
+    ```
+
+- **Use field init shorthand**: when function parameters have the same name as the struct fields, they can be passed to the struct fields directly
+    ```rust
+    fn build_user(email: String, username: String) -> User {
+            User {
+                active: true,
+                username,     // no need to be username: username
+                email,        // no need to be email: email
+                sign_in_count: 1,
+            }
+        }
+    ```
+- **Use struct update to create instance from other instance**: be aware that if the heap field of the old instance is moved, it cannot be used anymore.
+    ```rust
+    let user2 = User {
+        email: String::from("another@example.com"),
+        ..user1   // the rest fields moved in from user1, including username, which is
+                  // a String in heap, therefore user1 is no longer available.
+    };
+    ```
+    
+**Special structs**
+
+- Using **tuple structs** without named fields to create different types: a tuple struct looks like a tuple. It is a named tuple. This struct has no field names.
+    ```rust
+    struct Color(i32, i32, i32);
+    struct Point(i32, i32, i32);
+    
+    let black = Color(0, 0, 0);   // black and origin are different types
+    let origin = Point(0, 0, 0);
+    ```
+
+- **uint-like** structs with any fields: it is useful to implement a trait on a type but don't have any data to strore in the type.
+    ```rust
+    struct AlwaysEqual;
+    let aaa = AlwaysEqual;
+    ```
+    
+**Borrowing fields of a struct**
+- borrow checker will track ownership at both the struct and field level.
+    ```rust
+    struct Point {x: i32, y: i32};
+    
+    fn main() {
+        let mut p = Point {x: 0, y: 0};
+        let x = &mut p.x;
+        let y = &p.y;
+        println!("({}, {})", x, y);
+        
+        // error, mutable borrow above
+        let x1 = &p.x;
+        println!("({}, {})", x, y);
+    }
+    ```
+
+### 5.2 An example programming using stucts
+
+**Debug printing** with `#[derive(Debug)]`
+    ```rust
+    #[derive(Debug)]
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+    
+    let rect = Rectangle {
+        sidet: 30,
+        height: 20,
+    };
+    
+    println!("The rectangle is {:?}", rect);
+    // or
+    dbg!(&rect)  // dbg! moves ownership while println! only use reference.
+    ```
