@@ -35,6 +35,39 @@
 
 ## QA ======= =================================================================
 
+### QA: what is the error "cannot move of out xxx which is behind a reference?
+
+This happens when you try to move a variable you do not own and the data does not implement Copy trait..
+```rust
+fn main() {
+    let sq = Square {r: 3.0};
+    let bb = &sq;
+    let sq1 = bb.enlarge(9.9); // bb is moved into the method and becomes self.
+                               // self dererences all the way down to sq
+                               // automatically and so sq will be deleted
+                               // after the method completed. As bb does not
+                               // own the data, Rust does not allow the deletion
+                               // with an error message "Cannot move out of '*bb'
+                               // which is behind a shared reference". move occurs
+                               // because Square does not implement the 'Copy' trait
+    println!("{:?}", sq1);
+}
+
+#[derive(Debug)] // if allow Copy with #[derive(Debug, Copy, Clone)], there will be
+                 // no more "move out of ..." error
+struct Square {
+    r: f64,
+}
+
+impl Square {
+   fn enlarge(self, x: f64) -> Square {
+        Square {
+            r: self.r + x,
+        }
+    } 
+}
+```
+
 ### QA: What are the differences between String and &str?  --- not completed
 
 **String is a data structure stored in heap**
@@ -579,7 +612,9 @@ fn main() {
 ### 4.2 referrence and borrowing
 
 **When ownership moved?** 
-    - only applied to varaibles in heap not in stack
+    - generally speaking, move happens to types that does not implement copy trait.
+    - Custom Struct will be moved if copy trait is not implemented.
+    - for the built-in types, those lives in heap will be moved, not those in stack
         ```rust
         // for varaibles in stack, ownership not moved
         let x = 5;
@@ -910,3 +945,90 @@ fn main() {
     // or
     dbg!(&rect)  // dbg! moves ownership while println! only use reference.
     ```
+    
+### 5.3 Method syntax
+
+**Use impl to implement a method within the scope of a struct**
+
+- `self` as function input: differences between `self`, `&self` and `&mut self`
+    ```rust
+    `#[derive(Debug)]
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+
+    impl Rectangle {
+        fn area(&self) -> u32 {      // reference to borrow value
+            self.width * self.height
+        }
+    }
+
+    // ok to put multiple method in one impl
+    impl Rectangle {
+        fn grow(&mut self, x: u32) {  // mutable reference to change value
+            self.width += x;  // u32 so do not dereference
+            self.height += x;
+        }
+        
+        fn delete(self) {  // move ownership to delete
+            // do nothing but self is deleted
+        }
+    }
+
+
+    fn main() {
+        let mut rect1 = Rectangle {
+            width: 30,
+            height: 50,
+        };
+
+        rect1.grow(10);
+        println!(
+            "The rectangle is now {:?}, which area is {}.",
+            rect1,
+            rect1.area()
+        );
+
+        rect1.delete();
+    }
+    ```
+    
+- `Self` as return to generate an instance
+    ```rust
+    impl Rectangle {
+        fn square(size: u32) -> Self {
+            Self {
+                width: size,
+                height: size,
+            }
+        }
+    }
+    
+    let sq = Rectangle::square(3);   // call function square
+    ```
+    
+**struct method will automatically referencing and derefencing to match the self parameters**
+
+```rust
+fn main() {
+    let rect = Box::new(Rectangle {
+        width: 1,
+        height: 2,
+    });
+    println!("are is {}", rect.area()); // auto dereferenncing from Box to Rectangle
+}
+
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+```
+
