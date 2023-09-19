@@ -1,6 +1,10 @@
 # LunarVim
 
-## Installation:
+## Installation for Fedora
+
+Much easier than for Ubuntu. 
+
+## Installation for Ubuntu:
 
 **To reinstall LunarVim**, 
     - first use uninstall script to uninstall. Follow instructions here: https://www.lunarvim.org/docs/installation
@@ -29,7 +33,7 @@
 
 Remember to set `git config --global core.autocrlf input`. Vim clones plugins from github, which may have line ending issue.
 
-## QA =========================================================================
+## QA =======================================================================
 
 ### QA: how to autoformat code in LunarVim?
 
@@ -118,19 +122,19 @@ Only need to install Nvim-R plugin. All other plugins are already managed by Lun
 **Nvim-R** key bindings
 
     - `\rf` to start R console
-
+    
     - `\rq` quit R console
-
+    
     - `\ro` open R object browser
-
+    
     - `\d` to run a line
-
+    
     - `\ss` run a selected block of code
-
+    
     - `\aa` run all the script
-
+    
     - `\xx` toggle comment
-
+    
     - `:Rstop`: stop R excution
 
 **R language server**: if r_language_server is not automatically detected in LunarVim after opening a `.R` file, add the following line to `config.lua`:

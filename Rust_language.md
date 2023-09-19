@@ -35,6 +35,39 @@
 
 ## QA ======= =================================================================
 
+### QA: what is the error "cannot move of out xxx which is behind a reference?
+
+This happens when you try to move a variable you do not own and the data does not implement Copy trait..
+```rust
+fn main() {
+    let sq = Square {r: 3.0};
+    let bb = &sq;
+    let sq1 = bb.enlarge(9.9); // bb is moved into the method and becomes self.
+                               // self dererences all the way down to sq
+                               // automatically and so sq will be deleted
+                               // after the method completed. As bb does not
+                               // own the data, Rust does not allow the deletion
+                               // with an error message "Cannot move out of '*bb'
+                               // which is behind a shared reference". move occurs
+                               // because Square does not implement the 'Copy' trait
+    println!("{:?}", sq1);
+}
+
+#[derive(Debug)] // if allow Copy with #[derive(Debug, Copy, Clone)], there will be
+                 // no more "move out of ..." error
+struct Square {
+    r: f64,
+}
+
+impl Square {
+   fn enlarge(self, x: f64) -> Square {
+        Square {
+            r: self.r + x,
+        }
+    } 
+}
+```
+
 ### QA: What are the differences between String and &str?  --- not completed
 
 **String is a data structure stored in heap**
@@ -86,13 +119,12 @@
     ```
 
 ### QA: how to read input from terminal?
-    
-    ```rust
-    use std::io;
-    let mut aaa = String.new();
-    io::stdin().read_line(&mut aaa).expect("Fail to read line");
-    println!("aaa is {aaa}");
-    ```
+```rust
+use std::io;
+let mut aaa = String.new();
+io::stdin().read_line(&mut aaa).expect("Fail to read line");
+println!("aaa is {aaa}");
+```
 
 
 ## Snippets ==============================================================
@@ -109,14 +141,14 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
 
 ### snippet: std::env::args().nth(1).unwrap_or_else(||{println!("something")}) to read the first argument in `cargo run arg1 arg2`
 
-    ```rust
-    fn main() {
-      let arg: String = std::env::args().nth(1).unwrap_or_else(|| {
-        println!("Please supply an argument to this program")
-      };
-      println!("The input is {arg}");
-    }
-    ```
+```rust
+fn main() {
+  let arg: String = std::env::args().nth(1).unwrap_or_else(|| {
+    println!("Please supply an argument to this program")
+  };
+  println!("The input is {arg}");
+}
+```
 
 
 ## Raw notes ==================================================================
@@ -133,14 +165,15 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
 
 **rustc is a compiler** that generates an executable file
 
-    - create file `main.rs`
-        ```[rust](rust)
-        fn main() {
-            println!("Hello, world"); // ! indicates macro, not function
-        }
-        ```
-    - compile the file with `$ rustc main.rs`, which create an executable file `main`.
-    - run the executable with `$ ./main`. It can be run without Rust installed.
+- create file `main.rs`
+
+    ```[rust](rust)
+    fn main() {
+        println!("Hello, world"); // ! indicates macro, not function
+    }
+    ```
+- compile the file with `$ rustc main.rs`, which create an executable file `main`.
+- run the executable with `$ ./main`. It can be run without Rust installed.
 
 ### 1.3 Hello, Cargo
 
@@ -161,9 +194,9 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         name = "hello_cargo"
         version = "0.1.0"
         edition = "2021"
-
+        
         # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
+        
         [dependencies]
         ```
 
@@ -273,16 +306,16 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
             let x = 5;
 
             let x = x + 1; //now 6
-
+    
             {
                 let x = x * 2; // here x is 12
                 println!("The value of x in the inner scope is: {x}");
             }
-
+    
             println!("The value of x is: {x}"); // x is still 6 !!!!!
         }
         ```
-        
+
 #### 3.2 data types
 
 **static data type**: As a statically typed language, Rust must know the types of all variables at compile time.
@@ -344,7 +377,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         // access array element
         let x = arr[0]
         ```
-        
+
 **Standard library types** from RBE  chapt 19.
 
 #### 3.3 Functions
@@ -384,7 +417,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
             x + y;   // not an expression because of ending ;
         }
         ```
-        
+
 #### 3.4 control flow
 
 **`if` must use `bool`** data type as condition
@@ -403,17 +436,18 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         }
     }
     ```
-    
+
 **`if` is an expression** so can be assigned to a variable. The values of the final expressions of each arm must have the same data type, as the compiler needs to determine the variable data type at compiling, NOT at runtime.
     ```rust
     fn main() {
         let condition = true;
         let number = if condition { 5 } else { 6 };
+    ```
 
         println!("The value of number is: {number}");
     }
     ```
-    
+
 **`loop` runs for ever** until stopped by `break`. We can also use `continue` to skip the rest and start from beginning.
     ```rust
     fn main() {
@@ -425,24 +459,25 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         }
     }
     ```
-    
+
 **`loop` is an expression** that can be assigned to a variable. The return of a `loop` is the expression after `break`. The ending `;` does not matter.
+
     ```rust
     fn main() {
         let mut counter = 0;
-
+    
         let result = loop {
             counter += 1;
-
+    
             if counter == 10 {
                 break counter * 2; // return, end with or without ; is ok
             } // ok with or without ending :
         };
-
+    
         println!("The result is {result}");
     }
     ```
-    
+
 **`loop` labels** to disambiguate between multiple loops. If a loop is inside another loop, by default, `break` and `continue` apply to the inner-most loop where they are inside. To break their parent loop, we assign a label to that loop. A label starts with a single quote `'` followed by `:`, eg., `'xxxx: loop` in the example below.
     ```rust
     fn main() {
@@ -450,6 +485,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         'counting_up: loop {
             println!("count = {count}");
             let mut remaining = 10;
+    ```
 
             loop {
                 println!("remaining = {remaining}");
@@ -461,13 +497,13 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
                 }
                 remaining -= 1;
             }
-
+    
             count += 1;
         }
         println!("End count = {count}");
     }
     ```
-    
+
 **`while` loop works the same** as in R
     ```rust
     fn main() {
@@ -475,14 +511,14 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
 
         while number != 0 {
             println!("{number}!");
-
+    
             number -= 1; // syntax like Python
         }
-
+    
         println!("LIFTOFF!!!");
     }
     ```
-    
+
 **`for` loop works the same** as in R
     ```rust
     fn main() {
@@ -493,7 +529,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         }
     }
     ```
-    
+
 **range `(1..4)` for 1, 2, 3, 4**
     ```rust
     fn main() {
@@ -576,7 +612,9 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
 ### 4.2 referrence and borrowing
 
 **When ownership moved?** 
-    - only applied to varaibles in heap not in stack
+    - generally speaking, move happens to types that does not implement copy trait.
+    - Custom Struct will be moved if copy trait is not implemented.
+    - for the built-in types, those lives in heap will be moved, not those in stack
         ```rust
         // for varaibles in stack, ownership not moved
         let x = 5;
@@ -606,7 +644,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
                                     // funcdtion call in main, the values persist
     }
     ```
-    
+
 **Dereferencing a pointer to get its value** of a mutable heap variable
     - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
        ```rust
@@ -637,7 +675,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         //   more mutable references but can have multiple references, 
         //   including 0 or 1 mutable reference.
       ```
-      
+
 **Inexplicit dereference and reference** in `.` method. Depends on how the method and function are defined. Below are just a few specific examples.
     ```rust
     let x: Box<i32> = Box::new(-1);
@@ -654,7 +692,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
         // error, *x is a value without any reference so it cannot be 
         //  dereferenced
     ```
-    
+
 **Ponter safety principle**: data should never be aliased and mutated at the same time.
     - Alasing is accessing the same data with different variable.
     - when a data is mutated, its reference may also change, so the alias could loses reference.
@@ -672,7 +710,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
                 //   push and num may lose reference to &vec[2]
         }
         ```
-        
+
 **Read, Write, and Own permisions**: relationship between variables and their data
     - The relationship is checked within compiler, not during runtime.
     - example
@@ -768,7 +806,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
       s1
     }
     ```
- 
+
  **&String vs &str**
  - A `&String` is a normal reference to a String and takes 8 bytes in stack
  - A `&str` is a reference to a slice of a String. It takes 16 bytes in stack, 8 for the reference and 8 for the length of the slice.
@@ -782,16 +820,16 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
       let mut a_num = 0;   // lives in stack
       inner(&mut a_num);
     }
-
+    
     fn inner(x: &mut i32) {  // x is a ponter poiting to the value of a_num
       let another_num = 1;  // lives in stack
       let a_stack_ref = &another_num;  // ponter to value of another_num
-
+    
       let a_box = Box::new(2);  // a pointer poiting to a heap data
       let a_box_stack_ref = &a_box;  // a pointer poiting to the pointer of a_box
       let a_box_heap_ref = &*a_box;  // a pointer poiting to the heap value, it has
                                      // no ownership and is a immutable borrowing
-
+    
       *x += 5;
     }
     ```
@@ -852,6 +890,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
     };
     ```
     
+
 **Special structs**
 
 - Using **tuple structs** without named fields to create different types: a tuple struct looks like a tuple. It is a named tuple. This struct has no field names.
@@ -869,6 +908,7 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
     let aaa = AlwaysEqual;
     ```
     
+
 **Borrowing fields of a struct**
 - borrow checker will track ownership at both the struct and field level.
     ```rust
@@ -905,3 +945,90 @@ for (i, &item) in s.as_bytes().iter().enumerate() {
     // or
     dbg!(&rect)  // dbg! moves ownership while println! only use reference.
     ```
+    
+### 5.3 Method syntax
+
+**Use impl to implement a method within the scope of a struct**
+
+- `self` as function input: differences between `self`, `&self` and `&mut self`
+    ```rust
+    `#[derive(Debug)]
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+
+    impl Rectangle {
+        fn area(&self) -> u32 {      // reference to borrow value
+            self.width * self.height
+        }
+    }
+
+    // ok to put multiple method in one impl
+    impl Rectangle {
+        fn grow(&mut self, x: u32) {  // mutable reference to change value
+            self.width += x;  // u32 so do not dereference
+            self.height += x;
+        }
+        
+        fn delete(self) {  // move ownership to delete
+            // do nothing but self is deleted
+        }
+    }
+
+
+    fn main() {
+        let mut rect1 = Rectangle {
+            width: 30,
+            height: 50,
+        };
+
+        rect1.grow(10);
+        println!(
+            "The rectangle is now {:?}, which area is {}.",
+            rect1,
+            rect1.area()
+        );
+
+        rect1.delete();
+    }
+    ```
+    
+- `Self` as return to generate an instance
+    ```rust
+    impl Rectangle {
+        fn square(size: u32) -> Self {
+            Self {
+                width: size,
+                height: size,
+            }
+        }
+    }
+    
+    let sq = Rectangle::square(3);   // call function square
+    ```
+    
+**struct method will automatically referencing and derefencing to match the self parameters**
+
+```rust
+fn main() {
+    let rect = Box::new(Rectangle {
+        width: 1,
+        height: 2,
+    });
+    println!("are is {}", rect.area()); // auto dereferenncing from Box to Rectangle
+}
+
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+```
+
