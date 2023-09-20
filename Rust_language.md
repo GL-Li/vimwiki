@@ -7,7 +7,7 @@
 - Snippets 
 - Raw notes
 
-## Major reference ============================================================
+## Major reference ===
 
 - The Rust Programing Language, The Book: https://doc.rust-lang.org/book/
     - with quiz: https://rust-book.cs.brown.edu/experiment-intro.html
@@ -15,7 +15,7 @@
 - Udemy: Ultimate Rust Crash Course: https://www.udemy.com/course/ultimate-rust-crash-course/
 - Easy Rust: https://dhghomon.github.io/easy_rust/Chapter_21.html
 
-## Workflow and SOP ===========================================================
+## Workflow and SOP ===
 
 ### SOP: manage project with cargo
 
@@ -31,9 +31,9 @@
     - `Cargo.lock`: locks the dependency versions of the project when the project was first build or run. The future `$ cargo run` and `$ cargo build` will use the versions locked in this file unless run `$ cargo update`.
     - to update the major version, must manually modify `Cargo.toml` file.
 
-## Minimal examples ===========================================================
+## Minimal examples ===
 
-## QA ======= =================================================================
+## QA ===
 
 ### QA: what is the error "cannot move of out xxx which is behind a reference?
 
@@ -53,8 +53,9 @@ fn main() {
     println!("{:?}", sq1);
 }
 
-#[derive(Debug)] // if allow Copy with #[derive(Debug, Copy, Clone)], there will be
-                 // no more "move out of ..." error
+// if allow Copy with #[derive(Debug, Copy, Clone)], there will be
+// no more "move out of ..." error
+#[derive(Debug)] 
 struct Square {
     r: f64,
 }
@@ -71,28 +72,29 @@ impl Square {
 ### QA: What are the differences between String and &str?  --- not completed
 
 **String is a data structure stored in heap**
-    - used for dynamic string manipulation.
-    - access through a pointer (reference) whose size is 24 bytes, including pointer, length and capacity of the string. The actual string data have variable size.
-    - When talking about the size of a String object like in `let s = String::from("abc")`, is 24 bytes, it is the size of the pointer, not the actual data in heap. Actually `s` lives in stack and has a value of a pointer. The pointer points to the data in heap. `s` is just the pointer.
-    - create with ways like:
-        - `let aaa = String::from("aaa")`
-        - `let bbb = "bbb".to_string()`
-        - using macro `format!`
-            ```rust
-            let a = "aaa";
-            let b = "bbb";
-            let c = "ccc";
-            let abc = format!("String {}{}{}", a, b, c)
-                // a new String with data "String aaabbbccc"
-            ```
+
+- used for dynamic string manipulation.
+- access through a pointer (reference) whose size is 24 bytes, including pointer, length and capacity of the string. The actual string data have variable size.
+- When talking about the size of a String object like in `let s = String::from("abc")`, is 24 bytes, it is the size of the pointer, not the actual data in heap. Actually `s` lives in stack and has a value of a pointer. The pointer points to the data in heap. `s` is just the pointer.
+- create with ways like:
+    - `let aaa = String::from("aaa")`
+    - `let bbb = "bbb".to_string()`
+    - using macro `format!`
+        ```rust
+        let a = "aaa";
+        let b = "bbb";
+        let c = "ccc";
+        let abc = format!("String {}{}{}", a, b, c)
+            // a new String with data "String aaabbbccc"
+        ```
 
 **&str is a borrowed reference to a string literal or a slice of String**. 
-    - used it whenever possible as it is faster and simple than `String`.
-    - It does not own the data and is immutable.
-        ```rust
-        let x = "xxx";  // a &str type with fixed data and lives in stack
-        let xs - "xxx".to_string(); // a string type and "xxx" is in heap
-        ```
+- use it whenever possible as it is faster and simple than `String`.
+- It does not own the data and is immutable.
+    ```rust
+    let x = "xxx";  // a &str type with fixed data and lives in stack
+    let xs - "xxx".to_string(); // a string type and "xxx" is in heap
+    ```
 
 ### QA: what are the ways of print with formatter {}?
 
@@ -127,7 +129,7 @@ println!("aaa is {aaa}");
 ```
 
 
-## Snippets ==============================================================
+## Snippets ===
 
 ### snippet: s.as_bytes().iter().enumerate() to iterate bytes of a String
 The byte of a character is an integer, for example, `b'a'` is 97, `b' '` is 32. In the example, `b` and single quote of a charater gives the byte representation of the character.
@@ -151,15 +153,16 @@ fn main() {
 ```
 
 
-## Raw notes ==================================================================
+## Raw notes ===
 
 ### 1.1 Installation using rustup
 
 **rustup** is a tool that manage Rust installation, update, and uninstallation.
-    - `$ sudo apt purge rustc` to uninstall the old version that is not installed with rustup
-    - reinstall Rust with rustup, may change overtime, always use the latest command. Just an example: `$ $ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
-    - `$ rustup update` to update to a new version
-    - `$ rustup self uninstall` to uninstall Rust and rustup.
+
+- `$ sudo apt purge rustc` to uninstall the old version that is not installed with rustup
+- reinstall Rust with rustup, may change overtime, always use the latest command. Just an example: `$ $ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
+- `$ rustup update` to update to a new version
+- `$ rustup self uninstall` to uninstall Rust and rustup.
 
 ### 1.2 Hello, World
 
@@ -294,27 +297,27 @@ fn main() {
 **concurrent programming** is a form of programming in which several processes run concurrently during overlapping time periods.
 
 **constant vs immutable variables**: constant will never change
-    - variables are immutable by default, but variable name can be re-declaired as a **new** variable. For example after we define `let x = 3`, we cannot simply reassign a value with `x = 9`. However, we can re-declair `x` with `let x = 9`, which is called **shadowning**.
-    - constant can only be declaired once. After declair `const ABC: u32 = 24 * 3600` we cannot declair again with `const ABC: u32 = 24 * 60 * 60`. That is, we cannot assign any value to `ABC` again.
-    - `let` can only be used in a function scope to declair variables but `const` can also be used in global scope.
+- variables are immutable by default, but variable name can be re-declaired as a **new** variable. For example after we define `let x = 3`, we cannot simply reassign a value with `x = 9`. However, we can re-declair `x` with `let x = 9`, which is called **shadowning**.
+- constant can only be declaired once. After declair `const ABC: u32 = 24 * 3600` we cannot declair again with `const ABC: u32 = 24 * 60 * 60`. That is, we cannot assign any value to `ABC` again.
+- `let` can only be used in a function scope to declair variables but `const` can also be used in global scope.
 
 **shadowing and scope**: shadowing is only valid within its scope
-    - curly braces `{...}` define a scope. A shadowing inside it will **NOT** affect the variables outside it
-    - example: in the code below, `let x = x * 2` inside `{}` does not change x value out side it.
-        ```rust
-        fn main() {
-            let x = 5;
+- curly braces `{...}` define a scope. A shadowing inside it will **NOT** affect the variables outside it
+- example: in the code below, `let x = x * 2` inside `{}` does not change x value out side it.
+    ```rust
+    fn main() {
+        let x = 5;
 
-            let x = x + 1; //now 6
-    
-            {
-                let x = x * 2; // here x is 12
-                println!("The value of x in the inner scope is: {x}");
-            }
-    
-            println!("The value of x is: {x}"); // x is still 6 !!!!!
+        let x = x + 1; //now 6
+
+        {
+            let x = x * 2; // here x is 12
+            println!("The value of x in the inner scope is: {x}");
         }
-        ```
+
+        println!("The value of x is: {x}"); // x is still 6 !!!!!
+    }
+    ```
 
 #### 3.2 data types
 
@@ -323,222 +326,219 @@ fn main() {
 **Literals**: in computer science, a literal represents a fixed value that can be assigned to a variable or constant. For example, `12` is an integer literal, `"abc"` is a string literal, and `["cat", "dog"]` is a list (python) literal.
 
 **scalar types**: A scalar type represents a single value. There four primary scalar types:
-    - integer types like `u32`, `i32`, `u64`, `i64`:
-        - **unsigned integer** has values like 0, 1, 2, .... No negative values.
-        - **signed integer** can have negative, zero, and positive integers.
-        - we can add underscore `_` to integer literals. For example, `12_34_567` is the same as `1234567`.
-        - The default integer type is `i32`.
-        - Integer division returns an integer, truncates toward zero.
-    - floating-point types like `f32` and `f64`. 
-        - Rust's default is `f64`. All floating-point types are signed.
-        - Integer literals cannot be assigned to floating-point variables
-            ```rust
-            let x: f64 = 123; //wrong
-            let x: f64 = 123.0; //correct
-            ```
-    - numerical operations must match types of two numbers
+- integer types like `u32`, `i32`, `u64`, `i64`:
+    - **unsigned integer** has values like 0, 1, 2, .... No negative values.
+    - **signed integer** can have negative, zero, and positive integers.
+    - we can add underscore `_` to integer literals. For example, `12_34_567` is the same as `1234567`.
+    - The default integer type is `i32`.
+    - Integer division returns an integer, truncates toward zero.
+- floating-point types like `f32` and `f64`. 
+    - Rust's default is `f64`. All floating-point types are signed.
+    - Integer literals cannot be assigned to floating-point variables
         ```rust
-        let x: i32 = 5 / 3;  //return 1
-        let x = -5 / 3; //return -1, Rust can guess data type for x, but slow
-        let x = 5.0 / 3; //error, floating-point cannot be devied by integer 
-        let x: f32 = 5 / 3; //error, types mismatch, 5 / 3 is integer
-        let x: f32 = 5.0 / 3.0; //return 1.66666...
+        let x: f64 = 123; //wrong
+        let x: f64 = 123.0; //correct
         ```
-    - Boolean type with `true` or `false`
-        ```rust
-        let t: bool = true;
-        ```
-    - character type is a single character (can be unicode) in signle quote. It is NOT string type.
-        ```rust
-        let c: char = 'z';
-        let heart_eyed_cat = '😻';
-        let c: char = "z"; // error in double quote
-        let c: char = 'abc'; //error, more than one character
-       ```
+- numerical operations must match types of two numbers
+    ```rust
+    let x: i32 = 5 / 3;  //return 1
+    let x = -5 / 3; //return -1, Rust can guess data type for x, but slow
+    let x = 5.0 / 3; //error, floating-point cannot be devied by integer 
+    let x: f32 = 5 / 3; //error, types mismatch, 5 / 3 is integer
+    let x: f32 = 5.0 / 3.0; //return 1.66666...
+    ```
+- Boolean type with `true` or `false`
+    ```rust
+    let t: bool = true;
+    ```
+- character type is a single character (can be unicode) in signle quote. It is NOT string type.
+    ```rust
+    let c: char = 'z';
+    let heart_eyed_cat = '😻';
+    let c: char = "z"; // error in double quote
+    let c: char = 'abc'; //error, more than one character
+   ```
        
 **Compound types** contain multiple values
-    - tuple type can group different types. A tuple has a fixed length once created. A empty tuple is called `unit` and is written in `()`.
-        ```rust
-        let aaa: (i32, f64, char) = (500, 3.14, 't');
-        let (x, y, z) = aaa; // destructure the tuple into elements
-        println!("aaa has {x}, {y}, {z}");
-        
-        // or use aaa.0, aaa.1, ..., to access element by index
-        let ele_1 = aaa.0
-        println!("aaa first element is {ele_1}");
-        println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
-        ```
-    - array type can only have elements of the same type and have a fixed length. Arrays live in stack, not heap as the length is fixed.
-        ```rust
-        // declair an array of type u32 and 5 elements
-        let arr: [u32; 5] = [1, 2, 3, 4, 5];
-        // array of 100 string "abc"
-        let arr = ["abc": 100];
-        // access array element
-        let x = arr[0]
-        ```
+- tuple type can group different types. A tuple has a fixed length once created. A empty tuple is called `unit` and is written in `()`.
+    ```rust
+    let aaa: (i32, f64, char) = (500, 3.14, 't');
+    let (x, y, z) = aaa; // destructure the tuple into elements
+    println!("aaa has {x}, {y}, {z}");
+    
+    // or use aaa.0, aaa.1, ..., to access element by index
+    let ele_1 = aaa.0
+    println!("aaa first element is {ele_1}");
+    println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
+    ```
+- array type can only have elements of the same type and have a fixed length. Arrays live in stack, not heap as the length is fixed.
+    ```rust
+    // declair an array of type u32 and 5 elements
+    let arr: [u32; 5] = [1, 2, 3, 4, 5];
+    // array of 100 string "abc"
+    let arr = ["abc": 100];
+    // access array element
+    let x = arr[0]
+    ```
 
 **Standard library types** from RBE  chapt 19.
 
 #### 3.3 Functions
 
 **Statement** performs some action and does not return a value. Therefore a statement cannot be assigned to a variable. Examples
-    ```rust
-    let y = 6;
-    let x = (let y = 6); //error: expected expressioin, found statement ('let')
-    ```
+```rust
+let y = 6;
+let x = (let y = 6); //error: expected expressioin, found statement ('let')
+```
     
 **Expression** returns a value and can be assigned to a variable.
-    ```rust
-    // 123 is an expression in
-    let x = 123;
-    // a new scope block created with curly brackets is an expression
-    let y = {
-        let x = 3;
-        x + 1 // not ending with ;
-    };
-    // calling a function or macro is an expression
-    let z = my_functions();
-    ```
+```rust
+// 123 is an expression in
+let x = 123;
+// a new scope block created with curly brackets is an expression
+let y = {
+    let x = 3;
+    x + 1 // not ending with ;
+};
+// calling a function or macro is an expression
+let z = my_functions();
+```
     
 **Function with return values**: rules to follow
-    - types of argument must be specified 
-    - type of return must be specified
-    - last statement is the return, or return with `return` keyword
-    - example
-        ```rust
-        // good function
-        fn add_2(x: i32, y: i32) -> i32 {
-            return x + y   // with or without return is ok
-        }
-        
-        // error: return unit (), not i32 as declaired
-        fn add_2(x: i32, y: i32) -> i32 {
-            x + y;   // not an expression because of ending ;
-        }
-        ```
+- types of argument must be specified 
+- type of return must be specified
+- last statement is the return, or return with `return` keyword
+- example
+    ```rust
+    // good function
+    fn add_2(x: i32, y: i32) -> i32 {
+        return x + y   // with or without return is ok
+    }
+    
+    // error: return unit (), not i32 as declaired
+    fn add_2(x: i32, y: i32) -> i32 {
+        x + y;   // not an expression because of ending ;
+    }
+    ```
 
 #### 3.4 control flow
 
 **`if` must use `bool`** data type as condition
-    ```rust
-    fn main() {
-        let number = 6;
+```rust
+fn main() {
+    let number = 6;
 
-        if number % 4 == 0 {
-            println!("number is divisible by 4");
-        } else if number % 3 == 0 {
-            println!("number is divisible by 3");
-        } else if number % 2 == 0 {
-            println!("number is divisible by 2");
-        } else {
-            println!("number is not divisible by 4, 3, or 2");
-        }
+    if number % 4 == 0 {
+        println!("number is divisible by 4");
+    } else if number % 3 == 0 {
+        println!("number is divisible by 3");
+    } else if number % 2 == 0 {
+        println!("number is divisible by 2");
+    } else {
+        println!("number is not divisible by 4, 3, or 2");
     }
-    ```
+}
+```
 
 **`if` is an expression** so can be assigned to a variable. The values of the final expressions of each arm must have the same data type, as the compiler needs to determine the variable data type at compiling, NOT at runtime.
-    ```rust
-    fn main() {
-        let condition = true;
-        let number = if condition { 5 } else { 6 };
-    ```
-
-        println!("The value of number is: {number}");
-    }
-    ```
+```rust
+fn main() {
+    let condition = true;
+    let number = if condition { 5 } else { 6 };
+    println!("The value of number is: {number}");
+}
+```
 
 **`loop` runs for ever** until stopped by `break`. We can also use `continue` to skip the rest and start from beginning.
-    ```rust
-    fn main() {
-        let mut i: i32 = 0;
-        loop {
-            i = i + 1;
-            if i > 10 {break};
-            println!("again!");
-        }
+```rust
+fn main() {
+    let mut i: i32 = 0;
+    loop {
+        i = i + 1;
+        if i > 10 {break};
+        println!("again!");
     }
-    ```
+}
+```
 
 **`loop` is an expression** that can be assigned to a variable. The return of a `loop` is the expression after `break`. The ending `;` does not matter.
 
-    ```rust
-    fn main() {
-        let mut counter = 0;
-    
-        let result = loop {
-            counter += 1;
-    
-            if counter == 10 {
-                break counter * 2; // return, end with or without ; is ok
-            } // ok with or without ending :
-        };
-    
-        println!("The result is {result}");
-    }
-    ```
+```rust
+fn main() {
+    let mut counter = 0;
+
+    let result = loop {
+        counter += 1;
+
+        if counter == 10 {
+            break counter * 2; // return, end with or without ; is ok
+        } // ok with or without ending :
+    };
+
+    println!("The result is {result}");
+}
+```
 
 **`loop` labels** to disambiguate between multiple loops. If a loop is inside another loop, by default, `break` and `continue` apply to the inner-most loop where they are inside. To break their parent loop, we assign a label to that loop. A label starts with a single quote `'` followed by `:`, eg., `'xxxx: loop` in the example below.
-    ```rust
-    fn main() {
-        let mut count = 0;
-        'counting_up: loop {
-            println!("count = {count}");
-            let mut remaining = 10;
-    ```
+```rust
+fn main() {
+    let mut count = 0;
+    'counting_up: loop {
+        println!("count = {count}");
+        let mut remaining = 10;
 
-            loop {
-                println!("remaining = {remaining}");
-                if remaining == 9 {
-                    break;
-                }
-                if count == 2 {
-                    break 'counting_up;
-                }
-                remaining -= 1;
+        loop {
+            println!("remaining = {remaining}");
+            if remaining == 9 {
+                break;
             }
-    
-            count += 1;
+            if count == 2 {
+                break 'counting_up;
+            }
+            remaining -= 1;
         }
-        println!("End count = {count}");
+
+        count += 1;
     }
-    ```
+    println!("End count = {count}");
+}
+```
 
 **`while` loop works the same** as in R
-    ```rust
-    fn main() {
-        let mut number = 3;
+```rust
+fn main() {
+    let mut number = 3;
 
-        while number != 0 {
-            println!("{number}!");
-    
-            number -= 1; // syntax like Python
-        }
-    
-        println!("LIFTOFF!!!");
+    while number != 0 {
+        println!("{number}!");
+
+        number -= 1; // syntax like Python
     }
-    ```
+
+    println!("LIFTOFF!!!");
+}
+```
 
 **`for` loop works the same** as in R
-    ```rust
-    fn main() {
-        let a = [10, 20, 30, 40, 50];
+```rust
+fn main() {
+    let a = [10, 20, 30, 40, 50];
 
-        for element in a {
-            println!("the value is: {element}");
-        }
+    for element in a {
+        println!("the value is: {element}");
     }
-    ```
+}
+```
 
 **range `(1..4)` for 1, 2, 3, 4**
-    ```rust
-    fn main() {
-        for number in (1..4).rev() {  //.rev() to reverse the range
-            println!("{number}!");
-        }
-        println!("LIFTOFF!!!");
+```rust
+fn main() {
+    for number in (1..4).rev() {  //.rev() to reverse the range
+        println!("{number}!");
     }
-    ```
+    println!("LIFTOFF!!!");
+}
+```
     
 ### 4. Understanding ownership
 
@@ -549,31 +549,31 @@ fn main() {
     - A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
 
 **Frames are where variables live**: a frame is a mapping from variables to values within a single scope. A scope is defined by `{...}`, for example:
-    ```rust
-    fn main() {     // frame for function main holds the following:
-        let n = 5;  //n:5 (L1, location 1)
-        let y = plus_one(n); // y:6, (L3)
-        println!("The value of y is: {y}");
-    }
+```rust
+fn main() {     // frame for function main holds the following:
+    let n = 5;  //n:5 (L1, location 1)
+    let y = plus_one(n); // y:6, (L3)
+    println!("The value of y is: {y}");
+}
 
-    fn plus_one(x: i32) -> i32 {  // frame for plus_one holds:
-        x + 1  // x:5 as x is assigned with n in main() (L2)
-    }
-    ```
+fn plus_one(x: i32) -> i32 {  // frame for plus_one holds:
+    x + 1  // x:5 as x is assigned with n in main() (L2)
+}
+```
 
 **Frames are organized into a stack of currently-called-functions**: in above example, two frames are involved in a stack when function `plus_one` is called, This stack can be shown as:
-    ```
-    main() frame, dropped after last line executed
-    plus_one frame, dropped after return in main()
-    ```
+```
+main() frame, dropped after last line executed
+plus_one frame, dropped after return in main()
+```
 
 **Box stores data in heap**: box is a construct in Rust for putting data in heap. In the example below, only one copy of the one million array lives in heap, which is not in any stack frame. Instead, two pointers for a and b are in the stack frame of main.
-    ```rust
-    fn main() {
-        let a = Box::new([0; 1_000_000]); // create a box in array with pointer a
-        let b = a; // move the pointer to b. Pointer a deleted
-    }
-    ```
+```rust
+fn main() {
+    let a = Box::new([0; 1_000_000]); // create a box in array with pointer a
+    let b = a; // move the pointer to b. Pointer a deleted
+}
+```
     
 **data structure Vec, String, and HashMap are boxes**: they are stored in heap when created with a pointer stored in stack frames.
 
@@ -589,9 +589,9 @@ fn main() {
     - When the owner goes out of scope, the value will be dropped.
 
 **string literals** are fixed string with type `&str`
-    - used when the value of a string is known at compile time
-    - is hard-coded like `"abc"`, must inside double quote!!!!
-    - do not use `mut` as by definition, string literal are immutable
+- used when the value of a string is known at compile time
+- is hard-coded like `"abc"`, must inside double quote!!!!
+- do not use `mut` as by definition, string literal are immutable
     ```rust
     let s1 = "Hello";
     let s2: &str = "World";
@@ -599,166 +599,165 @@ fn main() {
     ```
 
 **String type** provided by standard library
-    - https://linuxhint.com/strings-in-rust/
-    - ways to create String object
-    - `let s = string::from("hello")`: generated from a string literal
-    - methods for string type
-        - `s.push_str(", world")`: to append a string literal to a string
-        - 
+- https://linuxhint.com/strings-in-rust/
+- ways to create String object
+- `let s = string::from("hello")`: generated from a string literal
+- methods for string type
+    - `s.push_str(", world")`: to append a string literal to a string
 
 **`&String` type is a reference to a `String`**
-    - It has no ownership. It exists as long as the `String` it points to is not out of scope.
+- It has no ownership. It exists as long as the `String` it points to is not out of scope.
 
 ### 4.2 referrence and borrowing
 
 **When ownership moved?** 
-    - generally speaking, move happens to types that does not implement copy trait.
-    - Custom Struct will be moved if copy trait is not implemented.
-    - for the built-in types, those lives in heap will be moved, not those in stack
-        ```rust
-        // for varaibles in stack, ownership not moved
-        let x = 5;
-        let y = x; // value of x, 5, is copied to y. Two copies of 5.  Both x and y exist
-        println!("x is {x} and y is {y}")  // no problem
-        
-        // for variables in heap, ownership moved
-        let a = String::from("xyz");
-        let b = a;  // ownership of "xyz" moved to b. Only one "xyz" in heap. 
-                    // variable a is not valid anymore
-        printlin!("a is {a} and b is {b}")  // error as a does not exists anymore
-        ```
-    - heap varaible ownership move happens when reassigned or used in a function call
+- generally speaking, move happens to types that does not implement copy trait.
+- Custom Struct will be moved if copy trait is not implemented.
+- for the built-in types, those lives in heap will be moved, not those in stack
+    ```rust
+    // for varaibles in stack, ownership not moved
+    let x = 5;
+    let y = x; // value of x, 5, is copied to y. Two copies of 5.  Both x and y exist
+    println!("x is {x} and y is {y}")  // no problem
+    
+    // for variables in heap, ownership moved
+    let a = String::from("xyz");
+    let b = a;  // ownership of "xyz" moved to b. Only one "xyz" in heap. 
+                // variable a is not valid anymore
+    printlin!("a is {a} and b is {b}")  // error as a does not exists anymore
+    ```
+- heap varaible ownership move happens when reassigned or used in a function call
 
 **References are non-owning pointers** prefixed with ampersand operator `&`. It borrows value from a heap variables but does not take the ownership of the value.
-    ```rust
-    fn main() {
-        let m1 = String::from("Hello");
-        let m2 = String::from("world");
-        greet(&m1, &m2); // note the ampersands
-        let s = format!("{} {}", m1, m2);
-    }
+```rust
+fn main() {
+    let m1 = String::from("Hello");
+    let m2 = String::from("world");
+    greet(&m1, &m2); // note the ampersands
+    let s = format!("{} {}", m1, m2);
+}
 
-    fn greet(g1: &String, g2: &String) { // note the ampersands
-        println!("{} {}!", g1, g2); // as g1 and g2 does not own "Hello" and 
-                                    // "World", when they dropped after the 
-                                    // funcdtion call in main, the values persist
-    }
-    ```
+fn greet(g1: &String, g2: &String) { // note the ampersands
+    println!("{} {}!", g1, g2); // as g1 and g2 does not own "Hello" and 
+                                // "World", when they dropped after the 
+                                // funcdtion call in main, the values persist
+}
+```
 
 **Dereferencing a pointer to get its value** of a mutable heap variable
-    - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
-       ```rust
-      let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
-      let a = *x;  
-        // x is a pointer-value pair. The * removes the pointer, which is called
-        //   dereferencing, so *x is the value only
-        // let a = *x; assigns the value to a. As a has no pointer, it lives in stack.
-        //   This assignment is possible as x is a i32 value. Not valid if x is a
-        //   str type.
-      *x += 1;  // modify the value of x to 6
-      
-      let r1: &Box<i32> = &x;  // shared borrowing 
-        // &Box<i32> means reference to a value of type Box<i32>.
-        // &x is the value of x through reference of the pointer of x.
-        // let r1 = &x; assign x's value to r1 through reference.
-        // The operator `=` assigns value, not pointer. `&x` means assign
-        //   value through pointer.
-        // r1's value is 6 but does not own the value.
-      
-      let b: i32 = **r1;  
-        // *r1 --> *&x --> x so **r1 --> *x
-        // b is 6 and lives in stack
-                          
-      let r2: &i32 = &*x; 
-        // r2 is a reference to a i32 object, which has value. 
-        // &* create an immutable reference. A heap value cannot have two or
-        //   more mutable references but can have multiple references, 
-        //   including 0 or 1 mutable reference.
-      ```
+- explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
+   ```rust
+  let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
+  let a = *x;  
+    // x is a pointer-value pair. The * removes the pointer, which is called
+    //   dereferencing, so *x is the value only
+    // let a = *x; assigns the value to a. As a has no pointer, it lives in stack.
+    //   This assignment is possible as x is a i32 value. Not valid if x is a
+    //   str type.
+  *x += 1;  // modify the value of x to 6
+  
+  let r1: &Box<i32> = &x;  // shared borrowing 
+    // &Box<i32> means reference to a value of type Box<i32>.
+    // &x is the value of x through reference of the pointer of x.
+    // let r1 = &x; assign x's value to r1 through reference.
+    // The operator `=` assigns value, not pointer. `&x` means assign
+    //   value through pointer.
+    // r1's value is 6 but does not own the value.
+  
+  let b: i32 = **r1;  
+    // *r1 --> *&x --> x so **r1 --> *x
+    // b is 6 and lives in stack
+                      
+  let r2: &i32 = &*x; 
+    // r2 is a reference to a i32 object, which has value. 
+    // &* create an immutable reference. A heap value cannot have two or
+    //   more mutable references but can have multiple references, 
+    //   including 0 or 1 mutable reference.
+  ```
 
 **Inexplicit dereference and reference** in `.` method. Depends on how the method and function are defined. Below are just a few specific examples.
-    ```rust
-    let x: Box<i32> = Box::new(-1);
-    let abs1 = i32::abs(*x);
-        // explicit dereference, otherwise type error
-        // function i32::abs() only takes i32 integers
-        
-    let abs2 = x.abs(); 
-    let abs3 = &x.abs();
-        // inexplicit deferencing, the .abs() will corce the type to
-        //   match the method
+```rust
+let x: Box<i32> = Box::new(-1);
+let abs1 = i32::abs(*x);
+    // explicit dereference, otherwise type error
+    // function i32::abs() only takes i32 integers
     
-    let abs4 = *x.abs();
-        // error, *x is a value without any reference so it cannot be 
-        //  dereferenced
-    ```
+let abs2 = x.abs(); 
+let abs3 = &x.abs();
+    // inexplicit deferencing, the .abs() will corce the type to
+    //   match the method
+
+let abs4 = *x.abs();
+    // error, *x is a value without any reference so it cannot be 
+    //  dereferenced
+```
 
 **Ponter safety principle**: data should never be aliased and mutated at the same time.
-    - Alasing is accessing the same data with different variable.
-    - when a data is mutated, its reference may also change, so the alias could loses reference.
-    - example with error
-        ```rust
-        fn main() {
-            let mut vec: Vec<i32> = vec![1, 2, 3];
-            let num: &i32 = &vec[2];
-            printlin!("num is {num}")
-                // no problem to use num here
-            
-            vec.push(4);
-            println!("print num again: {num}");
-                // error when access num again, vec has been altered by the
-                //   push and num may lose reference to &vec[2]
-        }
-        ```
+- Alasing is accessing the same data with different variable.
+- when a data is mutated, its reference may also change, so the alias could loses reference.
+- example with error
+    ```rust
+    fn main() {
+        let mut vec: Vec<i32> = vec![1, 2, 3];
+        let num: &i32 = &vec[2];
+        printlin!("num is {num}")
+            // no problem to use num here
+        
+        vec.push(4);
+        println!("print num again: {num}");
+            // error when access num again, vec has been altered by the
+            //   push and num may lose reference to &vec[2]
+    }
+    ```
 
 **Read, Write, and Own permisions**: relationship between variables and their data
-    - The relationship is checked within compiler, not during runtime.
-    - example
-        ```rust
-        fn main() {
-            let mut vec: Vec<i32> = vec![1, 2, 3];
-                // initiate vec with RWO permision
-            
-            let num: &i32 = &vec[2];
-                // initiate num with RO as immutable. It borrows data from vec
-                // so vec becomes R only
-                
-            println!("Third element of vec is {}", *num);
-                // This is the line where num is last used, returning borrowed
-                // data from vec and then dropped. After the return, vec re-gain
-                // RWO of the data.
-                
-            println!("This is the last time use vec, whose first element is {}",
-                     vec[0]);
-                // vec dropped as it will out of scope.
-        }
-        ```
-    - permissions are defined on paths that include variables. Paths are things like `x`, `&x`, `*x`, `y[0]`, `z.1`, and `*&x`, ...
-        ```rust
-        // when vec is inmmutable
-        let vec: Vec<i32> = vec![1, 2, 3];
-        let mut x1: i32 = vec[2];
-        x1 += 100;
-            // x1 is a regular mutable i32 varaible
-            
-        let x2: &i32 = &vec[2];
-            // &i32 is reference, which is immutable as vec is immutable
-        
-        // when vec is mutable
+- The relationship is checked within compiler, not during runtime.
+- example
+    ```rust
+    fn main() {
         let mut vec: Vec<i32> = vec![1, 2, 3];
-        let x3: &mut i32 = &mut vec[2];
-        *x3 += 100;
-            // &mut indicate mutable reference 
-            // *x3 has write permission to data. 
-            // both x3 and vec[2] changed to 103.
-            // vec is not accessible until x3 is dropped
-        ```
+            // initiate vec with RWO permision
+        
+        let num: &i32 = &vec[2];
+            // initiate num with RO as immutable. It borrows data from vec
+            // so vec becomes R only
+            
+        println!("Third element of vec is {}", *num);
+            // This is the line where num is last used, returning borrowed
+            // data from vec and then dropped. After the return, vec re-gain
+            // RWO of the data.
+            
+        println!("This is the last time use vec, whose first element is {}",
+                 vec[0]);
+            // vec dropped as it will out of scope.
+    }
+    ```
+- permissions are defined on paths that include variables. Paths are things like `x`, `&x`, `*x`, `y[0]`, `z.1`, and `*&x`, ...
+    ```rust
+    // when vec is inmmutable
+    let vec: Vec<i32> = vec![1, 2, 3];
+    let mut x1: i32 = vec[2];
+    x1 += 100;
+        // x1 is a regular mutable i32 varaible
+        
+    let x2: &i32 = &vec[2];
+        // &i32 is reference, which is immutable as vec is immutable
+    
+    // when vec is mutable
+    let mut vec: Vec<i32> = vec![1, 2, 3];
+    let x3: &mut i32 = &mut vec[2];
+    *x3 += 100;
+        // &mut indicate mutable reference 
+        // *x3 has write permission to data. 
+        // both x3 and vec[2] changed to 103.
+        // vec is not accessible until x3 is dropped
+    ```
 
 **Borrow checker finds permission violations**: Creating an immutable reference to a data cause the data to be temporarily read-only until the reference dropped.
-    - in plain English: I borrow it with no intention to change it. You can use it but do not change it either until I return it.
+- in plain English: I borrow it with no intention to change it. You can use it but do not change it either until I return it.
 
 **Mutable references allows mutation but prevents aliasing**: When a mutable reference is created the original variable loses access to the data until the reference dropped.
-    - in plain English: I borrow it and will change it. You please do not touch it until I return it.
+- in plain English: I borrow it and will change it. You please do not touch it until I return it.
 
 **Data must outlive all of its references** especially when a function returns a reference, make sure the data the reference point to is still alive after function return.
 
@@ -768,21 +767,21 @@ fn main() {
 **When creating a reference, always keep in mind when the value is going to be returned**. Most ownership errors are caused by fogetting this.
 
 **Error Case study: returning a reference to the stack**
-    ```rust
-    fn return_a_string() -> &String {
-        let s = String::from("Hello world");
-        &s  // s is dropped after function return so the returned reference
-            // points to nowhere
-    }
-    ```
+```rust
+fn return_a_string() -> &String {
+    let s = String::from("Hello world");
+    &s  // s is dropped after function return so the returned reference
+        // points to nowhere
+}
+```
 **Error case study: not enough permissions**
-    ```rust
-    fn stringify_name_with_title(name: &Vec<String>) -> String {
-        name.push(String::from("Esq."));  // name is immutable
-        let full = name.join(" ");
-        full
-    }
-    ```
+```rust
+fn stringify_name_with_title(name: &Vec<String>) -> String {
+    name.push(String::from("Esq."));  // name is immutable
+    let full = name.join(" ");
+    full
+}
+```
 
 ### 4.4 the slice type
 
@@ -929,23 +928,23 @@ fn main() {
 ### 5.2 An example programming using stucts
 
 **Debug printing** with `#[derive(Debug)]`
-    ```rust
-    #[derive(Debug)]
-    struct Rectangle {
-        width: u32,
-        height: u32,
-    }
-    
-    let rect = Rectangle {
-        sidet: 30,
-        height: 20,
-    };
-    
-    println!("The rectangle is {:?}", rect);
-    // or
-    dbg!(&rect)  // dbg! moves ownership while println! only use reference.
-    ```
-    
+```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+let rect = Rectangle {
+    sidet: 30,
+    height: 20,
+};
+
+println!("The rectangle is {:?}", rect);
+// or
+dbg!(&rect)  // dbg! moves ownership while println! only use reference.
+```
+
 ### 5.3 Method syntax
 
 **Use impl to implement a method within the scope of a struct**
@@ -957,13 +956,13 @@ fn main() {
         width: u32,
         height: u32,
     }
-
+    
     impl Rectangle {
         fn area(&self) -> u32 {      // reference to borrow value
             self.width * self.height
         }
     }
-
+    
     // ok to put multiple method in one impl
     impl Rectangle {
         fn grow(&mut self, x: u32) {  // mutable reference to change value
@@ -982,18 +981,18 @@ fn main() {
             width: 30,
             height: 50,
         };
-
+    
         rect1.grow(10);
         println!(
             "The rectangle is now {:?}, which area is {}.",
             rect1,
             rect1.area()
         );
-
+    
         rect1.delete();
     }
     ```
-    
+
 - `Self` as return to generate an instance
     ```rust
     impl Rectangle {
@@ -1008,6 +1007,7 @@ fn main() {
     let sq = Rectangle::square(3);   // call function square
     ```
     
+
 **struct method will automatically referencing and derefencing to match the self parameters**
 
 ```rust
