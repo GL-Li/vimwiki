@@ -35,6 +35,10 @@ Remember to set `git config --global core.autocrlf input`. Vim clones plugins fr
 
 ## QA =======================================================================
 
+### QA: how to view the definition of a struct or function and then go back?
+
+To view the definition, place cursor on the struct or function where it is called and press `gd`. To go back to the position, press `Ctrl o`.
+
 ### QA: how to autoformat code in LunarVim?
 
 - Add `lvim.format_on_save = true` to `config.lua`. Code will be auto-formatted at save.
