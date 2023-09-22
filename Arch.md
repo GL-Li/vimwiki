@@ -627,4 +627,19 @@ Important key things to remember
 
         
 
+## QA ========================================
 
+### QA: how to set up a new or reset a old disk for use in Linux, including partition, format and mount?
+
+Following these steps:
+- use `$lsblk` or `sudo fdisk -l` to identify the disk, for example `/dev/sda`.
+- run `sudo fdisk /dev/sda` to start work on the disk:
+    - delete all existing partitions with `d` and `Enter` repeatedly until all partitions are deleted
+    - create a new partition table for example GPT if not already having this table
+    - create a new partition with `n`. When ask for the last sector, type `+300G` to set the partition size to 300G.
+    - create more partition on the rest disk spaces.
+    - set the type of a partition. Default to `Linux System`. To change to other type, press `t` and select the code 1 for EFI system.
+    - press `w` to rewrite the disk.
+- run `$ sudo mkfs.ext4 /dev/sda2` to format a partition
+    - other format: `mkfs.btrfs`, ...
+- to mount `/dev/sda2` to `/mnt/data`, run `$sudo mount /dev/sda2 /mnt/data`.
