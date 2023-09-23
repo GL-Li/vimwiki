@@ -1032,3 +1032,170 @@ impl Rectangle {
 }
 ```
 
+## Enums and pattern matching
+
+### 6.1 Defining an enum
+
+**enum defines a type that has multiple variants**
+
+- example: IP address has two versions: v4 and v6. V4 is represented by 4 integers like those in 192.168.0.3, which can be written in tupple (192, 168, 0, 3); V6 IP is a string such as 2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF. We can define an enum for IP address which has V4 and V6 variants:
+    ```rust
+    enum IpAddr {
+      V4(u8, u8, u8, u8),
+      V6(String)
+    }
+    ```
+- create IP address variables
+    ```rust
+    let ip_v4 = IpAddr::V4(192, 168, 0, 3);
+    let ip_v6 = IpAddr::V6(String::from("2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF"));
+    ```
+    
+- define methods for enum just like for struct
+    ```rust
+    impl IpAddr {
+      fn do_sth(&self) {
+        // do something here
+      }
+    }
+    ```
+    
+**option enum - a special builtin enum**
+
+- why need it: Option enum is used to handle `null` cases as Rust does not have `null`. Option enum avoids errors when using null as a non-null value.
+
+- definition of option enum: it is defined in standard library below, where `<T>` is a generic type parameter that can be any type.
+    ```rust
+    enum Option<T> {
+      None,
+      Some(T),
+    }
+  ```  
+
+- use of option enum. Option enum, `Some` and `None` are included in prelude when Rust is launched.
+    ```rust
+    let some_number = Some(5);  // type Option<i32>
+    let some_string = Some(String::from("hello"));  // type Option<String>
+    let absent_number: Option<i32> = None;  // define type for None
+    ```
+    
+- Option enum is its own type
+    ```rust
+    let x = 5;   // i32
+    let y = Some(8); // Option<i32>
+    let sum = x + y; // error, different types
+    ```
+    
+- builtin method for Option enum: https://doc.rust-lang.org/std/option/enum.Option.html
+    - check if an option is Some or None and return a boolean. If a Some, we can add additional conditions.
+        ```rust
+        let x = Some(2);
+        assert_eq!(x.is_some(), true);
+        assert_eq!(x.is_none(), false):
+        assert_eq!(x.is_some_and(|x| x > 1), true) // |x| x > 1 is a closure
+        ```
+   - extract value containted in an option and handle the case of None 
+        ```rust
+        assert_eq!(x.expect("x should be 2"), 2);) 
+            // if x is None, panic with the message "x should be 2"
+        
+        assert_eq!(Some("stuff").unwrap(), "stuff"); //returns the contained Some value
+        let z: Option<&str> = None;
+        assert_eq!(z.unwrap_or("sth"), "sth")  // used to handle None
+        
+        let t = 5;
+        assert_eq!(None.unwrap_or_else(|| 2 * t), 10);
+        ```
+        
+### 6.2 The match control flow construct
+
+**an enum is often used with match** to explore each variants
+
+ - basic example: the match must exhaust all possibilities
+    ```rust
+    enum Coin {
+      Peny,
+      Nickel,
+      Dime,
+      Quarter,
+    }
+    
+    // match all variants
+    fn value_in_cents(coin: Coin) -> u8 {
+      match coin {
+        Coin::Peny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+      }
+    }
+
+    // if we only care about peny and quater
+    fn value_in_peny_quarter(coin: Coin) -> u8 {
+      match coin {
+        Coin::Peny => 1,
+        Coin::Quarter => 25,
+        _ => (),  // catch all other cases
+      }
+    }
+    ```
+    
+- match patterns that bind to values to extract values out of enum variants
+    ```rust
+    fn main() {
+        let q1 = Coin::Quarter("Indiana".to_string());
+        let q1_cents = value_in_name(q1);
+        println!("value in cents is {}", q1_cents);
+    }
+
+    enum Coin {
+        Peny,
+        Nickel,
+        Dime,
+        Quarter(String),  // value of the String can be extracted, example below
+    }
+
+    fn value_in_name(coin: Coin) -> String {
+        match coin {
+            Coin::Peny => "one".to_string(),
+            Coin::Nickel => "five".to_string(),
+            Coin::Dime => "ten".to_string(),
+            Coin::Quarter(state) => state,  // state is the String in Quarter
+        }
+    }
+    ```
+    
+- matching with `Option<T>`
+    ```rust
+    fn main() {
+        let x = Some(5);
+        let y = plus_one(x);
+        println!("y is {:?}", y);
+    }
+
+    fn plus_one(x: Option<i32>) -> Option<i32> {
+        match x {
+            None => None,
+            Some(i) => Some(i + 1),  // add inside Some()
+        }
+    }
+    ```
+    
+**How matches interact with ownership**
+
+- match consumes x if x is not copyable
+```rust
+    fn main() {
+        let x = Some(String::from("hello"));
+        let y = plus_one(x);
+        println!("y is {:?}", y);
+        // println!("x is {:?}", x);  // x is moved to plus_one as it has String
+    }
+
+    fn plus_one(x: Option<String>) -> Option<String> {
+        match x {
+            None => None,
+            Some(s) => Some(s + "_add_1"),
+        }
+    }
+    ```
