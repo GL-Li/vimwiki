@@ -1,9 +1,20 @@
 ## Outline
     - Major reference
-    - Workflow and SOP
-    - Minimal examples
-    - Glossaries
+    - QA
     - Raw notes
+
+## QA ====
+
+### QA: how to capture all string before a pattern, and if pattern does not exist, the whole string?
+
+Use `^(.*?)(?=pattern|$)`, which can be read as: from beginning `^`, capture any string `(.*?)` until `pattern` or to the end `$`.
+
+Example:
+
+```r
+x <- c("abc ---", "xyz", "123 ---")
+stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
+```
 
 ## raw notes
 
