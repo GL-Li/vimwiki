@@ -1199,3 +1199,121 @@ impl Rectangle {
         }
     }
     ```
+    
+- match on a reference to avoid moving 
+    ```rust
+    fn main() {
+        let opt: Option<String> = 
+            Some(String::from("Hello world"));
+
+        // opt became &opt to avoiding moving
+        match &opt {  
+            Some(s) => println!("Some: {}", s),
+            None => println!("None!")
+        };
+
+        println!("{:?}", opt);
+    }
+    ```
+    
+### 7.1 Packages and Crates
+
+**A create is the smallest amount of cde that the Rust compiler considers at a time**
+
+- binary crate: compiled to an executable such as command-line program. Must have a function called `main()`.
+- library crate: do not have main and do not compile to executable. They define functions to be shared with other projects. 
+- a package is a bundle of one ore more crates that provides a set of functionality. A package contains a `cargo.toml` file that describes how to build thoese crates. A package can contain at most one library crate and multiple binary crates.
+
+### 7.2 Defining modules to control scope and privacy
+
+**Modules cheat sheet**: how compiler works
+- start from the crate root: which is `src/main.rs` for binary crate and `src/lib.rs` for library crate.
+- declaring modules in the root file
+- declaring submodules in any file other than the root file
+- path to code in modules like `crate::garden::vegetables::Asparagus`.
+- private vs public: default to private, use `pub` to make it public
+- the `use` keyword
+- example: a binary crate named `baclyard`:
+    - structure
+        ````
+        backyard
+        |-- Cargo.lock
+        |-- Cargo.toml
+        |-- src
+            |-- garden
+            |   |-- vegetables.rs
+            |-- garden.rs
+            |-- main.rs
+        ```
+    - `src/main.rs`
+        ```rust
+        use crate::garden::vegetables::Asparagus;
+        
+        pub mod garden;
+        
+        fn main() {
+            let plant = Asparagus {};
+            println!("I'm growing {:?}!", plant):
+        }
+        ```
+        
+**Grouping related code in modules**: example restaurant library
+- create a library crate project with:
+    - `$ cargo new restaurant --lib`    where `--lib` for library crate. It create files:
+        ```
+        ├── Cargo.toml
+        └── src
+            └── lib.rs
+        ```
+    - add the following code in file `src/lib.rs`. The code defines a nested module structure.
+        ```rust
+        mod front_of_house {
+            mod hosting {
+                fn add_to_waitlist() {}
+
+                fn seat_at_table() {}
+            }
+
+            mod serving {
+                fn take_order() {}
+
+                fn serve_order() {}
+
+                fn take_payment() {}
+            }
+        }
+        ```
+    - module tree of the crate:
+        ```
+        crate
+         └── front_of_house
+             ├── hosting
+             │   ├── add_to_waitlist
+             │   └── seat_at_table
+             └── serving
+                 ├── take_order
+                 ├── serve_order
+                 └── take_payment
+        ```
+        
+### 7.3 Paths for referring to an item in the module tree
+
+**absolute and relative path**
+- absolute path starts from `crate`
+- relative path starts by default from current module
+- example. In file `src/lib.rs` we have code:
+    ```rust
+    mod front_of_house {
+        mod hosting {
+            fn add_to_waitlist() {}
+        }
+    }
+
+    pub fn eat_at_restaurant() {
+        // Absolute path
+        crate::front_of_house::hosting::add_to_waitlist();
+
+        // Relative path
+        front_of_house::hosting::add_to_waitlist();
+    }
+    ```
