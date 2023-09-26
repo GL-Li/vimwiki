@@ -42,7 +42,7 @@
     - install LunarVim:
         - `$ sudo dnf install neovim`
         - install nvm from github with curl
-        - install laxygit
+        - install lazygit
         - install LunarVim
         - install JetBrainsMono Nerd fonts, reboot to take effects.
         - copy `config.lua`
@@ -52,8 +52,7 @@
             - More on Fedora Packages of R Software Cran project , read ?????????????????????????????
         - `$ sudo dnf install rstudio-desktop`
     - give user permission to `/mnt/` to mount discs:
-        - `$ sudo chown -R $USER /mnt` to change owner of `mnt` to current user. If `/mnt` has subdirecotries, add `-R` to change owner recursively.
-        - `$ sudo mount /dev/sda1 /mnt/d`. Create `d` subfolder if not existe.
+        - `$ sudo chown -R $USER /mnt` to change owner of `mnt` to current user.  add `-R` to change owner recursively for subdirectories.
     - mount disk:
         - `$ sudo mount /dev/sda1 /mnt/d` to mount
         - add to `/etc/fstab` to auto-mount at reboot:
