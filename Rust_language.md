@@ -1298,14 +1298,36 @@ impl Rectangle {
         
 ### 7.3 Paths for referring to an item in the module tree
 
-**absolute and relative path**
+**absolute and relative path to a function** not working if the module of the function is private, or the function is private
 - absolute path starts from `crate`
 - relative path starts by default from current module
 - example. In file `src/lib.rs` we have code:
     ```rust
+    // front_of_house is accessible to function eat_at_restaurant as they are in
+    // the same scope
     mod front_of_house {
-        mod hosting {
+        // hosting is private in a scope not accessible to function eat_at_resturant
+        mod hosting {  
             fn add_to_waitlist() {}
+        }
+    }
+
+    pub fn eat_at_restaurant() {
+        // Absolute path not working for private hosting module
+        crate::front_of_house::hosting::add_to_waitlist();
+
+        // Relative path not working for private hosting module
+        front_of_house::hosting::add_to_waitlist();
+    }
+    ```
+    
+**Exposing paths with the pub keyword** to expose modules and functions that are private to functions calling them.
+- example
+    ```rust
+    mod front_of_house {
+        // both hosting module and add_to_waitlist function need to be public
+        pub mod hosting {
+            pub fn add_to_waitlist() {}
         }
     }
 
@@ -1317,3 +1339,257 @@ impl Rectangle {
         front_of_house::hosting::add_to_waitlist();
     }
     ```
+    
+**Starting relative paths with super** to access modules and functions in parent module
+- one `super::` to parent module
+    ```rust
+    fn deliver_order() {}
+
+    mod back_of_house {
+        fn fix_incorrect_order() {
+            cook_order();
+            super::deliver_order();
+        }
+
+        fn cook_order() {}
+    }
+    ```
+
+- double `super::super::` to grandparent model
+    ```rust
+    // the main.rs file
+    mod grandparent_module {
+        pub fn grandparent_function() {
+            println!("This is the grandparent function");
+        }
+    }
+
+    mod parent_module {
+        pub mod child_module {
+
+            pub fn access_grandparent_function() {
+                // Accessing the grandparent function using super::super::
+                super::super::grandparent_module::grandparent_function();
+            }
+        }
+    }
+
+    fn main() {
+        parent_module::child_module::access_grandparent_function();
+    }
+    ```
+    
+**Making structs and enums public**: 
+
+- struct need to make public field-by-field case
+    ```rust
+    mod back_of_house {
+        pub struct Breakfast {      // public as a whole
+            pub toast: String,
+            seasonal_fruit: String, // keep private from access individually
+        }
+
+        impl Breakfast {
+            pub fn summer(toast: &str) -> Breakfast {
+                Breakfast {
+                    toast: String::from(toast),
+                    seasonal_fruit: String::from("peaches"),
+                }
+            }
+        }
+    }
+
+    pub fn eat_at_restaurant() {
+        // Order a breakfast in the summer with Rye toast
+        let mut meal = back_of_house::Breakfast::summer("Rye");
+        // Change our mind about what bread we'd like
+        meal.toast = String::from("Wheat");
+        println!("I'd like {} toast please", meal.toast);
+
+        // The next line won't compile if we uncomment it; we're not allowed
+        // to see or modify the seasonal fruit that comes with the meal
+        // meal.seasonal_fruit = String::from("blueberries");
+    }
+    ```
+
+- enum made public as a whole
+    ```rust
+    mod back_of_house {
+        pub enum Appetizer {  // all variants are public 
+            Soup,
+            Salad,
+        }
+    }
+
+    pub fn eat_at_restaurant() {
+        let order1 = back_of_house::Appetizer::Soup;
+        let order2 = back_of_house::Appetizer::Salad;
+    }
+    ```
+    
+## 7.4 Bring paths into scope with  the use keyword
+
+**why**: The path `a::b::c::d()` is repetitive. We can use `use` to bring `d()` into a scope.
+
+**Creating idiomatic use paths**
+
+- For functions, `use` goes all the way down to the module containing the functions, so we know here the function is NOT locally defined with an managiable path. It also avoids namespace confilict.
+    ```rust
+    mod mod1 {
+      pub mod2 {
+        pub fn f1() {}
+        pub fn f2() {}
+      }
+    }
+    use crate::mod1::mod2;  // path to the parent module of functiions
+    pub fn my_fun() {
+      mod2::f1();
+      mod2::f2();
+    }
+    ```
+- For structs and enums, `use` the full path, probably rarely two structs or enums having the same name.
+    ```rust
+    use std::collections::HashMap;  // full path to the struct
+
+    fn main() {
+        let mut map = HashMap::new();
+        map.insert(1, 2);
+    }
+    ```
+    
+**Providing new names with the as keyword**
+
+- We can also use `as` to rename a function, struct, or enums to a shorter one or to avaoid name conflict
+    ```rust
+    use std::fmt::Result;
+    use std::io::Result as IoResult;  // rename to avoid conflict
+
+    fn function1() -> Result {
+        // --snip--
+    }
+
+    fn function2() -> IoResult<()> {
+        // --snip--
+    }
+    ```
+    
+**Re-exporting names with pub use**
+
+- `pub use` brings names from other module to current one and use these names as if from current module.
+    ````rust
+    mod restaurant {
+        pub mod front_of_house {
+            pub mod hosting {
+                pub fn add_to_waitlist() {}
+            }
+        }
+
+        // pub use re-export hosting mod to under mode restaurant
+        pub use crate::restaurant::front_of_house::hosting;
+        
+        // re-export mod room from other mod to current on
+        pub use crate::hotel::room;
+
+        pub fn eat_at_restaurant() {
+            hosting::add_to_waitlist();
+        }
+    }
+    
+    mod hotel {
+        pub mod room {
+            pub fn desk();
+        }
+    }
+
+    pub fn eat_at_restaurant() {
+        // skip front_of_house in the parh as hosting is exported under restaurant
+        restaurant::hosting::add_to_waitlist();
+        // use mod room from restaurant mod instead of hotel
+        restaurant::room::desk();
+        // of course we can still use desk from hotel
+        hotel::room::desk();
+    }
+    ```
+    
+**Using external packages**: to use an external package, take package rand for example:
+
+- first add the package to `Cargo.toml` under `[dependencies]` so that the package and its dependencies will be downloaded for the project.
+    ```toml
+    [package]
+    ...
+    ...
+    ...
+    
+    [dependencies]
+    rand = "0.8.5"
+    ...
+    ```
+
+- then bring the package to scope with `use rand::xxx`:
+    ```rust
+    // Rng is a trait of rand package. use rand::rng brings all the trait
+    // into scope, such as rand::thred_rng.gen_range() function.
+    use rand::Rng;
+    fn main() {
+        let secret_number = rand::thread_rng().gen_range(1..=100);
+    }
+    ```
+    
+- run `$ cargo run` to install rand and its dependencies if not already install, and run the code.
+
+**Using nested paths to clean up large use lists**
+
+- using nested paths to convert multiple `use` statements into one. Examples:
+    ```rust
+    // before
+    use std::cmp::Ordering;
+    use std::io;
+    // after converting into nested path
+    use std::{cmp::Ordering, io};
+    
+    // before
+    use std::io;
+    use std::io::Write;
+    //after
+    use std::io::{self, Writing};
+    ```
+    
+- to bring all public modules and functions into scope, use the glob operator:
+    ```rust
+    use std::collectiions::*;
+    ```
+
+### 7.5 Separating modules into different files
+
+- basic structure: the root file `lib.rs` or `main.rs` lists the names of the top modules that can be called with `crate::xxx`. Then define seperate files `xxx.rs` with the same names as the modules. for example
+    - root file `src/librs`
+        ```rust
+        // list all modules
+        mod restaurant;
+        mod hotel;
+        
+        // use the modules
+        use crate::restaurant::kitchen;
+        
+        pub fn cooking () {
+            kitchen::knife();
+        }
+        ```
+    - `src/restaurant.rs`
+        ```rust
+        pub mod kitchen {
+            pub fn knife() {)
+        }
+        ```
+
+- further seperate mod kitchen into a file `kitchen.rs`. In this case we need to create a sub directory `restaurant` so the file is `src/restaurant/kitchen.rs` and the files changed to:
+    - `src/restaurant.rs`:
+        ```rust
+        pub mod kitchen;
+        ```
+    - `src/restaurant/kitchen.rs`:
+        ```rust
+        pub fn knife() {}
+        ```
+        
+
