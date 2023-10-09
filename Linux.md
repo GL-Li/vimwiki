@@ -59,6 +59,7 @@
 
 ## QA =========================================================================
 
+
 ### QA: how to burn an iso image onto a USB drive from terminal?
 
 - Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`

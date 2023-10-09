@@ -11,12 +11,12 @@
 - [[ai]]: ChatGPT
 - [[api]]
 - [[docker_kubernetes]]
-- [[git]]
+- [[git]] --- [[bitbucket]]
 - [[julia]]
 - [[R|R language]]
 - [[regex|Regular Expression]]
 - [[Rust_language]]
-- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]]
+- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]]
 - [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
 
 # Sample project study - learn best practice from good project

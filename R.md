@@ -66,6 +66,10 @@ to increase to 500 columns.
 
 ## package development ========================================================
 
+### QA: how to suppress print in unit test?
+
+Use `expect_output(res <- my_function(...))` to hide print out.
+
 ### QA: how to use and write package vignettes?
 
 - `> browseVignettes(package = "dplyr")` to open all vignettes of a package in web brower
@@ -101,6 +105,8 @@ to increase to 500 columns.
 
 ### QA: R is a very flexible with types, which potentially causes unexpected results without showing any errors or warnings. What are the common functions have this kind of danger?
 
+- `all(character(0) == 0)` is `TRUE`. This is so dangerous, as empty case should not be simply treated as TRUE. We want to identify some real cases that make sense.
+
 - `length(levels(x))`: the code is supposed to check the number of levels of a factor. It also works when `x` is a character. This will give incorrect results as shown in the code snippet below:
     ```r
     x <- c("aaa", "bbb", "ccc")
@@ -110,9 +116,10 @@ to increase to 500 columns.
     ```
     
 
-### QA: how to suppress message in readr::read_csv functon?
+### QA: what are some readr::read_csv tricks? 1) how to suppress message in readr::read_csv functon? 2) check all rows to determine column type.
 
 - `readr::read_csv(..., show_col_types = FALSE)` to suppress message.
+- `readr::read_csv(..., guess_max = Inf)` to read all rows then determine column type. Default is 1000 rows. So if the first 1000 rows are empty or in different type, the reading result might be wrong.
 
 ### QA: how to check memory usage in a R process?
 
