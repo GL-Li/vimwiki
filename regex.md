@@ -5,16 +5,27 @@
 
 ## QA ====
 
-### QA: how to capture all string before a pattern, and if pattern does not exist, the whole string?
+### QA: how to capture all string before (or after) a pattern, and if pattern does not exist, the whole string?
 
 Use `^(.*?)(?=pattern|$)`, which can be read as: from beginning `^`, capture any string `(.*?)` until `pattern` or to the end `$`.
 
 Example:
 
 ```r
-x <- c("abc ---", "xyz", "123 ---")
+x <- c("abc ---", "xyz", "123 --")
+# look ahead
 stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
 ```
+
+To capture after a pattern or whole string
+
+```R
+x <- c("--- abc", "xyz", "-- 123")
+# look behind
+stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
+```
+
+
 
 ## raw notes
 
@@ -82,13 +93,13 @@ stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
         str_extract_all(x, "<.+>")
         # [[1]]
         # [1] "<h1> heading one </h1>"
-
+        
         # .+?> matches all until hitting the first >
         str_extract_all(x, "<.+?>")
         # [[1]]
         # [1] "<h1>"  "</h1>"
         # being lazy means `.+?` matches as few characters as possible before find `>`.
-
+        
         ```
     - `?+`, `*+`, and `++` are possessive that does not backtrack. It is faster than lazy and greedy search.
         ```r
@@ -96,11 +107,11 @@ stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
         str_extract(y, ".+dog")
         # [1] "this is a dog"
         # .+ includes dog but then track back for dog to complete the match
-
+        
         str_extract(y, ".++dog")
         # [1] NA
         # .++ include dog but will not track back so cannot find match for dog in the patern and returns nothing.
-
+        
         ```
 
 ### regex concepts: capturing groups, backreference
@@ -113,7 +124,7 @@ stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
     #      [,1]      [,2]  [,3]
     # [1,] "123 456" "123" "456"
     # [2,] "987 654" "987" "654"
-
+    
     str_match(x, "^(\\d{3})\\s(\\d{3})\\s(\\d{3})(\\s-\\s\\1\\s\\2)?")
     # \\1 and \\2 backreference to the first and second capture
     # groups for repeated matching
@@ -148,22 +159,19 @@ Not returned and not in the overall matched string.
 - lookahead with `(?=xxx)` to look ahead of "xxx"
     ```R
     x <- c("abc def ghi jkl", "123 ghi 456")
-
+    
     # look for word ahead of "ghi"
-    str_match(x, "(?<word>\\w+)\\s?(?=ghi)")
+    str_extract(x, "(?<word>\\w+)\\s?(?=ghi)")
     #             word
-    # [1,] "def " "def"
-    # [2,] "123 " "123"
+    # [1,] "def " "123"
     ```
-
+    
 - lookbehind with `(?<=xxx)` to look behind "xxx"
     ```R
     # look for word after "ghi"
-    str_match(x, "(?<=ghi)\\s?(?<word>\\w+)")
+    str_extract(x, "(?<=ghi)\\s?(?<word>\\w+)")
     #             word
-    # [1,] " jkl" "jkl"
-    # [2,] " 456" "456"
-
+    # [1,] " jkl" "456"
     ```
 
 - negative lookahead with `(?!xxx)` to find match not before "xxx"
