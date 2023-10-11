@@ -1593,3 +1593,591 @@ impl Rectangle {
         ```
         
 
+### 8.1 Storing lists o values with vectors
+
+**vector basics Vec<T>**
+
+- A vector only stores values of the same type.
+- two ways to create a vector
+    ```rust
+    // method 1: create an empty vector
+    let v1: Vec<i32> = Vec::new();
+    
+    // method 2: create a vector with initial values, type inferred
+    let v2 = vec![1, 2, 3];
+    ```
+- updating a vector with `.push`
+    ```rust
+    let mut v = Vec::new();
+    v.push(1);
+    v.push(2);
+    ```
+- reading elements of Vectors: two ways, which to use depends on whether you want to programming crash or not when index is out of boundary.
+    ```rust
+    // use index
+    let v = vec![1, 2, 3];
+    println!("{}", v[1]);  // print number 2
+    println!("{}", v[99]); // panic, out of boundary
+    
+    // use get to return an option
+    println!("{:?}", v.get(1));  // print Some(2)
+    println!("{:?}", v.get(9));  // print None
+    ```
+
+**Iterating over the values in a vector**
+
+- use each value in iteration:
+    ```rust
+    let v = vec![100, 32, 57];
+    for n_ref in &v {                    // use reference to avoid moving
+        // n_ref has type &i32
+        let n_plus_one: i32 = *n_ref + 1; // dereference to access value
+        println!("{n_plus_one}");
+    }
+        ```
+- modify each value in iteration:
+    ```rust
+    let mut v = vec![100, 32, 57];
+    for n_ref in &mut v {
+        // n_ref has type &mut i32
+        *n_ref += 50;
+    }
+    ```
+- non-copyable elements cannot be moved out of a vector by indexing:
+    ```rust
+    let v = vec![String::from("Hello ")];
+    let mut s = v[0];    // cannot move String out of the vector by indexing to
+    s.push_str("world"); // avoid the String being owned by both v and s.
+    println!("{s}");
+    ```
+
+**Using a enum to store multiple types**
+
+- example:
+    ```rust
+    enum SpreadsheetCell {
+        Int(i32),
+        Float(f64),
+        Text(String),
+    }
+
+    // this vector has all element of type SpreadsheetCell, but different variants
+    let row = vec![
+        SpreadsheetCell::Int(3),
+        SpreadsheetCell::Text(String::from("blue")),
+        SpreadsheetCell::Float(10.12),
+    ];
+    ```
+    
+**Quiz**
+
+- quiz 2:
+    ```rust
+    fn main() {
+      let mut v: Vec<i32> = vec![1, 2, 3];
+      let mut v2: Vec<&mut i32> = Vec::new();
+      for i in &mut v {
+        v2.push(i);  // as v2 is Vec<&mut i32>, i has to be &mut i32,
+      }
+      *v2[0] = 5;   // v2[0] point to v1[0] which point to a value. 
+                    // the assignment changes the value but v2[0] and v1[0]
+                    // have the same value
+      let a = *v2[0];
+      let b = v[0];
+      println!("{a} {b}");  // print 5 5
+    }
+    ```
+    
+### 8.2 storing UTF-8 encoded text with Strings
+
+**string basics**
+
+- creating a new string: 3 methods:
+    ```rust
+    // 1. new empty string
+    let s1 = String::new();
+    
+    // 2. with initial value
+    let s2 = String::from("any value");
+    
+    // 3. convert from a &str
+    let s3 = "any value".to_string();
+    ```
+    
+- updating a string:
+    ```rust
+    // 1. appending with push_str
+    let mut s1 = String::from("Hello ");
+    s1.push_str("World!");  // update s1, no return. s1 has to be mutable
+    let s3 = " I come";
+    s1.push_str(s3);  // s3 is &str and is not moved
+    println!("s3 is not deleted. It is still {s3}");  // no problem
+    
+    // 2. push to add a single character
+    let mut s4 = "lo".to_string();
+    s4.push('l');  // s4 update to "lol"
+    
+    // 3. concatenate with + operator
+    let s5 = String::from("aaa");
+    let s6 = String::from("bbb");
+    let s7 = s5 + &s6;  // s5 moved to s7, in the form String + &str + &str + ...
+    let s8 = String::from("aaa") + "bbb" + "ccc"; // get aaabbbccc
+    
+    // 4. concatenate with format! macro, which does not take ownership
+    let c1 = "aaa".to_string();
+    let c2 = "bbb".to_string();
+    let c3 = "ccc".to_string();
+    let c = format!("{c1}-{c2}-{c3}");  // get aaa-bbb-ccc and c1, ... still live
+    ``` 
+    
+**Indexing into strings**: String does not support indexing with s[2]
+
+- internal representation of String: in UTF-8 encoding, a character may be represented by multiple bytes and return by indexing of bytes may not make sense.
+    ```rust
+    // 1 byte a ascii character
+    let hello = String::from("Hola");
+    
+    // 2 bytes a character
+    let hello = String::from("Здравствуйте");
+
+    // 4 bytes a character
+    let hello = String::from("你好");
+    ```
+
+- bytes and scalar values and grapheme clusters: there are multiple ways to represent a String. Hard to indexing.
+
+**Slicing Strings**: it has the same issue as indexing with character boundaries. Use with caution. The good thing is that the compiler can catch the issue.
+
+- examples:
+    ```rust
+    // safe with ascii  characters
+    let s = "abcdefg";
+    let s1 = &s[0..3];  // s1 is "abc"
+    
+    // be careful when a character has more than one byte
+    let c = "Здравствуйте";
+    let c1 = &c[0..4];  // c1 is the first two chacaters "Зд"
+    let c2 = &c[0..5];  // panic, cut into the third character,
+    ```
+    
+**Methods for iterating over strings** 
+
+- using `chars()` method:
+    ```rust
+    for c in "Здabcравствуйте".chars() {
+        println!("c");  // print each character З, д, a, b, ...
+    }
+    ```
+    
+- using `bytes()` method: may never need it in my life
+    ```rust
+    for c in "Здabcравствуйте".byte() {
+        println!("c");  // print UTF8 code 208, 151, 208, 180, ...
+    }
+    ```
+    
+### 8.3 Storing keys with associated values in hash map
+
+**hash map basics**
+
+- crating a hash map: all keys must be of the same type and all values of the same type.
+    ```rust
+    // HashMap is not included in prelude
+    use std::collections::HashMap;
+
+    let mut scores = HashMap::new();
+
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Yellow"), 50);
+    dbg!(&scores);  // use reference, otherwise moved by dbg!
+    ```
+
+- accessing values in hash map with `get()` method, which returns an `Option<&V>`.
+    ```rust
+    // 1. access a single value
+    let team_name = String::from("Blue");
+    let score = scores.get(&team_name).copied().unwrap_or(0)
+        // get() returns a Option<&i32>, not good for unwrap_or(0) as 0 is i32
+        // use copied() to convert it to Option<i32>
+        
+    // 2. iterate over a hash map
+    for (k, v) in &scores {
+        println!("{k}: {v});
+    }
+    ```
+    
+**hash maps and ownership**
+
+- copy and move:
+    ```rust
+    let k = String::from("Blue");
+    let v = 10;
+    let mut scores = HashMap::new();
+    scores.insert(k, v);  // String k is moved to scores, i32 v is copied to scores
+    ```
+    
+**updating a hash map**
+
+- overwriting a value of an existing key use `.insert()`
+    ```rust
+    use std::collections::HashMap;
+
+    let mut scores = HashMap::new();
+
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Blue"), 25); // replace line above
+
+    println!("{:?}", scores);
+    ```
+    
+- adding a key-value pair only if the key does not exist with `.entry().or_insert()`
+    ```rust
+    use std::collections::HashMap;
+
+    let mut scores = HashMap::new();
+    scores.insert(String::from("Blue"), 10);
+
+    scores.entry(String::from("Yellow")).or_insert(50);  // new, added
+    scores.entry(String::from("Blue")).or_insert(50);    // existing, no change
+
+    println!("{:?}", scores);
+    ```
+    
+- updating a value based on the old value
+    ```rust
+    use std::collections::HashMap;
+
+    let text = "hello world wonderful world";
+
+    let mut map = HashMap::new();
+
+    for word in text.split_whitespace() {
+        // or_insert() returns a mutable reference of the value of word to
+        // count, so that the value can be updated by dereferecing.
+        // the mutable reference goes out of scope before next round
+        let count = map.entry(word).or_insert(0);
+        *count += 1;
+    }
+
+    println!("{:?}", map);
+    ```  
+    
+    
+### 9.1 Unrecoverable errors with panic!
+
+**using a `panic!` backtrace**
+
+- two ways to cause panic:
+    - error in code
+        ```rust
+        fn main() {
+            let v = vec![1, 2, 3];
+            v[99];  // out of boundary error
+        }
+        ```
+    - use `panic!()` to stop run
+        ```rust
+        fn main() {
+            panic!();
+        }
+        ```
+
+- display backtrace at panic: i
+    - `$ RUST_BACKTRACE=1 cargo run` to show main backtrace
+    - `$ RUST_BACKTRACE=full cargo run` to show all backtrace
+
+
+### 9.2 recoverable errors with Result
+
+**Result enum**
+
+- definition:
+    ```rust
+    enum Result<T, E> {
+        Ok(T),  // contains the success value, small letter k
+        Err(E), // contains the error value
+    }
+    ```
+    
+- examples
+    ```rust
+    let good_result: Result<i32, i32> = Ok(10);
+    let bad_result: Result<i32, i32> = Err(10);
+    ```
+    
+- `std::fs::File::open()` returns a Result type
+    ```rust
+    use std::fs::File;
+
+    fn main() {
+        let greeting_file_result = File::open("hello.txt");
+
+        let greeting_file = match greeting_file_result {
+            Ok(file) => file,
+            Err(error) => panic!("Problem opening the file: {:?}", error),
+        };
+    }
+    ```
+    
+- examples of `File.open()` failurs:
+    - NotFound: 
+      ```
+      [src/main.rs:7] &greeting_file_result = Err(
+            Os {
+                code: 2,
+                kind: NotFound,
+                message: "No such file or directory",
+            },
+        )
+        ```
+    - PermissionDenied, for example, read a write-only file
+        ```
+        [src/main.rs:7] &greeting_file_result = Err(
+            Os {
+                code: 13,
+                kind: PermissionDenied,
+                message: "Permission denied",
+            },
+        )
+        ```
+    
+**matching on different errors**
+
+- use `error.kind()` for to extract specific result of `Result::Err(error)` variant
+    ```rust
+    use std::fs::File;
+    use std::io::ErrorKind;
+
+    fn main() {
+        let greeting_file_result = File::open("hello.txt");
+
+        let greeting_file = match greeting_file_result {
+            Ok(file) => file,
+            Err(error) => match error.kind() {
+                ErrorKind::NotFound => match File::create("hello.txt") {
+                    Ok(fc) => fc,
+                    Err(e) => panic!("Problem creating the file: {:?}", e),
+                },
+                other_error => {
+                    panic!("Problem opening the file: {:?}", other_error);
+                }
+            },
+        };
+    }
+    ```
+    
+- enum ErroKind has 40 variants and is growing
+    ```rust
+    pub enum ErrorKind {
+        NotFound,
+        PermissionDenied,
+        ConnectionRefused,
+        ...,
+        OutOfMemory,
+        Other,
+    }
+    ```
+    
+**shortcuts for panic on Error: unwrap and expect**
+
+- why: less verbose than `match`. Most programmer use them instead of `match`.
+
+- `.unwrap()` of a `Restult` enum returns its content if successful or panic if failure
+    ```rust
+    use std::fs::File;
+
+    fn main() {
+        let greeting_file = File::open("hello.txt").unwrap();
+    }
+    ```
+    
+- `.expect()` method does the same but gives a customized  error message
+    ```rust
+    use std::fs::File;
+
+    fn main() {
+        let greeting_file = File::open("hello.txt")
+            .expect("hello.txt should be included in this project");
+    }
+    ```
+    
+**propagating errors** to function calling something that might fail
+
+- normal example:
+    ```rust
+    use std::fs::File;
+    use std::io::{self, Read};
+
+    // use Result enum to wrap different type for return
+    fn read_username_from_file() -> Result<String, io::Error> {
+        let username_file_result = File::open("hello.txt");
+
+        let mut username_file = match username_file_result {
+            Ok(file) => file,
+            Err(e) => return Err(e),
+        };
+
+        let mut username = String::new();
+
+        match username_file.read_to_string(&mut username) {
+            Ok(_) => Ok(username),
+            Err(e) => Err(e),
+        }
+    }
+    ```
+
+- short version using `?` opearator. The code bedlow equals to those above
+    ```rust
+    use std::fs::File;
+    use std::io::{self, Read};
+
+    fn read_username_from_file() -> Result<String, io::Error> {
+        let mut username = String::new();
+
+        // ? means that move on if successful, Err(e) if failed
+        // read_username_from_file must return Result or Option or
+        // other types implementing FromResidual
+        File::open("hello.txt")?.read_to_string(&mut username)?;
+
+        Ok(username)
+    }
+    ```
+    
+- use `?` in functions returning Option
+    ```rust
+    fn last_char_of_first_line(text: &str) -> Option<char> {
+        text.lines().next()?.chars().last()
+    }
+    ```
+
+- return of `main()` function: can return a Result type
+    ```rust
+    use std::error::Error;
+    use std::fs::File;
+
+    // ignore success type by unit (), return any error with Box<dyn Error>
+    fn main() -> Result<(), Box<dyn Error>> {
+        let greeting_file = File::open("hello.txt")?;
+
+        Ok(())   // a way to use unit ()
+    }
+    ```
+    
+### 9.3 to panic! or not to panic!
+Revisit when having more experiences.
+
+
+## 10 Generic types, traits, and lifetimes
+
+**generic types vs concrete types**
+
+- generics are abstract stand-ins for concrete types or other properties. A generic type is a placeholder for multiple concrete types.
+
+- concrete types are types like i32, String, or other specific types.
+
+### 10.1 generic data types
+
+**define generic data types**
+
+- in struct definitions:
+    ```rust
+    // Point allow differernt types in field but all fields have the same type
+    struct Point<T> {
+        x: T,
+        y: T,
+    }
+
+    fn main() {
+        let integer = Point { x: 5, y: 10 };  // T is i32
+        let float = Point { x: 1.0, y: 4.0 }; // T is f64
+    }
+    
+    // each field can have their own type
+    struct Point<T, U> {
+        x: T,
+        y: U,
+    }
+
+    fn main() {
+        let both_integer = Point { x: 5, y: 10 };
+        let both_float = Point { x: 1.0, y: 4.0 };
+        let integer_and_float = Point { x: 5, y: 4.0 };
+    }
+    ```
+    
+- in enum definitions. We already have the examples in Option and Result enums
+    ```rust
+    enum Option<T> {
+        Some(T),
+        None,
+    }
+
+    enum Result<T, E> {
+        Ok(T),
+        Err(E),
+    }
+    ```
+
+- in method definitions
+    - simple case
+        ```rust
+        struct Point<T> {
+            x: T,
+            y: T,
+        }
+
+        // use impl<T> to define a generic method
+        impl<T> Point<T> {
+            fn get_x(&self) -> &T {
+                &self.x
+            }
+        }
+        
+        // we can also define a method for a specific type of generic struct
+        impl Point<f32> {
+            fn distance_from_origin(&self) -> f32 {
+                (self.x.powi(2) + self.y.powi(2)).sqrt()
+            }
+        }
+
+
+        fn main() {
+            let p = Point { x: 5, y: 10 };
+
+            println!("p.x = {}", p.get_x());
+            println!("distance to origin is {}", p.distance_from_origin());
+        }
+        ```
+    
+    - mixed types:
+        ```rust
+        struct Point<X1, Y1> {
+            x: X1,
+            y: Y1,
+        }
+
+        impl<X1, Y1> Point<X1, Y1> {
+            // self in method is Point<X1, Y1> above
+            // add new signature <X2, Y2> to mixup to make it generic
+            fn mixup<X2, Y2>(self, other: Point<X2, Y2>) -> Point<X1, Y2> {
+                Point {
+                    x: self.x,  // x has type X1
+                    y: other.y, // y has type Y2
+                }
+            }
+        }
+
+        fn main() {
+            let p1 = Point { x: 5, y: 10.4 };
+            let p2 = Point { x: "Hello", y: 'c' };
+
+            let p3 = p1.mixup(p2);
+
+            println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+        }
+        ```
+        
+### 10.2 traits: define shared behavior
+
+
+
