@@ -84,7 +84,7 @@ stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
     - `{3,5}` repeats 3, 4, or 5 times
     - `{3,}` repeats 3 or more times
 
-- greedy lazy possessive repetition
+- greedy, lazy, possessive repetition
     - `?` `*` and `+` are greedy, returns all matches
     - `??` `*?` and `+?` are lazy, returns few matches as possible
         ```r
@@ -120,76 +120,69 @@ stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
     ```R
     x <- c("123 456 789", "987 654 321 - 987 654")
     str_match(x, "^(\\d{3})\\s(\\d{3})")
-    # each element include an overall match followed by each capture groups
-    #      [,1]      [,2]  [,3]
-    # [1,] "123 456" "123" "456"
-    # [2,] "987 654" "987" "654"
+    	# each element include an overall match followed by each capture groups
+        #      [,1]      [,2]  [,3]
+        # [1,] "123 456" "123" "456"
+        # [2,] "987 654" "987" "654"
     
     str_match(x, "^(\\d{3})\\s(\\d{3})\\s(\\d{3})(\\s-\\s\\1\\s\\2)?")
-    # \\1 and \\2 backreference to the first and second capture
-    # groups for repeated matching
-    #      [,1]                 [,2]  [,3]  [,4]  [,5]
-    # [1,] "123 456 789"        "123" "456" "789" NA
-    # [2,] "987 654 321 - 987 " "987" "654" "321" " - 987 654"
+        # \\1 and \\2 backreference to the first and second capture
+        # groups for repeated matching
+        #      [,1]                 [,2]  [,3]  [,4]  [,5]
+        # [1,] "123 456 789"        "123" "456" "789" NA
+        # [2,] "987 654 321 - 987 " "987" "654" "321" " - 987 654"
     ```
 
 - capture groups with names for easy reference using `(?<aaa>xxx)` inside
     ```R
     names = c("Jone Smith", "Jay F Brown")
     str_match(names, "(?<firstname>\\w+)\\s?(?<middlename>\\w+)?\\s(?<lastname>\\w+)")
-    #                    firstname middlename lastname
-    # [1,] "Jone Smith"  "Jone"    NA         "Smith"
-    # [2,] "Jay F Brown" "Jay"     "F"        "Brown"
+        #                    firstname middlename lastname
+        # [1,] "Jone Smith"  "Jone"    NA         "Smith"
+        # [2,] "Jay F Brown" "Jay"     "F"        "Brown"
     ```
 
 - non-capturing group `(?:xxx)` which match is not returned as an seperate object but is in the overall matched string.
     ```R
     cars <- c("this is a green car", "this is a red car")
     str_match(cars, "(?:red|green)\\s(?<car>car)")
-    # the first group is used but not captured
-    #                  car
-    # [1,] "green car" "car"
-    # [2,] "red car"   "car"
+        # the first group is used but not captured
+        #                  car
+        # [1,] "green car" "car"
+        # [2,] "red car"   "car"
     ```
 
 ### regex positive and negative lookahead and lookbehind
 
-Not returned and not in the overall matched string.
+They are used to extract capture group before/after or not before/after a given pattern
 
 - lookahead with `(?=xxx)` to look ahead of "xxx"
     ```R
     x <- c("abc def ghi jkl", "123 ghi 456")
     
     # look for word ahead of "ghi"
-    str_extract(x, "(?<word>\\w+)\\s?(?=ghi)")
-    #             word
-    # [1,] "def " "123"
+    str_extract(x, "(\\w+)\\s?(?=ghi)")
+    	# [1,] "def " "123"
     ```
     
 - lookbehind with `(?<=xxx)` to look behind "xxx"
     ```R
     # look for word after "ghi"
     str_extract(x, "(?<=ghi)\\s?(?<word>\\w+)")
-    #             word
-    # [1,] " jkl" "456"
+    	# [1,] " jkl" "456"
     ```
-
+    
 - negative lookahead with `(?!xxx)` to find match not before "xxx"
     ```R
     # find ghi that is not before "456"
-    str_match(x, "(?<word>ghi)(?!(?:\\s?456))")
-    #            word
-    # [1,] "ghi" "ghi"
-    # [2,] NA    NA
+    str_extract(x, "(ghi)(?!(?:\\s?456))")
+    	# [1,] "ghi" NA
     ```
-
+    
 - negative lookbehind with `(?<!xxx)` to find match not behind "xxx"
     ```R
     # find ghi that is not after "def"
-    str_match(x, "(?<!(?:def\\s?))(?<word>ghi)")
-    #            word
-    # [1,] NA    NA
-    # [2,] "ghi" "ghi"
+    	# [1,] NA    "ghi"
     ```
 
 ### regex atomic group with `(?>xxxx|yyy|zz)` to exit the group after the first match inside
@@ -220,7 +213,7 @@ aaa <- c("rcethn.male (20)", "jobTitle.Sr. Manager (17)",
 #   a valid return.
 str_match(aaa, "(?<factor>^.+?)(?=\\s\\(\\d+\\)$|\\sX\\d{2,}$|$)")
 # or
-str_extract(aaa, "(?<factor>^.+?)(?=\\s\\(\\d+\\)$|\\sX\\d{2,}$|$)")
+str_extract(aaa, "^(.+?)(?=\\s\\(\\d+\\)$|\\sX\\d{2,}$|$)")
 # str_extract returns overall matching. In this case, it is the
 # same as the capturing group
 ```
