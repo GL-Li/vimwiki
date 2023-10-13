@@ -1,5 +1,31 @@
 ## General R settings =========================================================
 
+### QA: how to set up options and environment variables for R?
+
+- Set up options in `.Rprofile` and uses options
+    - set options by adding line
+      ```r
+      options(warning.length = 100)
+      ```
+    - view options with `getOptions(warning.length)`
+    - view all options with `options()`.
+    
+- Specify environment variables in `.Renviron` file and use them.
+    - add line:
+        ```
+        AAA=abcdefg
+        ```
+    - access the environment variable with `Sys.getenv("AAA")`
+
+- There are three locations for these files: 
+    - project root
+    - user home, in Linux it is `~/`.
+    - R home, check with `R.home()`.
+
+- When a R session starts, it first look them at the project root. If not find, look at home, and then R home.
+
+- If they are important to a project, it is recommended to place them in project root so can be shared on other computers.
+
 ### QA: how to access system info from R?
 
 `> .Platform$OS.type` to show OS, return "windows", "unix", or ...
