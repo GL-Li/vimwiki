@@ -2129,7 +2129,7 @@ Revisit when having more experiences.
         // use impl<T> to define a generic method
         impl<T> Point<T> {
             fn get_x(&self) -> &T {
-                &self.x
+                &self.x   // it is &(self.x), not (&self).x
             }
         }
         
@@ -2179,5 +2179,254 @@ Revisit when having more experiences.
         
 ### 10.2 traits: define shared behavior
 
+**what is trait**: a trait is a method or functionality shared by multiple types. It has the same method signature or the format to be used when being called. The implemetation, however, is different in different types.
+
+- defining a trait: the definition only provides signature and is very brief:
+    ```rust
+    // a trait can have multiple methods, all must be impleted 
+    pub trait Summary {
+        // take reference to a variable of certain types and return a String.
+        // This is all the definition required
+        fn summarize(&self) -> String; 
+        
+        // define another method that mutate the variable of certain types
+        fn hide_author(&mut self);
+    }
+    ```
+    
+- implement a trait on a type. All trait items must be implemented. A working example:
+    ```rust
+    // src/main.rs
+    fn main() {
+        // example of Tweet
+        let mut tweet = Tweet {
+            username: String::from("horse_ebooks"),
+            content: String::from("of course, as you probably already know, people"),
+            reply: false,
+            retweet: false,
+        };
+        tweet.hide_author();
+        println!("1 new tweet: {}", tweet.summarize());
+
+        // example of NewsArticle
+        let mut article = NewsArticle {
+            headline: String::from("Breaking New: xxxx"),
+            location: String::from("Boston"),
+            author: String::from("Tom"),
+            content: String::from("It just happened, ..."),
+        };
+        article.hide_author();
+        println!("News: {}", article.summarize());
+    }
+    
+    
+    pub trait Summary {
+        fn summarize(&self) -> String;
+        fn hide_author(&mut self);
+    }
+
+    pub struct NewsArticle {
+        pub headline: String,
+        pub location: String,
+        pub author: String,
+        pub content: String,
+    }
+
+    impl Summary for NewsArticle {
+        // remember to implement all items in trait Summary
+        fn summarize(&self) -> String {
+            format!("{}, by {} ({})", self.headline, self.author, self.location)
+        }
+
+        fn hide_author(&mut self) {
+            self.author = String::from("anonimous");
+        }
+    }
+
+    pub struct Tweet {
+        pub username: String,
+        pub content: String,
+        pub reply: bool,
+        pub retweet: bool,
+    }
+
+    impl Summary for Tweet {
+        fn summarize(&self) -> String {
+            format!("{}: {}", self.username, self.content)
+        }
+
+        fn hide_author(&mut self) {
+            self.username = String::from("Anonimous");
+        }
+    }
+    ```
+
+- default implementations: it is like a placeholder for a trait item. It is used to pass compiler before implement for each type. It will be replaced after the item is implemented for a type but the default still works for types without specific implementation.
+    ```rust
+    pub trait Summary {
+        // default to a very simple message
+        fn summarize(&self) -> String {
+            println!("To be completed ...");
+            String::from("(Read more ...)")
+        }
+    }
+    ```
+
+**traits as parameters** of functions
+
+- what is it: trait is used to specify types of a parameter
+    ```rust
+    // instead of specifying type for item, here the signature means item can be any
+    // type that has trait Summary implemented. In summary we now have three ways to 
+    // specify the type of a parameter:
+    // - concrete type such as x: i32
+    // - generic type such as x:T
+    // - type with trait such as x: &impl Xxx
+    pub fn notify(item: &impl Summary) {
+        println!("Breaking news! {}", item.summarize());
+    }
+    ```
+
+- trait bound syntax: trait bound is the long form signature above:
+    ```rust
+    // the following signature looks like restricted generic function -- T is restricted to those with trait Summary.
+    pub fn notify<T: Summary>(item: &T) {
+        println!("Breaking news! {}", item.summarize());
+    }
+    
+    // it can be more concise when multiple parameters have the same trait
+    pub fn notify<T: Summary>(item1: &T, item2: &T) {//pass}
+    // better than 
+    pub fn notify(item1: &impl Summary, item2: &impl Summary) {//pass}
+    ```
+    
+- specifying multiple trait bounds with + syntax
+    ```rust
+    // either way is ok
+    pub fn notify(item: &(impl Summary + Display)) {
+    // or
+    pub fn notify<T: Summary + Display>(item: &T) {
+    ```
+    
+- clearer trait bounds with where clauses
+    ```rust
+    // hard to read if a signature has too many traits, foe example
+    fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> i32 {
+    
+    // it can be rewritten as below. It is easy to read and edit
+    fn some_function<T, U>(t: &T, u: &U) -> i32
+        where
+            T: Display + Clone,  
+            U: Clone + Debug,
+    {
+    ```
+    
+**returning types that implement traits**
+
+- still the function need to return only one type that implements a trait
+    ```rust
+    fn returns_summarizable() -> impl Summary {
+        Tweet {
+            username: String::from("horse_ebooks"),
+            content: String::from(
+                "of course, as you probably already know, people",
+            ),
+            reply: false,
+            retweet: false,
+        }
+    }
+    ```
+
+- this is wrong as a function cannot return two types
+    ```rust
+    fn returns_summarizable(switch: bool) -> impl Summary {
+        if switch {
+            NewsArticle {
+                headline: String::from(
+                    "Penguins win the Stanley Cup Championship!",
+                ),
+                location: String::from("Pittsburgh, PA, USA"),
+                author: String::from("Iceburgh"),
+                content: String::from(
+                    "The Pittsburgh Penguins once again are the best \
+                     hockey team in the NHL.",
+                ),
+            }
+        } else {
+            Tweet {
+                username: String::from("horse_ebooks"),
+                content: String::from(
+                    "of course, as you probably already know, people",
+                ),
+                reply: false,
+                retweet: false,
+            }
+        }
+    }
+    ```
+    
+**useing trait bounds to conditionally implement methods** thta have given traints. It is a way to avoid compiling errors when defining methods on generic types.
+
+- `PartialOrd` trait to compare
+    ```rust
+    use std::fmt::Display;
+
+    struct Pair<T> {
+        x: T,
+        y: T,
+    }
+
+    // no restriction on method new()
+    impl<T> Pair<T> {
+        fn new(x: T, y: T) -> Self {
+            Self { x, y }
+        }
+    }
+
+    // cmp_display() only works for type implementing Display and PartialOrd.
+    // Otherwise >= or println! will report a cmpliler error
+    impl<T: Display + PartialOrd> Pair<T> {
+        fn cmp_display(&self) {
+            if self.x >= self.y {
+                println!("The largest member is x = {}", self.x);
+            } else {
+                println!("The largest member is y = {}", self.y);
+            }
+        }
+    }
+    ```
+
+- if a trait is implemented to a type, all methods of the trait are applied to the type. By using trait bound, we can make sure that these methods work.
+    ```rust
+    // ToString is a trait in standard library. It has method to_sring().
+    // This method applies to all types that has Display trait. That is,
+    // any type that can be printed can be coverted to string
+    impl<T: Display> ToString for T {
+        // -- snip--
+    }
+    
+    // inter has Display so can be converted to string
+    let s = 3.to_string()   // same as String::from("3")
+    ```
+    
+**Quizz**
+
+- quiz 1: the code below does not compile:
+    ```rust
+    use std::fmt::Display;
+    
+    // the return is some type with Display trait, but not neccesarily a String
+    // so .push_str method may not work for it.
+    fn displayable<T: Display>(t: T) -> impl Display { t }
+    fn main() {
+      let s = String::from("hello");
+      let mut s2 = displayable(s);
+      s2.push_str(" world");
+      println!("{s2}");
+    }
+    ```
+    
+    
+### 10.3 Validating references with lifetimes
 
 
