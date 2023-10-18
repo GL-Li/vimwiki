@@ -207,8 +207,8 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
 
 ## QA: how to get into the terminal of running container?
 
-- `$ docker exec -it bash` for Ubuntu based container
-- `$ docker exec -it sh` for alpine-based container
+- `$ docker exec -it xxxx bash` for Ubuntu based container
+- `$ docker exec -it xxxx sh` for alpine-based container
 
 ## raw notes ==================================================================
 
