@@ -2429,4 +2429,111 @@ Revisit when having more experiences.
     
 ### 10.3 Validating references with lifetimes
 
+**lifetimes basics**
 
+- why lifetime: when a function returns a reference type, this return depends on the reference to  one or more parameters. Lifetimes tell compiler that the parameters lives long enough for the returned reference. In other words, lifetimes prevent dangling references.
+
+- example:
+    ```rust
+    // the return is a string slice &str that depends on x and y. So x and y
+    // must live as long as the return. The lifetime specifier 'a tells
+    // compiler that they have the same lifetime.
+    fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+        if x.len() > y.len() {
+            x
+        } else {
+            y
+        }
+    }
+    
+    // when calling the function and using its return, make sure the parameters
+    // live long enough. Here is a failed example:
+    fn main() {
+        let string1 = String::from("long string is long");
+        let result;
+        {
+            let string2 = String::from("xyz");
+            result = longest(string1.as_str(), string2.as_str());
+        }
+        // string2 is dead when printing result, compiler error
+        println!("The longest string is {}", result);
+    }
+    ```
+    
+**other topics on lifetime**
+
+- lifetime annotations in struct definition: in case a struct field holds reference, we need to specify lifetime in struct definition, for example:
+    ```rust
+    // simply give required lifetime specifier `a in definition.Do not have a
+    // practical role.
+    struct ImportantExcerpt<'a> {
+        part: &'a str,
+    }
+
+    fn main() {
+        let novel = String::from("Call me Ishmael. Some years ago...");
+        let first_sentence = novel.split('.').next().expect("Could not find a '.'");
+        let i = ImportantExcerpt {
+            // first_sentence is a string slice &str
+            part: first_sentence,
+        };
+    }
+    ```
+
+- lifetime elision rules: usually every reference in function signature needs a lifetime specifier. Some common patterns, however, are so common that the Rust team decided to code the pattern into compiler and lift the lifetime specifier. There are three rules the compiler follows if the lifetime specifiers are not provided:
+    - rule 1: the compiler assigns a different lifetime specifier for each input reference type. For example, 
+        - `fn foo(x: &i32, y: &i32)` is treated like `fn foo<'a, 'b>(x: &'a i32, y: &'b i32)`
+    - rule 2: If there is only one input lifetime parameter, that lifetime is assigined to all output lifetime parameters:
+        - `fn foo(x: &i32) -> &i32 {` becomes `fn foo<'a>(x: &'a i32) -> &'a i32 {`.
+    - rule 3: If `&self` or `&mut self` is one of the input parameters, its lifetime is assigned to all output lifetime parameters.
+        
+- lifetime annotations in method definitions
+    ```rust
+    // declair lifetime after impl and ImportantExceerpt
+    impl<'a> ImportantExcerpt<'a> {
+        // output is not a reference so no lifetime needed
+        fn level(&self) -> i32 {
+            3
+        }
+    }
+    
+    impl<'a> ImportantExcerpt<'a> {
+        // rule 3
+        fn announce_and_return_part(&self, announcement: &str) -> &str {
+            println!("Attention please: {}", announcement);
+            self.part
+        }
+    }
+    ```
+    
+- the static lifetime `'static` denotes a reference can live for  the entire duration of the program. All string literals have `'static` lifetime.Do not abuse it as the compiler may suggest it.
+
+**generic type parameters, trait bounds, and lifetimes together**
+
+- an example having them all:
+    ```rust
+    use std::fmt::Display;
+
+    // lifetime and generic typ in the same bracket <'a, T>
+    fn longest_with_an_announcement<'a, T>(
+        x: &'a str,
+        y: &'a str,
+        ann: T,
+    ) -> &'a str
+    where
+        T: Display,
+    {
+        println!("Announcement! {}", ann);
+        if x.len() > y.len() {
+            x
+        } else {
+            y
+        }
+    }
+    
+    fn main() {
+        longest_with_an_anouncement("abcd", "xyz", "ann: any type with Display");
+    }
+    ```
+    
+    
