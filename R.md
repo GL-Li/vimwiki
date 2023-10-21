@@ -88,8 +88,14 @@ Use `installr::updateR()` from a R console. Only works in Windows as `installr` 
 The starting working directory can be managed by file `/etc/rstudio/rsession.conf` by adding lines:
     ```
     # change ~/working to whatever you like. It is created automatically if not exist
-    session-default-working-dir=~/working
+    # in docker container, use full path instead of ~/
+    session-default-working-dir=/home/rstudio/working
     ```
+    
+If copy `rstudio-prefs.json` to containers `/home/rstudio/.config/rstudio/` make sure the line
+```
+"initial_working_directory": "/home/rstudio/project/` matches.
+```
 
 See https://docs.posit.co/ide/server-pro/rstudio_pro_sessions/directory_management.html#:~:text=The%20default%20working%20directory%20for,conf%20config%20file.
 
