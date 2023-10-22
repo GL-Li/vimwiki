@@ -152,8 +152,9 @@ fn main() {
 }
 ```
 
+# The Rust Book ============
 
-## Raw notes ===
+## 1. Getting started
 
 ### 1.1 Installation using rustup
 
@@ -251,7 +252,7 @@ fn main() {
         - only the executable is required to run
         - all others are artifacts for quick rebuild.
 
-### 2. Programming a guessing game
+## 2. Programming a guessing game
 
 - [x] elements in the code
     - `use std::io;`  use library `io` from standard library `std`
@@ -290,9 +291,9 @@ fn main() {
         - `$ cargo update` to update the version of dependencies
     - `$ cargo doc --open`: Generate documentation for the project, which list help documentation of functions and dependencies of the project.
 
-### 3 Common programming concepts
+## 3 Common programming concepts
 
-#### 3.1 variables and mutability
+### 3.1 variables and mutability
 
 **concurrent programming** is a form of programming in which several processes run concurrently during overlapping time periods.
 
@@ -307,19 +308,19 @@ fn main() {
     ```rust
     fn main() {
         let x = 5;
-
+    
         let x = x + 1; //now 6
-
+    
         {
             let x = x * 2; // here x is 12
             println!("The value of x in the inner scope is: {x}");
         }
-
+    
         println!("The value of x is: {x}"); // x is still 6 !!!!!
     }
     ```
 
-#### 3.2 data types
+### 3.2 data types
 
 **static data type**: As a statically typed language, Rust must know the types of all variables at compile time.
 
@@ -358,7 +359,8 @@ fn main() {
     let c: char = "z"; // error in double quote
     let c: char = 'abc'; //error, more than one character
    ```
-       
+   
+
 **Compound types** contain multiple values
 - tuple type can group different types. A tuple has a fixed length once created. A empty tuple is called `unit` and is written in `()`.
     ```rust
@@ -383,14 +385,14 @@ fn main() {
 
 **Standard library types** from RBE  chapt 19.
 
-#### 3.3 Functions
+### 3.3 Functions
 
 **Statement** performs some action and does not return a value. Therefore a statement cannot be assigned to a variable. Examples
 ```rust
 let y = 6;
 let x = (let y = 6); //error: expected expressioin, found statement ('let')
 ```
-    
+
 **Expression** returns a value and can be assigned to a variable.
 ```rust
 // 123 is an expression in
@@ -403,7 +405,7 @@ let y = {
 // calling a function or macro is an expression
 let z = my_functions();
 ```
-    
+
 **Function with return values**: rules to follow
 - types of argument must be specified 
 - type of return must be specified
@@ -421,7 +423,7 @@ let z = my_functions();
     }
     ```
 
-#### 3.4 control flow
+### 3.4 control flow
 
 **`if` must use `bool`** data type as condition
 ```rust
@@ -539,14 +541,14 @@ fn main() {
     println!("LIFTOFF!!!");
 }
 ```
-    
-### 4. Understanding ownership
 
-#### 4.1 What is ownership
+## 4. Understanding ownership
+
+### 4.1 What is ownership
 
 **Safety is the absence of undefined behavior**: any unexpected action by the code potentially causses security problems. 
     - A foundational goal of Rust is to ensure codes never have undefined behavior.
-    - A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
+        - A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
 
 **Frames are where variables live**: a frame is a mapping from variables to values within a single scope. A scope is defined by `{...}`, for example:
 ```rust
@@ -574,7 +576,7 @@ fn main() {
     let b = a; // move the pointer to b. Pointer a deleted
 }
 ```
-    
+
 **data structure Vec, String, and HashMap are boxes**: they are stored in heap when created with a pointer stored in stack frames.
 
 **Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory while running. The programmer must explicitly allocate and free the memory.
@@ -1032,7 +1034,7 @@ impl Rectangle {
 }
 ```
 
-## Enums and pattern matching
+## 6. Enums and pattern matching
 
 ### 6.1 Defining an enum
 
@@ -1060,6 +1062,7 @@ impl Rectangle {
     }
     ```
     
+
 **option enum - a special builtin enum**
 
 - why need it: Option enum is used to handle `null` cases as Rust does not have `null`. Option enum avoids errors when using null as a non-null value.
@@ -1070,7 +1073,7 @@ impl Rectangle {
       None,
       Some(T),
     }
-  ```  
+  ```
 
 - use of option enum. Option enum, `Some` and `None` are included in prelude when Rust is launched.
     ```rust
@@ -1129,7 +1132,7 @@ impl Rectangle {
         Coin::Quarter => 25,
       }
     }
-
+    
     // if we only care about peny and quater
     fn value_in_peny_quarter(coin: Coin) -> u8 {
       match coin {
@@ -1147,14 +1150,14 @@ impl Rectangle {
         let q1_cents = value_in_name(q1);
         println!("value in cents is {}", q1_cents);
     }
-
+    
     enum Coin {
         Peny,
         Nickel,
         Dime,
         Quarter(String),  // value of the String can be extracted, example below
     }
-
+    
     fn value_in_name(coin: Coin) -> String {
         match coin {
             Coin::Peny => "one".to_string(),
@@ -1172,7 +1175,7 @@ impl Rectangle {
         let y = plus_one(x);
         println!("y is {:?}", y);
     }
-
+    
     fn plus_one(x: Option<i32>) -> Option<i32> {
         match x {
             None => None,
@@ -1181,6 +1184,7 @@ impl Rectangle {
     }
     ```
     
+
 **How matches interact with ownership**
 
 - match consumes x if x is not copyable
@@ -1198,24 +1202,29 @@ impl Rectangle {
             Some(s) => Some(s + "_add_1"),
         }
     }
-    ```
-    
+```
+
 - match on a reference to avoid moving 
     ```rust
     fn main() {
         let opt: Option<String> = 
             Some(String::from("Hello world"));
-
+    
         // opt became &opt to avoiding moving
         match &opt {  
             Some(s) => println!("Some: {}", s),
             None => println!("None!")
         };
-
+    
         println!("{:?}", opt);
     }
     ```
     
+
+
+
+## 7. Managing growing project with packages, crates, and modules
+
 ### 7.1 Packages and Crates
 
 **A create is the smallest amount of cde that the Rust compiler considers at a time**
@@ -1257,6 +1266,7 @@ impl Rectangle {
         }
         ```
         
+
 **Grouping related code in modules**: example restaurant library
 - create a library crate project with:
     - `$ cargo new restaurant --lib`    where `--lib` for library crate. It create files:
@@ -1270,15 +1280,15 @@ impl Rectangle {
         mod front_of_house {
             mod hosting {
                 fn add_to_waitlist() {}
-
+        
                 fn seat_at_table() {}
             }
-
+        
             mod serving {
                 fn take_order() {}
-
+        
                 fn serve_order() {}
-
+        
                 fn take_payment() {}
             }
         }
@@ -1311,16 +1321,17 @@ impl Rectangle {
             fn add_to_waitlist() {}
         }
     }
-
+    
     pub fn eat_at_restaurant() {
         // Absolute path not working for private hosting module
         crate::front_of_house::hosting::add_to_waitlist();
-
+    
         // Relative path not working for private hosting module
         front_of_house::hosting::add_to_waitlist();
     }
     ```
     
+
 **Exposing paths with the pub keyword** to expose modules and functions that are private to functions calling them.
 - example
     ```rust
@@ -1330,27 +1341,28 @@ impl Rectangle {
             pub fn add_to_waitlist() {}
         }
     }
-
+    
     pub fn eat_at_restaurant() {
         // Absolute path
         crate::front_of_house::hosting::add_to_waitlist();
-
+    
         // Relative path
         front_of_house::hosting::add_to_waitlist();
     }
     ```
     
+
 **Starting relative paths with super** to access modules and functions in parent module
 - one `super::` to parent module
     ```rust
     fn deliver_order() {}
-
+    
     mod back_of_house {
         fn fix_incorrect_order() {
             cook_order();
             super::deliver_order();
         }
-
+    
         fn cook_order() {}
     }
     ```
@@ -1363,22 +1375,23 @@ impl Rectangle {
             println!("This is the grandparent function");
         }
     }
-
+    
     mod parent_module {
         pub mod child_module {
-
+    
             pub fn access_grandparent_function() {
                 // Accessing the grandparent function using super::super::
                 super::super::grandparent_module::grandparent_function();
             }
         }
     }
-
+    
     fn main() {
         parent_module::child_module::access_grandparent_function();
     }
     ```
     
+
 **Making structs and enums public**: 
 
 - struct need to make public field-by-field case
@@ -1388,7 +1401,7 @@ impl Rectangle {
             pub toast: String,
             seasonal_fruit: String, // keep private from access individually
         }
-
+    
         impl Breakfast {
             pub fn summer(toast: &str) -> Breakfast {
                 Breakfast {
@@ -1398,14 +1411,14 @@ impl Rectangle {
             }
         }
     }
-
+    
     pub fn eat_at_restaurant() {
         // Order a breakfast in the summer with Rye toast
         let mut meal = back_of_house::Breakfast::summer("Rye");
         // Change our mind about what bread we'd like
         meal.toast = String::from("Wheat");
         println!("I'd like {} toast please", meal.toast);
-
+    
         // The next line won't compile if we uncomment it; we're not allowed
         // to see or modify the seasonal fruit that comes with the meal
         // meal.seasonal_fruit = String::from("blueberries");
@@ -1420,14 +1433,15 @@ impl Rectangle {
             Salad,
         }
     }
-
+    
     pub fn eat_at_restaurant() {
         let order1 = back_of_house::Appetizer::Soup;
         let order2 = back_of_house::Appetizer::Salad;
     }
     ```
     
-## 7.4 Bring paths into scope with  the use keyword
+
+### 7.4 Bring paths into scope with  the use keyword
 
 **why**: The path `a::b::c::d()` is repetitive. We can use `use` to bring `d()` into a scope.
 
@@ -1450,29 +1464,31 @@ impl Rectangle {
 - For structs and enums, `use` the full path, probably rarely two structs or enums having the same name.
     ```rust
     use std::collections::HashMap;  // full path to the struct
-
+    
     fn main() {
         let mut map = HashMap::new();
         map.insert(1, 2);
     }
     ```
     
+
 **Providing new names with the as keyword**
 
 - We can also use `as` to rename a function, struct, or enums to a shorter one or to avaoid name conflict
     ```rust
     use std::fmt::Result;
     use std::io::Result as IoResult;  // rename to avoid conflict
-
+    
     fn function1() -> Result {
         // --snip--
     }
-
+    
     fn function2() -> IoResult<()> {
         // --snip--
     }
     ```
     
+
 **Re-exporting names with pub use**
 
 - `pub use` brings names from other module to current one and use these names as if from current module.
@@ -1483,13 +1499,13 @@ impl Rectangle {
                 pub fn add_to_waitlist() {}
             }
         }
-
+    
         // pub use re-export hosting mod to under mode restaurant
         pub use crate::restaurant::front_of_house::hosting;
         
         // re-export mod room from other mod to current on
         pub use crate::hotel::room;
-
+    
         pub fn eat_at_restaurant() {
             hosting::add_to_waitlist();
         }
@@ -1500,7 +1516,7 @@ impl Rectangle {
             pub fn desk();
         }
     }
-
+    
     pub fn eat_at_restaurant() {
         // skip front_of_house in the parh as hosting is exported under restaurant
         restaurant::hosting::add_to_waitlist();
@@ -1511,6 +1527,7 @@ impl Rectangle {
     }
     ```
     
+
 **Using external packages**: to use an external package, take package rand for example:
 
 - first add the package to `Cargo.toml` under `[dependencies]` so that the package and its dependencies will be downloaded for the project.
@@ -1593,7 +1610,11 @@ impl Rectangle {
         ```
         
 
-### 8.1 Storing lists o values with vectors
+
+
+## 8. Common collections
+
+### 8.1 Storing lists of values with vectors
 
 **vector basics Vec<T>**
 
@@ -1634,7 +1655,7 @@ impl Rectangle {
         let n_plus_one: i32 = *n_ref + 1; // dereference to access value
         println!("{n_plus_one}");
     }
-        ```
+    ```
 - modify each value in iteration:
     ```rust
     let mut v = vec![100, 32, 57];
@@ -1660,7 +1681,7 @@ impl Rectangle {
         Float(f64),
         Text(String),
     }
-
+    
     // this vector has all element of type SpreadsheetCell, but different variants
     let row = vec![
         SpreadsheetCell::Int(3),
@@ -1669,6 +1690,7 @@ impl Rectangle {
     ];
     ```
     
+
 **Quiz**
 
 - quiz 2:
@@ -1728,8 +1750,9 @@ impl Rectangle {
     let c2 = "bbb".to_string();
     let c3 = "ccc".to_string();
     let c = format!("{c1}-{c2}-{c3}");  // get aaa-bbb-ccc and c1, ... still live
-    ``` 
+    ```
     
+
 **Indexing into strings**: String does not support indexing with s[2]
 
 - internal representation of String: in UTF-8 encoding, a character may be represented by multiple bytes and return by indexing of bytes may not make sense.
@@ -1739,7 +1762,7 @@ impl Rectangle {
     
     // 2 bytes a character
     let hello = String::from("Здравствуйте");
-
+    
     // 4 bytes a character
     let hello = String::from("你好");
     ```
@@ -1760,6 +1783,7 @@ impl Rectangle {
     let c2 = &c[0..5];  // panic, cut into the third character,
     ```
     
+
 **Methods for iterating over strings** 
 
 - using `chars()` method:
@@ -1784,9 +1808,9 @@ impl Rectangle {
     ```rust
     // HashMap is not included in prelude
     use std::collections::HashMap;
-
+    
     let mut scores = HashMap::new();
-
+    
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Yellow"), 50);
     dbg!(&scores);  // use reference, otherwise moved by dbg!
@@ -1806,6 +1830,7 @@ impl Rectangle {
     }
     ```
     
+
 **hash maps and ownership**
 
 - copy and move:
@@ -1816,41 +1841,42 @@ impl Rectangle {
     scores.insert(k, v);  // String k is moved to scores, i32 v is copied to scores
     ```
     
+
 **updating a hash map**
 
 - overwriting a value of an existing key use `.insert()`
     ```rust
     use std::collections::HashMap;
-
+    
     let mut scores = HashMap::new();
-
+    
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Blue"), 25); // replace line above
-
+    
     println!("{:?}", scores);
     ```
     
 - adding a key-value pair only if the key does not exist with `.entry().or_insert()`
     ```rust
     use std::collections::HashMap;
-
+    
     let mut scores = HashMap::new();
     scores.insert(String::from("Blue"), 10);
-
+    
     scores.entry(String::from("Yellow")).or_insert(50);  // new, added
     scores.entry(String::from("Blue")).or_insert(50);    // existing, no change
-
+    
     println!("{:?}", scores);
     ```
     
 - updating a value based on the old value
     ```rust
     use std::collections::HashMap;
-
+    
     let text = "hello world wonderful world";
-
+    
     let mut map = HashMap::new();
-
+    
     for word in text.split_whitespace() {
         // or_insert() returns a mutable reference of the value of word to
         // count, so that the value can be updated by dereferecing.
@@ -1858,11 +1884,15 @@ impl Rectangle {
         let count = map.entry(word).or_insert(0);
         *count += 1;
     }
-
+    
     println!("{:?}", map);
-    ```  
+    ```
     
-    
+
+
+
+## 9. Error Handling
+
 ### 9.1 Unrecoverable errors with panic!
 
 **using a `panic!` backtrace**
@@ -1908,10 +1938,10 @@ impl Rectangle {
 - `std::fs::File::open()` returns a Result type
     ```rust
     use std::fs::File;
-
+    
     fn main() {
         let greeting_file_result = File::open("hello.txt");
-
+    
         let greeting_file = match greeting_file_result {
             Ok(file) => file,
             Err(error) => panic!("Problem opening the file: {:?}", error),
@@ -1929,7 +1959,7 @@ impl Rectangle {
                 message: "No such file or directory",
             },
         )
-        ```
+      ```
     - PermissionDenied, for example, read a write-only file
         ```
         [src/main.rs:7] &greeting_file_result = Err(
@@ -1941,16 +1971,17 @@ impl Rectangle {
         )
         ```
     
+
 **matching on different errors**
 
 - use `error.kind()` for to extract specific result of `Result::Err(error)` variant
     ```rust
     use std::fs::File;
     use std::io::ErrorKind;
-
+    
     fn main() {
         let greeting_file_result = File::open("hello.txt");
-
+    
         let greeting_file = match greeting_file_result {
             Ok(file) => file,
             Err(error) => match error.kind() {
@@ -1978,6 +2009,7 @@ impl Rectangle {
     }
     ```
     
+
 **shortcuts for panic on Error: unwrap and expect**
 
 - why: less verbose than `match`. Most programmer use them instead of `match`.
@@ -1985,7 +2017,7 @@ impl Rectangle {
 - `.unwrap()` of a `Restult` enum returns its content if successful or panic if failure
     ```rust
     use std::fs::File;
-
+    
     fn main() {
         let greeting_file = File::open("hello.txt").unwrap();
     }
@@ -1994,31 +2026,32 @@ impl Rectangle {
 - `.expect()` method does the same but gives a customized  error message
     ```rust
     use std::fs::File;
-
+    
     fn main() {
         let greeting_file = File::open("hello.txt")
             .expect("hello.txt should be included in this project");
     }
     ```
     
+
 **propagating errors** to function calling something that might fail
 
 - normal example:
     ```rust
     use std::fs::File;
     use std::io::{self, Read};
-
+    
     // use Result enum to wrap different type for return
     fn read_username_from_file() -> Result<String, io::Error> {
         let username_file_result = File::open("hello.txt");
-
+    
         let mut username_file = match username_file_result {
             Ok(file) => file,
             Err(e) => return Err(e),
         };
-
+    
         let mut username = String::new();
-
+    
         match username_file.read_to_string(&mut username) {
             Ok(_) => Ok(username),
             Err(e) => Err(e),
@@ -2030,15 +2063,15 @@ impl Rectangle {
     ```rust
     use std::fs::File;
     use std::io::{self, Read};
-
+    
     fn read_username_from_file() -> Result<String, io::Error> {
         let mut username = String::new();
-
+    
         // ? means that move on if successful, Err(e) if failed
         // read_username_from_file must return Result or Option or
         // other types implementing FromResidual
         File::open("hello.txt")?.read_to_string(&mut username)?;
-
+    
         Ok(username)
     }
     ```
@@ -2054,11 +2087,11 @@ impl Rectangle {
     ```rust
     use std::error::Error;
     use std::fs::File;
-
+    
     // ignore success type by unit (), return any error with Box<dyn Error>
     fn main() -> Result<(), Box<dyn Error>> {
         let greeting_file = File::open("hello.txt")?;
-
+    
         Ok(())   // a way to use unit ()
     }
     ```
@@ -2086,7 +2119,7 @@ Revisit when having more experiences.
         x: T,
         y: T,
     }
-
+    
     fn main() {
         let integer = Point { x: 5, y: 10 };  // T is i32
         let float = Point { x: 1.0, y: 4.0 }; // T is f64
@@ -2097,7 +2130,7 @@ Revisit when having more experiences.
         x: T,
         y: U,
     }
-
+    
     fn main() {
         let both_integer = Point { x: 5, y: 10 };
         let both_float = Point { x: 1.0, y: 4.0 };
@@ -2111,7 +2144,7 @@ Revisit when having more experiences.
         Some(T),
         None,
     }
-
+    
     enum Result<T, E> {
         Ok(T),
         Err(E),
@@ -2125,7 +2158,7 @@ Revisit when having more experiences.
             x: T,
             y: T,
         }
-
+        
         // use impl<T> to define a generic method
         impl<T> Point<T> {
             fn get_x(&self) -> &T {
@@ -2139,11 +2172,10 @@ Revisit when having more experiences.
                 (self.x.powi(2) + self.y.powi(2)).sqrt()
             }
         }
-
-
+        
         fn main() {
             let p = Point { x: 5, y: 10 };
-
+        
             println!("p.x = {}", p.get_x());
             println!("distance to origin is {}", p.distance_from_origin());
         }
@@ -2155,7 +2187,7 @@ Revisit when having more experiences.
             x: X1,
             y: Y1,
         }
-
+        
         impl<X1, Y1> Point<X1, Y1> {
             // self in method is Point<X1, Y1> above
             // add new signature <X2, Y2> to mixup to make it generic
@@ -2166,22 +2198,22 @@ Revisit when having more experiences.
                 }
             }
         }
-
+        
         fn main() {
             let p1 = Point { x: 5, y: 10.4 };
             let p2 = Point { x: "Hello", y: 'c' };
-
+        
             let p3 = p1.mixup(p2);
-
+        
             println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
         }
         ```
-        
+
 ### 10.2 traits: define shared behavior
 
 **what is trait**: a trait is a method or functionality shared by multiple types. It has the same method signature or the format to be used when being called. The implemetation, however, is different in different types.
 
-- defining a trait: the definition only provides signature and is very brief:
+- defining a trait: the definition only provides signature and is very brief as the specific implementation depends on type. A method in a trait can also have simple default body, which is overwritten when re-defined for specific types
     ```rust
     // a trait can have multiple methods, all must be impleted 
     pub trait Summary {
@@ -2189,12 +2221,12 @@ Revisit when having more experiences.
         // This is all the definition required
         fn summarize(&self) -> String; 
         
-        // define another method that mutate the variable of certain types
+        // define another method that mutate the variable of types with this trait
         fn hide_author(&mut self);
     }
     ```
     
-- implement a trait on a type. All trait items must be implemented. A working example:
+- implement a trait on a type. All trait items must be implemented if no default definition. A working example:
     ```rust
     // src/main.rs
     fn main() {
@@ -2207,7 +2239,7 @@ Revisit when having more experiences.
         };
         tweet.hide_author();
         println!("1 new tweet: {}", tweet.summarize());
-
+    
         // example of NewsArticle
         let mut article = NewsArticle {
             headline: String::from("Breaking New: xxxx"),
@@ -2224,37 +2256,37 @@ Revisit when having more experiences.
         fn summarize(&self) -> String;
         fn hide_author(&mut self);
     }
-
+    
     pub struct NewsArticle {
         pub headline: String,
         pub location: String,
         pub author: String,
         pub content: String,
     }
-
+    
     impl Summary for NewsArticle {
         // remember to implement all items in trait Summary
         fn summarize(&self) -> String {
             format!("{}, by {} ({})", self.headline, self.author, self.location)
         }
-
+    
         fn hide_author(&mut self) {
             self.author = String::from("anonimous");
         }
     }
-
+    
     pub struct Tweet {
         pub username: String,
         pub content: String,
         pub reply: bool,
         pub retweet: bool,
     }
-
+    
     impl Summary for Tweet {
         fn summarize(&self) -> String {
             format!("{}: {}", self.username, self.content)
         }
-
+    
         fn hide_author(&mut self) {
             self.username = String::from("Anonimous");
         }
@@ -2277,8 +2309,8 @@ Revisit when having more experiences.
 - what is it: trait is used to specify types of a parameter
     ```rust
     // instead of specifying type for item, here the signature means item can be any
-    // type that has trait Summary implemented. In summary we now have three ways to 
-    // specify the type of a parameter:
+    // type that has trait Summary implemented. So far we now have three ways to 
+    // specify the type of a parameter in functions:
     // - concrete type such as x: i32
     // - generic type such as x:T
     // - type with trait such as x: &impl Xxx
@@ -2294,21 +2326,21 @@ Revisit when having more experiences.
         println!("Breaking news! {}", item.summarize());
     }
     
-    // it can be more concise when multiple parameters have the same trait
+    // trait bound is more concise when multiple parameters have the same trait
     pub fn notify<T: Summary>(item1: &T, item2: &T) {//pass}
     // better than 
     pub fn notify(item1: &impl Summary, item2: &impl Summary) {//pass}
     ```
     
-- specifying multiple trait bounds with + syntax
+- specifying multiple trait bounds with `+` syntax
     ```rust
-    // either way is ok
+    // either way is ok but the later is preferred
     pub fn notify(item: &(impl Summary + Display)) {
     // or
     pub fn notify<T: Summary + Display>(item: &T) {
     ```
     
-- clearer trait bounds with where clauses
+- more readable trait bounds with `where` clauses
     ```rust
     // hard to read if a signature has too many traits, foe example
     fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> i32 {
@@ -2321,9 +2353,10 @@ Revisit when having more experiences.
     {
     ```
     
+
 **returning types that implement traits**
 
-- still the function need to return only one type that implements a trait
+- still the function need to return only a type that implements a given trait
     ```rust
     fn returns_summarizable() -> impl Summary {
         Tweet {
@@ -2337,8 +2370,9 @@ Revisit when having more experiences.
     }
     ```
 
-- this is wrong as a function cannot return two types
+- this is wrong as a function cannot return two different types
     ```rust
+    // compiler does not know what type to return, NewArticle or Tweet?
     fn returns_summarizable(switch: bool) -> impl Summary {
         if switch {
             NewsArticle {
@@ -2365,24 +2399,26 @@ Revisit when having more experiences.
     }
     ```
     
-**useing trait bounds to conditionally implement methods** thta have given traints. It is a way to avoid compiling errors when defining methods on generic types.
+
+**using trait bounds to conditionally implement methods** that have given traits. It is a way to avoid compiling errors when defining methods on generic types.
 
 - `PartialOrd` trait to compare
+  
     ```rust
     use std::fmt::Display;
-
+    
     struct Pair<T> {
         x: T,
         y: T,
     }
-
+    
     // no restriction on method new()
     impl<T> Pair<T> {
         fn new(x: T, y: T) -> Self {
             Self { x, y }
         }
     }
-
+    
     // cmp_display() only works for type implementing Display and PartialOrd.
     // Otherwise >= or println! will report a cmpliler error
     impl<T: Display + PartialOrd> Pair<T> {
@@ -2395,7 +2431,7 @@ Revisit when having more experiences.
         }
     }
     ```
-
+    
 - if a trait is implemented to a type, all methods of the trait are applied to the type. By using trait bound, we can make sure that these methods work.
     ```rust
     // ToString is a trait in standard library. It has method to_sring().
@@ -2409,6 +2445,7 @@ Revisit when having more experiences.
     let s = 3.to_string()   // same as String::from("3")
     ```
     
+
 **Quizz**
 
 - quiz 1: the code below does not compile:
@@ -2431,12 +2468,12 @@ Revisit when having more experiences.
 
 **lifetimes basics**
 
-- why lifetime: when a function returns a reference type, this return depends on the reference to  one or more parameters. Lifetimes tell compiler that the parameters lives long enough for the returned reference. In other words, lifetimes prevent dangling references.
+- why lifetime: when a function returns a reference type, this return depends on the reference to  one or more parameters that are also references (A function cannot return a reference to a owned or local variable). Lifetimes tell compiler that these parameters lives long enough for the returned reference. In other words, lifetimes prevent dangling references.
 
 - example:
     ```rust
     // the return is a string slice &str that depends on x and y. So x and y
-    // must live as long as the return. The lifetime specifier 'a tells
+    // must live at lease as long as the return. The lifetime specifier 'a tells
     // compiler that they have the same lifetime.
     fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
         if x.len() > y.len() {
@@ -2460,16 +2497,17 @@ Revisit when having more experiences.
     }
     ```
     
+
 **other topics on lifetime**
 
 - lifetime annotations in struct definition: in case a struct field holds reference, we need to specify lifetime in struct definition, for example:
     ```rust
-    // simply give required lifetime specifier `a in definition.Do not have a
-    // practical role.
+    // simply give required lifetime specifier `a in definition, which means that
+    // the field part has the same lifetime as the variable of type ImportantExcerpt.
     struct ImportantExcerpt<'a> {
         part: &'a str,
     }
-
+    
     fn main() {
         let novel = String::from("Call me Ishmael. Some years ago...");
         let first_sentence = novel.split('.').next().expect("Could not find a '.'");
@@ -2486,7 +2524,7 @@ Revisit when having more experiences.
     - rule 2: If there is only one input lifetime parameter, that lifetime is assigined to all output lifetime parameters:
         - `fn foo(x: &i32) -> &i32 {` becomes `fn foo<'a>(x: &'a i32) -> &'a i32 {`.
     - rule 3: If `&self` or `&mut self` is one of the input parameters, its lifetime is assigned to all output lifetime parameters.
-        
+    
 - lifetime annotations in method definitions
     ```rust
     // declair lifetime after impl and ImportantExceerpt
@@ -2506,14 +2544,14 @@ Revisit when having more experiences.
     }
     ```
     
-- the static lifetime `'static` denotes a reference can live for  the entire duration of the program. All string literals have `'static` lifetime.Do not abuse it as the compiler may suggest it.
+- the static lifetime `'static` denotes a reference that lives for  the entire duration of the program. All string literals have `'static` lifetime.Do not abuse it as the compiler may suggest it.
 
 **generic type parameters, trait bounds, and lifetimes together**
 
 - an example having them all:
     ```rust
     use std::fmt::Display;
-
+    
     // lifetime and generic typ in the same bracket <'a, T>
     fn longest_with_an_announcement<'a, T>(
         x: &'a str,
