@@ -1,3 +1,44 @@
+## Trusaic package workflow
+
+**The complication**:
+- The package is development in WSL linux file system because RStudio docker container runs faster.
+- The code calling the package functions run on Windows file system as the payParity platform runs on Windows file system.
+- We need to build package source file in Linux file system and copy the source file to Windows file system and install in Windows.
+
+**Method**:
+
+- Create an executable bash script `build_payparity` in `~/bin/` to create the source file and copy it to Windows
+    ```sh
+    #! /usr/bin/env bash
+
+    # delete tar.gz files in parent directory
+    rm ../*tar.gz
+
+    # build package source file payParity_xxxxx.tar.gz
+    # into parent directory ../
+    Rscript -e "devtools::build()"
+
+    # copy the newly created tar.gz file to 
+    # /mnt/d/DiversityEquityInclusion/payParity.tar.gz
+    cp ../*tar.gz /mnt/d/DiversityEquityInclusion/payParity.tar.gz
+
+    echo "copied to DEI and renamed as payParity.tar.gz"
+    echo " --- "
+    ```
+    
+- Create a batch file, `install_payParity.bat` in Windows to install package from source file
+    ```bat
+    "C:\Program Files\R\R-4.3.1\bin\Rscript.exe" -e "install.packages('payParity.tar.gz', repos = NULL, type='source')"
+
+    del payParity.tar.gz
+    ```
+    
+- How to use them:
+    - `$ build_payparity` run from package directory in WSL
+    - `> install_payparity.bat` run from DEI directory in Window.
+
+
+
 ## General R settings =========================================================
 
 ### QA: how to set up options and environment variables for R?
