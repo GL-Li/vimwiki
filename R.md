@@ -1,5 +1,7 @@
 ## Trusaic package workflow
 
+### Develop package in WSL and end2end test in Windows
+
 **The complication**:
 - The package is development in WSL linux file system because RStudio docker container runs faster.
 - The code calling the package functions run on Windows file system as the payParity platform runs on Windows file system.
@@ -36,6 +38,36 @@
 - How to use them:
     - `$ build_payparity` run from package directory in WSL
     - `> install_payparity.bat` run from DEI directory in Window.
+
+
+### Manage installed packages
+
+- delete installed third-party packages but keep all base packages
+
+    ```r
+    # all packages
+    all_pkg <- installed.packages() |>
+        rownames()
+    # all base packages
+    base_pkg <- installed.packages(priority = "high") |> 
+        rownames()
+    # non-base packages
+    non_base_pkg <- setdiff(all_pkg, base_bkg)
+    # remove non-base packages
+    remove.packages(non_base_pkg)
+    ```
+
+- to install a set of packages in Windows from a file, run from command
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" dependencies_windows.R
+    ```
+
+- use `renv` to identify the minimal set of packages required for a project
+    ```r
+    # initialize renv project and check the env.lock file for installed
+    # packages for this project. They are installed in the order.
+    renv::init()
+    ```
 
 
 
