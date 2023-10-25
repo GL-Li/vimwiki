@@ -1949,8 +1949,8 @@ impl Rectangle {
     }
     ```
     
-- examples of `File.open()` failurs:
-    - NotFound: 
+- examples of `File.open()` failures:
+    - NotFound when file does not exist: 
       ```
       [src/main.rs:7] &greeting_file_result = Err(
             Os {
@@ -1974,7 +1974,7 @@ impl Rectangle {
 
 **matching on different errors**
 
-- use `error.kind()` for to extract specific result of `Result::Err(error)` variant
+- use `error.kind()` to extract specific result of `Result::Err(error)` variant
     ```rust
     use std::fs::File;
     use std::io::ErrorKind;
@@ -1984,6 +1984,7 @@ impl Rectangle {
     
         let greeting_file = match greeting_file_result {
             Ok(file) => file,
+            // .kind() method to get ErrorKind of error in Err(error)
             Err(error) => match error.kind() {
                 ErrorKind::NotFound => match File::create("hello.txt") {
                     Ok(fc) => fc,
@@ -2574,4 +2575,261 @@ Revisit when having more experiences.
     }
     ```
     
+## 11. Writing automated tests
+
+### 11.1 How to write tests
+
+**the anatomy of a test function**
+
+- when we make a new library project with `cargo new xxx --lib`, a test module with a test function is automatically generated in file `./src/lib.rs`:
+    ```rust
+    pub fn add(left: usize, right: usize) -> usize {
+        left + right
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]     // indicate this is a test function
+        fn it_works() {
+            let result = add(2, 2);
+            assert_eq!(result, 4);
+        }
+    }
+    ```
     
+- run test with `$ cargo test`
+
+**checking results with `assert!` and it families**
+- `assert!(xxx)` xxx is true or false
+- `assert_eq!(x, y)` to check x and y are equal.
+- `assert_ne!(x, y)` to check x and y are not equal.
+- adding custom message to failure message: arguments specified after required arguments in `assert!` families are passed to `format!()`. Examples
+    ```rust
+    // when the following assertion fails, all the argument afte y are passed to 
+    // format! as format!("{} does not equal to {}", x, y) and printed out in 
+    // failure message.
+    assert_eq!(x, y, "{} does not equal to {}", x, y)
+    ```
+    
+**checking for panics with should_panic** when panic is expected
+
+- example `src/lib.rs`:
+    ```rust
+    pub struct Guess {
+        value: i32,
+    }
+
+    impl Guess {
+        pub fn new(value: i32) -> Guess {
+            if value < 1 || value > 100 {
+                panic!("Guess value must be between 1 and 100, got {}.", value);
+            }
+
+            Guess { value }
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        #[should_panic]  // indicate panic is expected. test failed if not panic
+        fn greater_than_100() {
+            Guess::new(200);
+        }
+    }
+    ```
+    
+- adding custom message to `#[should_panic]` when fail at not panic
+    ```rust
+    #[should_panic(expected = "whatever message you want to add")]
+    ```
+    
+**using Result<T, E> in tests**, no `assert!` family used and no `should_panic` either.
+
+- example:
+    ```rust
+    #[cfg(test)]
+    mod tests {
+        #[test] // this is a fully functioning test function
+        fn it_works() -> Result<(), String> {
+            if 2 + 2 == 4 {
+                Ok(())
+            } else {
+                Err(String::from("two plus two does not equal four"))
+            }
+        }
+    }
+    ```
+    
+### 11.2 Controlling how test are run
+
+**cargo test options**
+
+- running test in parallel or consecutively: by default, cargo test functions run in parallel. So make sure the test functions are independent from each other. Turn of the parallel run with flag --test-threads=1 if one test function depends one the output of other functions.
+    ```sh
+    # not a typo, double -- in the command
+    $ cargo test -- --test-threds=1
+    ```
+    
+- showing function output: by default, cargo test does not display any `println!` output if the test succeeds. It prints when a test fails.To display the print even when the test succeed, add flag `--show-output`:
+    ```sh
+    $ cargo test -- --show-output
+    ```
+
+**running a subset of tests**
+
+- running a single test function `test_func_1`:
+    ```sh
+    $ cargo test test_func_1
+    ```
+    
+- filtering to run multiple test functions using keyword. So we can group tests by including keywords in test function names.
+    - test example:
+        ```rust
+                pub fn add_two(a: i32) -> i32 {
+            a + 2
+        }
+
+        #[cfg(test)]
+        mod tests {
+            use super::*;
+
+            #[test]
+            fn add_two_and_two() {
+                assert_eq!(4, add_two(2));
+            }
+
+            #[test]
+            fn add_three_and_two() {
+                assert_eq!(5, add_two(3));
+            }
+
+            #[test]
+            fn one_hundred() {
+                assert_eq!(102, add_two(100));
+            }
+        }
+        ```
+    
+    - run different tests:
+        ```sh
+        # all three test
+        $ cargo test  
+        
+        # run add_two_and_two only
+        $ cargo test add_two_and_two  
+        
+        # run tests having "and" in test function names
+        $ cargo test and
+        
+        # run tests having letter "h" in names
+        $ cargo test h
+        ```
+        
+- ignoring some tests unless specifically requested by add `#[ignore]` attribute:
+    - test code example:
+        ```rust
+                pub fn add_two(a: i32) -> i32 {
+            a + 2
+        }
+
+        #[cfg(test)]
+        mod tests {
+            use super::*;
+
+            #[test]
+            fn add_two_and_two() {
+                assert_eq!(4, add_two(2));
+            }
+
+            #[test]
+            #[ignore]  // ignored in $ cargo test
+            fn add_three_and_two() {
+                assert_eq!(5, add_two(3));
+            }
+
+            #[test]
+            fn one_hundred() {
+                assert_eq!(102, add_two(100));
+            }
+        }
+        ```
+    - cargo test:
+        ```sh
+        # ignore tests with ignore attritube
+        $ cargo test
+        
+        # ONLY run tests with ignore attribute
+        $ cargo test -- --ignored
+        ```
+        
+### 11.3 Test organization
+
+**unit tests** 
+
+- unit tests are tests wihtin the package, small and focused.
+
+- the tests module and configuration attribute `#[cfg(test)]`: 
+    - `#[cfg(test)]` tells compiler that this module only runs in `$ cargo test` and is ignored in `$ cargo build`.
+    - This module stays in the file where the functions to be tested are defined.
+
+**integration tests**:  integration tests are tests that uses the package as external users do.
+
+- the tests directory: as many test files under `./tests/` directory as needed. These files only run in `cargo test`.
+    ```
+    package_xxx
+    ├── Cargo.lock
+    ├── Cargo.toml
+    ├── src
+    │   └── lib.rs
+    └── tests
+        │── integration_test_1.rs
+        └── integration_test_2.rs
+    ```
+    
+- an example test file:
+    ```rust
+    // need to load the package
+    use package_xxx;
+
+    #[test]
+    fn test_func_1() {
+        // -- snippet calling package function -- 
+    }
+    ```
+    
+- run integration test:
+    - `$ cargo test` runs all tests including integration test
+    - `$ cargo test --test test_func_1` runs only integration tests in `test_func_1`.
+
+- submodules in integration tests: each integration test file is compiled into a separate crate when runing `cargo test`. We often need helper functions that are shared by these test files. We can place the helper functions in a file, **whose name must be** `mod.rs`, in a subdirectory under `tetsts/`:
+    - file structure:
+        ```
+        package_xxx
+        ├── Cargo.lock
+        ├── Cargo.toml
+        ├── src
+        │   └── lib.rs
+        └── tests
+            ├── subdir_1
+            │   └── mod.rs
+            ├── integration_test_1.rs
+            └── integration_test_2.rs
+        ```
+    - how to use sub module in `subdir_1`, example:
+        ```rust
+        use package_xxx
+        mod subdir_1  // contains a file must named mod.rs
+        
+        #[test]
+        fn test_func_1() {
+            subdir_1::anyfunc();  // calls a function in subdir_1/helper_func.rs
+            // other code
+        }
+        ```
+        
+- integration tests only works for library crates, not for binary crates.
