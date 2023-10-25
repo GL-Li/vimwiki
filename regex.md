@@ -14,15 +14,17 @@ Example:
 ```r
 x <- c("abc ---", "xyz", "123 --")
 # look ahead
-stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
+stringr::str_extract(x, "^(.*?)(?=\\s-*|$)")
 ```
 
-To capture after a pattern or whole string
+To capture after a pattern or whole string, use look behind. BUT lookbehind only accept pattern with know maximum size. You will often see error message `Look-behind pattern matches must have a bounded maximum length`  when you have `*` or `+` in match pattern. Replace them with a reasonable range such as `{0, 19}` or `{1, 100}`.  Most regex engines require this bounded maximum length restriction to reduce possible backtracking and thus improve performance.
 
 ```R
 x <- c("--- abc", "xyz", "-- 123")
-# look behind
-stringr::str_extract(x, "^(.*?)(?=\\s---|$)")
+# look behind with bounded maximum length error
+stringr::str_extract(x, "(?<=^|-*\\s?)(\\w+)")
+# replace * with a range solves the problem
+stringr::str_extract(x, "(?<=^|-{0, 100}\\s?)(\\w+)")
 ```
 
 
