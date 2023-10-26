@@ -384,3 +384,37 @@ Use `bench::bench_process_memory()` to retrieve current and maximum memory from 
       f <- fff()
     })
     ```
+    
+    
+### doFuture package to parallelize for loops
+
+- basic example:
+    ```R
+    options(future.globals.maxSize = 5e9)
+    library(doFuture)
+    plan(multisession)
+
+
+    # just to check time, can be removed
+    # completed in 10.5 seconds instead of 40+ seconds
+    system.time({
+      # run each in parallel, return a list
+      y <- foreach(x = 3:6) %dofuture% {
+        Sys.sleep(10)
+        c(sqrt(x), x, x^2)  # final return
+      }
+    })
+
+    # y is a list y[[1]], y[[2]], ... for the return of each x
+    y
+        # [1] 1.732051 3.000000 9.000000
+        #
+        # [[2]]
+        # [1]  2  4 16
+        #
+        # [[3]]
+        # [1]  2.236068  5.000000 25.000000
+        # 
+        # [[4]]
+        # [1]  2.44949  6.00000 36.00000
+    ```
