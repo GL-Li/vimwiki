@@ -241,3 +241,146 @@ Use `expect_output(res <- my_function(...))` to hide print out.
 ### QA: how to check memory usage in a R process?
 
 Use `bench::bench_process_memory()` to retrieve current and maximum memory from the R process. The reported number include all memory relevant to the R process.
+
+
+## packages ======================================
+
+### future package for parallel computing
+
+- good for long time and small global objects
+    - only globals used by `future({...})` are exported to new R session.
+    - default limit if 500 MB that can be exported
+    - edit the limit with `options(future.globals.maxSize = 1e9)`
+    - memory not released in future session in interactive run
+    - all memory release if run with `Rscript aaa.R`, takes time to release large memory.
+
+- example code:
+    ```R
+    library(future)
+    # use miltisession for parallel computing
+    plan(multisession)
+    # print out process ID just to show that different session are used
+    print(Sys.getpid())
+
+    # create a future which takes at least 10 sec to finish
+    f1 <- future({
+      Sys.sleep(10)
+      print(Sys.getpid())
+      cat("f1: Hello World!\n")
+      "111"
+    })
+
+    # in multisession, no need to wait 10 sec for f1
+    print("f1 created")
+
+    # another future taking 10 sec
+    f2 <- future({
+      Sys.sleep(10)
+      print(Sys.getpid())
+      cat("f2: Hello World!\n")
+      "222"
+    })
+
+    # no need to wait for f2
+    print("f1 and f2 futures created ------")
+    
+    # after 10 sec, both f1 and f2 are completed at background so we
+    # evaluate v1 and v1. Multisession saves 10 secs compared to sequential
+    v1 <- value(f1)
+    print(v1)
+    v2 <- value(f2)
+    print(v2)
+
+    print("end of the test")
+    ```
+    
+- same code put in function and check time:
+    ```r
+    library(future)
+    plan(multisession)
+    print(Sys.getpid())
+
+    fff <- function() {
+      f1 <- future({
+        Sys.sleep(10)
+        print(Sys.getpid())
+        cat("f1: Hello World!\n")
+        "111"
+      })
+
+      print("f1 created")
+
+      f2 <- future({
+        Sys.sleep(10)
+        print(Sys.getpid())
+        cat("f2: Hello World!\n")
+        "222"
+      })
+
+      print("f1 and f2 futures created ------")
+      v1 <- value(f1)
+      print(v1)
+      v2 <- value(f2)
+      print(v2)
+
+      print("end of the test")
+
+      return(list(f1 = v1, f2 = v2))
+    }
+
+    # finish in 10.3 secs instead of 20+
+    system.time({
+      f <- fff()
+    })
+    ```
+    
+- code to test memory exported to future session
+    ```R
+    options(future.globals.maxSize = 5e9)
+    library(future)
+    plan(multisession)
+    print(Sys.getpid())
+
+    # generate a large global object
+    x <- rnorm(5e8)
+
+    Sys.sleep(10)
+    print("x created")
+
+    fff <- function() {
+      f1 <- future({
+        # this future session need this large object
+        # x is exported to this session
+        xxx <- length(x)
+        print(xxx)
+        Sys.sleep(10)
+        print(Sys.getpid())
+        cat("f1: Hello World!\n")
+        "111"
+      })
+
+      print("f1 created")
+
+      f2 <- future({
+        # this future session does not need this large object
+        Sys.sleep(10)
+        print(Sys.getpid())
+        cat("f2: Hello World!\n")
+        "222"
+      })
+
+      print("f1 and f2 futures created ------")
+      v1 <- value(f1)
+      print(v1)
+      v2 <- value(f2)
+      print(v2)
+
+      print("end of the test")
+
+      return(list(f1 = v1, f2 = v2))
+    }
+
+    system.time({
+      f <- fff()
+    })
+    ```
