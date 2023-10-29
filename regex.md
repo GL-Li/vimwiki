@@ -5,6 +5,36 @@
 
 ## QA ====
 
+### QA: What is backtracking in regex?
+
+When we have unbounded pattern including `+`, `*`, or `{3,}` in greedy search, back tracking may happen. Backtracking might mean backtracking in input string or in matching pattern.
+
+- [backtracking in matching pattern](https://devopedia.org/regex-engines#:~:text=A%20regex%20engine%20executes%20the,engine%20is%20by%20default%20greedy.) 
+- [backtracking in input string](https://www.youtube.com/watch?v=XDWK_tK2LUE)
+
+Examples:
+
+```R
+# In the case below, the regex engine first match x from the beginning all
+# the way to the end because of ".+". After that, the engine searches "1"
+# from right to left, which is called back tracking. At the first "1" before 
+# "67", the engine tries to match "2". As there is no match after the first "1",
+# the engine tries to find the second "1" from right to left, which is before
+# "24". At this place, engine can find "2" after "1" and reports the match result
+# as "abc 12"
+x <- "abc 123 124 xyz 167"
+stringr::str_extract(x, ".+12")  # returns "abc 123 12"
+
+# if we run a lazy search with ".+?12", the engine will look at the first character "a" and check if "12" follows it. If not then the enigine looks at "ab" and check for "12" after it. The einginer repeats the process until find find a substring followed by "12" and return the pattern.
+stringr::str_extract(x, ".+?12")  # returns "abc 12"
+
+# Another example to show how backtracking works
+x <- "212-244-7688"
+stringr::str_extract(x, "\\d-\\d+$")
+```
+
+
+
 ### QA: how to capture all string before (or after) a pattern, and if pattern does not exist, the whole string?
 
 Use `^(.*?)(?=pattern|$)`, which can be read as: from beginning `^`, capture any string `(.*?)` until `pattern` or to the end `$`.
