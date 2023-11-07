@@ -21,3 +21,6 @@
 
 # Sample project study - learn best practice from good project
 - Docker [[example-voting-app]]
+
+# Domain knowledge
+- [[people_analytics]]
