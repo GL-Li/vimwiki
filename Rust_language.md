@@ -1220,7 +1220,45 @@ impl Rectangle {
     }
     ```
     
+### 6.3 Concise control flow with `if let`
 
+- a less verbose way to handle values that match one pattern while ignoring the rest:
+    ```rust
+    //the following two code blocks behaves the same
+    
+    // block 1
+    let config_max = Some(3u8);
+    match config_max {
+        Some(max) => println!("The maximum is configured to be {}", max),
+        _ => (),  // have to add this line to conver other possibilies though not interested in
+    }
+
+    // block 2
+    let config_max = Some(3u8);
+    if let Some(max) = config_max {   // ignore other possibilities
+        println!("The maximum is configured to be {}", max);
+    }
+    ```
+    
+- `if let ... else ...` is not concise compared to `match`. Simply use match if need to check multiple possibilities.
+    ```rust
+    // these two blocks are equivalent
+    
+    // block 1
+    let mut count = 0;
+    match coin {
+        Coin::Quarter(state) => println!("State quarter from {:?}!", state),
+        _ => count += 1,
+    }
+    
+    // block 2
+    let mut count = 0;
+    if let Coin::Quarter(state) = coin {
+        println!("State quarter from {:?}!", state);
+    } else {
+        count += 1;
+    }
+    ```
 
 
 ## 7. Managing growing project with packages, crates, and modules
@@ -2833,3 +2871,331 @@ Revisit when having more experiences.
         ```
         
 - integration tests only works for library crates, not for binary crates.
+
+
+## 12. An I/O project: building a commmand line program
+
+### 12.1 Accepting command line arguments
+
+- reading command line arguments with `std::env::args()`
+    ```rust
+    use std::env;
+
+    fn main() {
+        // env::args returns a String and .collect() returns an iterator
+        let args: Vec<String> = env::args().collect();
+        dbg!(args);
+    }
+    ```
+    
+- run the program:
+    - `$ cargo run -- aaa bbb ccc` prints out as follows. The double `--` indicate the parameters after it are for the program, not for `cargo run`.
+        ```
+        [src/main.rs:5] args = [
+            "./target/debug/minigrep",
+            "aaa",
+            "bbb",
+        ]
+        ```
+    - after comilation, we can run `$ ./path/to/minigrep aaa bbb`, which print out the same results.
+
+### 12.2 Reading a file
+
+- read a file into String with `std::fs::read_to_string(file_path)`:
+    ```rust
+    use std::fs;
+
+    fn main() {
+        // poem.txt is at the project root. Whole file read into a Results<String>
+        let contents = fs::read_to_string("poem.txt")
+            .expect("Should have been able to read the file");
+
+        println!("With text:\n{contents}");
+    }
+    ```
+    
+    
+### 12.3 Refactoring to improve modularity and error handling
+
+**separation of converns for binary projects** following these steps
+
+- split your program into a `main.rs` and a `lib.rs` and move your program logic into `lib.rs`.
+
+- As long as your coammand line parsing logic is small, it can remain in the `main.rs`.
+
+- When the command line parsing logic starts getting complicated, extract it from `main.rs` and move it to `lib.rs`.
+
+- The responsibilities that remain in the main function after this process should be limited to the following:
+    - calling the command line parsing logic with the argument values
+    - setting up any other configuration
+    - calling a `run` function in `lib.rs`
+    - handling the error if `run` returns an error.
+
+**grouping configuration values** in a struct
+
+- This minigrep command always have a query and a filepath. To make the code more organized, we can place them in a construct:
+    ```rust
+    struct Config {
+        query: String,
+        file_path: String,
+    }
+    ```
+    
+- creating a constructor for Config struct:
+    ```rust
+    impl Config {
+        fn new(args: &[String]) -> Config {
+            // ok to use clone for small Strings
+            let query = args[1].clone();
+            let file_path = args[2].clone();
+
+            Config { query, file_path }
+        }
+    }
+    ```
+    
+**fixing the error handling** when query or filepath not provided in terminal
+
+- When one or two arguments are missing, for example, running `$ cargo run -- star`, we will have index out of boundary error as `args[2]` is not provided.
+
+- use `panic` to give a better error message:
+    ```rust
+    impl Config {
+        fn new(args: &[String]) -> Config {
+            if arg.len() < 3 {
+                panic!("not enough arguments"); 
+            }
+            let query = args[1].clone();
+            let file_path = args[2].clone();
+
+            Config { query, file_path }
+        }
+    }
+    ```
+    
+- `painc!()` is better used for programming problem, not for usage problem, as users do not need to see all the error message such as `thread 'main' panicked at 'not enough arguments', src/main.rs:26:13`. Another reason is that it is better to process failure in `main()` function.
+
+- returning a `Result` instead of calling `panic!`:
+    - change function name from `new` to `build`. As a convention, `new` is expected to never fail.
+    - the `build` method:
+        ```rust
+        impl Config {
+            fn build(args: &[String]) -> Result<Config, &'static str> {
+                if args.len() < 3 {
+                    return Err("not enough arguments");
+                }
+
+                let query = args[1].clone();
+                let file_path = args[2].clone();
+
+                Ok(Config { query, file_path })
+            }
+        }
+        ```
+        
+- calling `Config::build()` and hadling errors in `main()`:
+    ```rust
+    use std::process;
+
+    fn main() {
+        let args: Vec<String> = env::args().collect();
+
+        // use a closure to handle error message and exit program
+        let config = Config::build(&args).unwrap_or_else(|err| {
+            // users only see the printed error message
+            println!("Problem parsing arguments: {err}");
+            // an exit code for additional processing
+            process::exit(1);
+        });
+
+        // --snip--
+    ```
+    
+**extracting logic from main**
+
+- code snipets:
+    ```rust
+    // read terminal arguments
+    let args: Vec<String> = std::env::args().collect()
+    
+    // exit with a status
+    std::process::exit(1)
+    
+    // work with multi-line text
+    for line in article {
+        if line.contains("xyz") {
+            // ...
+        }
+    }
+    ```
+    
+### 12.4 Developing the library's functionality with test-driven development
+
+**test-driven development** following these steps
+
+- write a test that fails and run it to make sure if fails for the reason you expected.
+- write or modify just enough code to make the new test pass.
+- refactor the code youjust added or changed and make sure the test continue to pass.
+- repeat above process
+
+
+### 12.5 Working with evnironment variables
+
+- example: how to use environment variable `AAA_BBB`
+    - `$ AAA_BBB=1 cargo run -- to poem.txt`: This is how an environment variable is presented in terminal
+    - To use it in Rust code:
+        ```rust
+        use std::env;
+        // env::var returns a Result<String, VarError>
+        // is_ok returns true or false
+        let aaa_bbb = env::var("AAA_BBB").is_ok();
+        ```
+        
+### 12.6 Writing error messages to standard error instead of standard output
+
+- When running a programm, we often send the output to a log file for a record, for example `$ cargo run > log.txt`, and keep the terminal clean. It is, however, desirable to print the error message on stout so we know what's wrong.
+
+- `eprintln!()` prints error message to stout and the error message will not be saved to `log.txt`. Example of using `eprintln!`:
+    ```rust
+    fn main() {
+        let args: Vec<String> = env::args().collect();
+
+        let config = Config::build(&args).unwrap_or_else(|err| {
+            eprintln!("Problem parsing arguments: {err}");
+            process::exit(1);
+        });
+
+        if let Err(e) = minigrep::run(config) {
+            eprintln!("Application error: {e}");
+            process::exit(1);
+        }
+    }
+    ```
+    
+### chapeter summary: working code
+
+`src/main.rs`
+```rust
+use std::env;
+use std::process;
+
+use minigrep::Config;
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    let config = Config::build(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
+
+    if let Err(e) = minigrep::run(config) {
+        eprintln!("Application error: {e}");
+        process::exit(1);
+    }
+}
+```
+
+`src/lib.rs`
+```rust
+use std::error::Error;
+use std::{env, fs};
+
+pub struct Config {
+    pub query: String,
+    pub file_path: String,
+    pub ignore_case: bool,
+}
+
+impl Config {
+    pub fn build(args: &[String]) -> Result<Config, &'static str> {
+        if args.len() < 3 {
+            return Err("not enough arguments");
+        }
+
+        let query = args[1].clone();
+        let file_path = args[2].clone();
+
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+        })
+    }
+}
+
+pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(config.file_path)?;
+
+    let result = if config.ignore_case {
+        search_case_insensitive(&config.query, &contents)
+    } else {
+        search(&config.query, &contents)
+    };
+
+    for line in result {
+        println!("{line}");
+    }
+
+    Ok(())
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    let query = query.to_lowercase(); // to_lowercase returns a String
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn case_sensitive() {
+        let query = "duct";
+        // \ for continue the line, not a new line
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Duct tape.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let contents = "\
+Rust:
+Safe, fast, productive,
+Pick Three.
+Trust me.";
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(query, contents)
+        );
+    }
+}
+```
