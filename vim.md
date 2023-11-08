@@ -54,6 +54,10 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+### QA: how to delete leading white space in multiple line in visual mode
+
+Select the lines into visual mode and then using `:` to go into command mode to display `:'<,'>`. Then type in search/replace command `s/^\s//`
+
 ### QA: how to run vim command from Linux terminal
 
 **vim c command_name** where command_name is a command that, if in vim editor, would be run in normal mode. Examples
