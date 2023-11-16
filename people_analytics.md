@@ -1,3 +1,7 @@
+resources:
+Wharton people analytics: https://wpa.wharton.upenn.edu/
+
+
 ## Concepts
 
 ### QA: what is people analytics?

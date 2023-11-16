@@ -73,6 +73,46 @@
 
 ## General R settings =========================================================
 
+### QA: Excel workbook: open save close to activate formulas
+
+```r
+#' This function equals to open a workbook, save it and then close it in Excel.
+#' 
+#' @description
+#' The workbook created in selfSrv run has cells that populated by formula. 
+#' These cells appears as NA when read with openxlsx::read.xlsx and other
+#' packages. This issue can be fixed by opening the workbook in Excel and save
+#' it with Ctr S manually. This function replaces this manual work.
+#' 
+#' @param data_dir string, directory where the workbook lives
+#' @param workbook string, workbook name
+#' 
+#' @return no return
+
+open_save_workbook <- function(data_dir,
+                               workbook = "Regression Details Ingestion.xlsx") {
+  # https://stackoverflow.com/questions/19404270/run-vba-script-from-r
+
+  if (.Platform$OS.type != "windows") {
+    stop("open_save_workbook only works on Window")
+  }
+  
+  library(RDCOMClient) # RDCOMClient::COMCreate not working without the library
+  
+  workbook <- paste0(data_dir, workbook) |>
+    stringr::str_replace_all("/", "\\\\")
+  
+  xlApp <- COMCreate("Excel.Application")  
+  xlWbk <- xlApp$Workbooks()$Open(workbook)
+  xlWbk$Save()
+  xlWbk$Close(FALSE)
+  xlApp$Quit()
+  
+  cat("\nThe workbook is opened, saved, and closed.\n")
+}
+```
+
+
 ### QA: how to set up options and environment variables for R?
 
 - Set up options in `.Rprofile` and uses options
