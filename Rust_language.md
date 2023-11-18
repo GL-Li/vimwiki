@@ -3199,3 +3199,307 @@ Trust me.";
     }
 }
 ```
+
+
+## 13 Functional Language Features: Iterators and Closures
+
+> Programming in a functional style often includes using functions as values by passing them in arguments, returning them from other functions, assigning them to variables for later execution, and so forth.
+
+### 13.1. closure: anonymous functions that capture their environment
+
+**closure definition**: a closure can take in environment variables without setting them as arguments as normal functions do.
+
+- often appear on the fly in method `.unwrap_or_else()`:
+    ```rust
+    fn main() {
+        let x1 = Some("hello world");
+        // Closure arguments are placed inside ||. In this case, there is no
+        // arguments so || is empty
+        let y1 = x1.unwrap_or_else(|| "empty string");
+        let x2: Option<&str> = None;
+        let y2 = x2.unwrap_or_else(|| "empty string");
+        println!("{y1}, {y2}");  // hello world, empty string
+    }
+    ```
+    
+- can be assigned to a varaible:
+    ```rust
+    // annotation is optional if the compiler can infer the types
+    fn main() {
+        let x = 1;
+        // the type of parameters and result are optional
+        // closure can take vaviable x from environment
+        let f = |y| x + y;
+        let res = f(2);
+        println!("{res}");  // 3
+    }
+    
+    
+    // if you want annotation, here is how
+    fn main() {
+        let x: u8 = 1;
+        // format to specify types, curly bracket is required
+        let f = |y: u8| -> u8 { x + y };
+        let res = f(2);
+        println!("{res}");  // 3
+    }
+    ```
+    
+**reference and ownership of environment variables in closure**
+
+- Base on the how the closure is defined, the closure automatically decide ???? how an environment variables is used in three ways:
+    - immutable reference
+    - mutable reference
+    - taking ownership
+
+- immutable reference:
+    ```rust
+    fn main() {
+        let x = "hello world".to_string();
+        let f = || println!("{}", x); // immutable borrow of x in closure
+        println!("{x}");  // immutable borrow, at this moment another immutable
+                          // borrow lives above because of f() below. It is ok to
+                          // to have multiple immutable borrows
+        f();  // immutable borrow, ok
+    }
+    ```
+    
+- mutable reference:
+    ```rust
+    // ok
+    fn main() {
+        // need to add mut before both x and f
+        let mut x = "hello world".to_string();
+        let mut f = || {
+            x.push_str("!");  // mutable borrow
+        };
+        f();  // mutable borrow completed after function run within its scope
+              // so it does not affect subsequent borrowing
+        println!{"{x}");  // immutable borrow only at this moment
+    }
+    
+    // not ok as mutable and immutable borrow live the same time
+    fn main() {
+        // need to add mut before both x and f
+        let mut x = "hello world".to_string();
+        let mut f = || {
+            x.push_str("!");  // mutable borrow
+        };
+        println!{"{x}");  // immutable borrow, but the same time we have a mutable
+                          // borrow above, which lives because of f() below.
+        f();  // mutable borrow
+    }
+    ```
+    
+- take ownership with keyword `move`. It is useful when passing the closure to a new thread as the new thread needs to own the data. Threads will be discussed in chpt 16.A brief example:
+    ```rust
+    use std::thread;
+
+    fn main() {
+        let list = vec![1, 2, 3];
+        println!("{:?}", list);
+
+        // this new thread may finish after the main thread finished so if does not
+        // own the list, the list will be a dangling reference.
+        thread::spawn(move || println!("from thread: {:?}", list))
+            .join()
+            .unwrap();
+    }
+   ``` 
+   
+**moving capture values out of closures and the Fn traits**
+
+- `FnOnce` trait applies to closures that can be called once. All closures at least implement `FnOnce`. A closure that moves captured values out of it body will only implement `FnOnce`. All ananimous functons are only called once, for example in `unwrap_or_else()`, which is defined as:
+    ```rust
+    // definition of unwrap_or_else()
+    impl<T> Option<T> {
+        pub fn unwrap_or_else<F>(self, f:F) -> T
+        where
+            F: FnOnce() -> T  // so f can be any closure without parameters
+        {
+            match self {
+                Some(x) => x,
+                None => f(),
+            }
+        }
+    }
+    
+    // in the case below, the captured value t is sent out of the closure
+    fn main() {
+        let s = None;
+        let t = "empty".to_string();
+        let x = s.unwrap_or_else(|| t);
+        println!("{x}");
+    }
+    ```
+    
+- `FnMut` applies to closure that don't move captured values out of their body but that might mutate the captured values. Take `sort_by_key` for example:
+    ```rust
+    // definition of sort_by_key on Vec.
+    pub fn sort_by_key<K, F>(&mut self, mut f: F)
+    where
+        F: FnMut(&T) -> K,
+        K: Ord,
+    {
+        stable_sort(self, |a, b| f(a).lt(&f(b)));
+    }
+    
+    // use case. In this case f = |s| s.width return the width of an element.
+    // It is used in another closure |a, b| f(a).lt(&f(b)) to compare two elements.
+    #[derive(Debug)]
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+
+    fn main() {
+        let mut list = [
+            Rectangle { width: 10, height: 1 },
+            Rectangle { width: 3, height: 5 },
+            Rectangle { width: 7, height: 12 },
+        ];
+
+        // s represent an element in list, can be any symbol.
+        list.sort_by_key(|s| s.width);  // this closure mutates list
+        println!("{:#?}", list);
+    }
+    ```
+    
+- `Fn` applies to closures that don't move values out and don't mutate values or captures nothing from their environment.
+
+**closures must name captured lifetimes**
+
+- lifetimes needed when a normal function accepts or returns a closure. Wrong case:
+    ```rust
+    // This function returns a closure that returns a String from a &str.
+    // It has a compiler error for missing lifetime.
+    fn make_a_cloner(s_ref: &str) -> impl Fn() -> String {
+        move || {
+            s_ref.to_string()
+        }
+    }
+
+    // If the function passed the compiler, this use case shows the problem.
+    fn main() {
+        let s_own = String::from("Hello world");
+        let cloner = make_a_cloner(&s_own);
+        drop(s_own);  // s_own dropped
+        cloner(); // Undefined behavior: pointer used after its data is freed.
+    }
+    ```
+
+- correct case:
+    ```rust
+    // pay attention to how lifetime is added in three locations
+    fn make_a_cloner<'a>(s_ref: &'a str) -> impl Fn() -> String + 'a {
+        move || {
+            s_ref.to_string()
+        }
+    }
+
+    fn main() {
+        let s_own = String::from("Hello world");
+        let cloner = make_a_cloner(&s_own);
+        drop(s_own);  // It is a simple coding error. Not an undefined behavior.
+        cloner();     // Undefined behaviors are unsafe and should be avoided.
+    }
+    ```
+    
+- simplify the function with lifetime elision: as there is only one parameters, this function can be defined as:
+    ```rust
+    fn make_a_cloner(s_ref: &str) -> impl Fn() -> String + '_ {
+        move || s_ref.to_string()
+    }
+    ```
+    
+**Quiz**
+
+- Determine whether the program will pass the compiler. If it passes, write the expected output of the program if it were executed.
+    ```rust
+    fn main() {
+        let mut s = String::from("Hello");
+        // s is not a captured environment varaible in the following closure.
+        // It is just a normal function parameter and can be any other symbol
+        // like x or t. No reference to any environment variable in the closure.
+        let add_suffix = |s: &mut String| s.push_str(" world");
+        println!("{s}");  // only immutable refernce to s at this moment
+        add_suffix(&mut s);  // only mutable reference to s at this moment
+        
+        // so the programming compiles. The printout is Hello.
+    }
+    ```
+    
+## 13.2 Processing a series of items with iterators
+
+**the `Iterator` trait and the `next` method**
+
+- `Iterator` trait is defined in the standard library. Users need to define own `next` method when assign this trait to a struct.
+    ```rust
+    pub trait Iterator {
+        type Item;  // associated type for the method, more in chpt 19
+        fn next(&mut self) -> Option<Self::Item>; // require definition by users 
+        // -- other methods with default implementation --
+    }
+    ```
+    
+- Example - different ways to convert a vector into an iterator 
+    ```rust
+    #[test]
+    fn iterator_demonstration() {
+        // use .iter() method
+        let v1 = vec![1, 2, 3];  // Vector has IntoIterator trait
+        let mut v1_iter = v1.iter();  // v1_iter has Iterator trait
+        assert_eq!(v1_iter.next(), Some(&1)); // v1_iter reference to the values
+        assert_eq!(v1_iter.next(), Some(&2));
+        assert_eq!(v1_iter.next(), Some(&3));
+        assert_eq!(v1_iter.next(), None);
+    }
+    
+    #[test]
+    fn into_iterator_demonstration() {
+        // use into_iter() method
+        let v2 = vec![1, 2, 3];
+        let mut v2_iter = v2.into_iter(); // into_iter owns the value
+        assert_eq!(v2_iter.next(), Some(1));
+        assert_eq!(v2_iter.next(), Some(2));
+        assert_eq!(v2_iter.next(), Some(3));
+        assert_eq!(v2_iter.next(), None);
+    }
+    ```
+    
+**iterator methods provided by the standard library**
+
+- methods that consume the iteratori are called **consuming adaptors**: these methods use `next` in their definition and thus consume the iterator:
+    ```rust
+    #[test]
+    fn iterator_cosumers() {
+        let v1 = vec![1, 2, 3];
+        let it = v1.iter();
+        let total: i32 = it.sum();  // explicit type required for sum
+        assert_eq!(total, 6);
+
+        assert_eq!(it.max(), Some(&3));  // max returns an option, different from sum.
+    }
+    ```
+    
+- methods that produce other iterators are called **iterator adaptors**: 
+    ```rust
+    #[test]
+    fn iterator_map() {
+        let v1 = vec![1, 2, 3];
+        let it = v1.iter();
+        let v2: vec<_> = it.map(|x| x + 1).collect(); // type needed
+
+        assert_eq!(v2, vec![2, 3, 4]);
+    }
+    
+    #[test]
+    fn iterator_filter() {
+        let v1 = vec![1, 2, 3];
+        let it = v1.iter();
+
+        // very complicated reference and ownership, dig in later
+        let v2: Vec<_> = it.filter(|&&x| x > 1).cloned().collect();
+        assert_eq!(v2, vec![2, 3]);
+    }
+    ```
