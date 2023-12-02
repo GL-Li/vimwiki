@@ -75,7 +75,7 @@ impl Square {
 
 - used for dynamic string manipulation.
 - access through a pointer (reference) whose size is 24 bytes, including pointer, length and capacity of the string. The actual string data have variable size.
-- When talking about the size of a String object like in `let s = String::from("abc")`, is 24 bytes, it is the size of the pointer, not the actual data in heap. Actually `s` lives in stack and has a value of a pointer. The pointer points to the data in heap. `s` is just the pointer.
+- When talking about the size of a String object like in `let s = String::from("abc")`, which is 24 bytes, it is the size of the pointer in stack, not the actual data in heap. Actually `s` lives in stack and has a value of a pointer. The pointer points to the data in heap. `s` is just the pointer.
 - create with ways like:
     - `let aaa = String::from("aaa")`
     - `let bbb = "bbb".to_string()`
@@ -2624,11 +2624,11 @@ Revisit when having more experiences.
     pub fn add(left: usize, right: usize) -> usize {
         left + right
     }
-
+    
     #[cfg(test)]
     mod tests {
         use super::*;
-
+    
         #[test]     // indicate this is a test function
         fn it_works() {
             let result = add(2, 2);
@@ -2651,6 +2651,7 @@ Revisit when having more experiences.
     assert_eq!(x, y, "{} does not equal to {}", x, y)
     ```
     
+
 **checking for panics with should_panic** when panic is expected
 
 - example `src/lib.rs`:
@@ -2658,21 +2659,21 @@ Revisit when having more experiences.
     pub struct Guess {
         value: i32,
     }
-
+    
     impl Guess {
         pub fn new(value: i32) -> Guess {
             if value < 1 || value > 100 {
                 panic!("Guess value must be between 1 and 100, got {}.", value);
             }
-
+    
             Guess { value }
         }
     }
-
+    
     #[cfg(test)]
     mod tests {
         use super::*;
-
+    
         #[test]
         #[should_panic]  // indicate panic is expected. test failed if not panic
         fn greater_than_100() {
@@ -2686,6 +2687,7 @@ Revisit when having more experiences.
     #[should_panic(expected = "whatever message you want to add")]
     ```
     
+
 **using Result<T, E> in tests**, no `assert!` family used and no `should_panic` either.
 
 - example:
@@ -2731,21 +2733,21 @@ Revisit when having more experiences.
                 pub fn add_two(a: i32) -> i32 {
             a + 2
         }
-
+        
         #[cfg(test)]
         mod tests {
             use super::*;
-
+        
             #[test]
             fn add_two_and_two() {
                 assert_eq!(4, add_two(2));
             }
-
+        
             #[test]
             fn add_three_and_two() {
                 assert_eq!(5, add_two(3));
             }
-
+        
             #[test]
             fn one_hundred() {
                 assert_eq!(102, add_two(100));
@@ -2767,29 +2769,29 @@ Revisit when having more experiences.
         # run tests having letter "h" in names
         $ cargo test h
         ```
-        
+    
 - ignoring some tests unless specifically requested by add `#[ignore]` attribute:
     - test code example:
         ```rust
                 pub fn add_two(a: i32) -> i32 {
             a + 2
         }
-
+        
         #[cfg(test)]
         mod tests {
             use super::*;
-
+        
             #[test]
             fn add_two_and_two() {
                 assert_eq!(4, add_two(2));
             }
-
+        
             #[test]
             #[ignore]  // ignored in $ cargo test
             fn add_three_and_two() {
                 assert_eq!(5, add_two(3));
             }
-
+        
             #[test]
             fn one_hundred() {
                 assert_eq!(102, add_two(100));
@@ -2833,7 +2835,7 @@ Revisit when having more experiences.
     ```rust
     // need to load the package
     use package_xxx;
-
+    
     #[test]
     fn test_func_1() {
         // -- snippet calling package function -- 
@@ -2869,7 +2871,7 @@ Revisit when having more experiences.
             // other code
         }
         ```
-        
+    
 - integration tests only works for library crates, not for binary crates.
 
 
