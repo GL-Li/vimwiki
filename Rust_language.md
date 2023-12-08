@@ -332,7 +332,7 @@ fn main() {
     - **signed integer** can have negative, zero, and positive integers.
     - we can add underscore `_` to integer literals. For example, `12_34_567` is the same as `1234567`.
     - The default integer type is `i32`.
-    - Integer division returns an integer, truncates toward zero.
+    - Integer division returns an integer, truncates toward zero. For example, 5/3 is 1.
 - floating-point types like `f32` and `f64`. 
     - Rust's default is `f64`. All floating-point types are signed.
     - Integer literals cannot be assigned to floating-point variables
@@ -547,8 +547,10 @@ fn main() {
 ### 4.1 What is ownership
 
 **Safety is the absence of undefined behavior**: any unexpected action by the code potentially causses security problems. 
-    - A foundational goal of Rust is to ensure codes never have undefined behavior.
-        - A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
+
+- A foundational goal of Rust is to ensure codes never have undefined behavior.
+
+- A second goal of Rust is to prevent undefined behavior at compile-time, instead of run-time, which improves software reliability and performance.
 
 **Frames are where variables live**: a frame is a mapping from variables to values within a single scope. A scope is defined by `{...}`, for example:
 ```rust
@@ -582,13 +584,15 @@ fn main() {
 **Garbage collection** is used by many other languages to manage memory, which regularly looks for no-longer-used memory while running. The programmer must explicitly allocate and free the memory.
 
 **stack, heap, pointer**: memory available to code at **runtime**
-    - **stack stores values of known fixed size** in memory in first-in-first-out order. Adding data is called **pushing on** to the stack. Removing data is called **popping off** the stack.
-    - **heap allocates a space in memory identified by a pointer to an unknown or changing value**. The pointer, whose size is known and fixed, is stored in a stack. To add data, the program first locate the pointer in stack, which then lead to the heap.
+
+- **stack stores values of known fixed size** in memory in first-in-first-out order. Adding data is called **pushing on** to the stack. Removing data is called **popping off** the stack.
+- **heap allocates a space in memory identified by a pointer to an unknown or changing value**. The pointer, whose size is known and fixed, is stored in a stack. To add data, the program first locate the pointer in stack, which then lead to the heap.
 
 **Ownership rules**
-    - Each value in Rust has an owner.
-    - There can only be one owner at a time.
-    - When the owner goes out of scope, the value will be dropped.
+
+- Each value in Rust has an owner.
+- There can only be one owner at a time.
+- When the owner goes out of scope, the value will be dropped.
 
 **string literals** are fixed string with type `&str`
 - used when the value of a string is known at compile time
@@ -613,9 +617,9 @@ fn main() {
 ### 4.2 referrence and borrowing
 
 **When ownership moved?** 
-- generally speaking, move happens to types that does not implement copy trait.
+- Generally speaking, move happens to types that does not implement copy trait.
 - Custom Struct will be moved if copy trait is not implemented.
-- for the built-in types, those lives in heap will be moved, not those in stack
+- For the built-in types, those lives in heap will be moved, not those in stack
     ```rust
     // for varaibles in stack, ownership not moved
     let x = 5;
@@ -646,7 +650,30 @@ fn greet(g1: &String, g2: &String) { // note the ampersands
 }
 ```
 
-**Dereferencing a pointer to get its value** of a mutable heap variable
+**Dereferencing a pointer to get its value** of a mutable heap variable. 
+
+- A variable `x` has two parts: a pointer and a value: `&x` is the pointer and `*x` is the value. 
+
+  ```rust
+  fn main() {
+      let x = Box::new(5);  // &x is in stack and *x is in heap
+      let r1 = &x;  // r1 is in stack, which is a copy of the pointer of x
+      let r2 = r1;  // r2 is a copy of r1
+      let r3 = &&x; // r3 is a reference to the pointer of x
+      let r4 = &r1; // r4 is a reference to r1
+      println!("{:p}", r1);  // r1 and r2 are at the same memory address
+      println!("{:p}", r2);  
+      println!("{:p}", r3);  // r3 has its own address
+      println!("{:p}", r4);  // r4 has its own address
+      
+      println!("{:p}", x);   // x has its address before move
+      let y = x;
+      println!("{:p}", y);   // y has the same address as x before x's move
+  }
+  ```
+
+  
+
 - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
    ```rust
   let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
@@ -903,7 +930,8 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
     let origin = Point(0, 0, 0);
     ```
 
-- **uint-like** structs with any fields: it is useful to implement a trait on a type but don't have any data to strore in the type.
+- **uint-like** structs without any fields: it is useful to implement a trait on a type but don't have any data to strore in the type.
+  
     ```rust
     struct AlwaysEqual;
     let aaa = AlwaysEqual;
@@ -953,7 +981,7 @@ dbg!(&rect)  // dbg! moves ownership while println! only use reference.
 
 - `self` as function input: differences between `self`, `&self` and `&mut self`
     ```rust
-    `#[derive(Debug)]
+    #[derive(Debug)]
     struct Rectangle {
         width: u32,
         height: u32,
@@ -976,8 +1004,7 @@ dbg!(&rect)  // dbg! moves ownership while println! only use reference.
             // do nothing but self is deleted
         }
     }
-
-
+    
     fn main() {
         let mut rect1 = Rectangle {
             width: 30,
@@ -1018,14 +1045,13 @@ fn main() {
         width: 1,
         height: 2,
     });
-    println!("are is {}", rect.area()); // auto dereferenncing from Box to Rectangle
+    println!("Area is {}", rect.area()); // auto dereferenncing from Box to Rectangle
 }
 
 struct Rectangle {
     width: u32,
     height: u32,
 }
-
 
 impl Rectangle {
     fn area(&self) -> u32 {
@@ -1232,7 +1258,7 @@ impl Rectangle {
         Some(max) => println!("The maximum is configured to be {}", max),
         _ => (),  // have to add this line to conver other possibilies though not interested in
     }
-
+    
     // block 2
     let config_max = Some(3u8);
     if let Some(max) = config_max {   // ignore other possibilities
@@ -1280,7 +1306,7 @@ impl Rectangle {
 - path to code in modules like `crate::garden::vegetables::Asparagus`.
 - private vs public: default to private, use `pub` to make it public
 - the `use` keyword
-- example: a binary crate named `baclyard`:
+- example: a binary crate named `backyard`:
     - structure
         ````
         backyard
@@ -1510,7 +1536,7 @@ impl Rectangle {
     ```
     
 
-**Providing new names with the as keyword**
+**Providing new names with the `as` keyword**
 
 - We can also use `as` to rename a function, struct, or enums to a shorter one or to avaoid name conflict
     ```rust
@@ -1617,7 +1643,7 @@ impl Rectangle {
 ### 7.5 Separating modules into different files
 
 - basic structure: the root file `lib.rs` or `main.rs` lists the names of the top modules that can be called with `crate::xxx`. Then define seperate files `xxx.rs` with the same names as the modules. for example
-    - root file `src/librs`
+    - root file `src/lib.rs`
         ```rust
         // list all modules
         mod restaurant;
@@ -1842,7 +1868,7 @@ impl Rectangle {
 
 **hash map basics**
 
-- crating a hash map: all keys must be of the same type and all values of the same type.
+- creating a hash map: all keys must be of the same type and all values of the same type.
     ```rust
     // HashMap is not included in prelude
     use std::collections::HashMap;
@@ -2730,10 +2756,6 @@ Revisit when having more experiences.
 - filtering to run multiple test functions using keyword. So we can group tests by including keywords in test function names.
     - test example:
         ```rust
-                pub fn add_two(a: i32) -> i32 {
-            a + 2
-        }
-        
         #[cfg(test)]
         mod tests {
             use super::*;
@@ -2754,7 +2776,7 @@ Revisit when having more experiences.
             }
         }
         ```
-    
+        
     - run different tests:
         ```sh
         # all three test
@@ -2773,10 +2795,6 @@ Revisit when having more experiences.
 - ignoring some tests unless specifically requested by add `#[ignore]` attribute:
     - test code example:
         ```rust
-                pub fn add_two(a: i32) -> i32 {
-            a + 2
-        }
-        
         #[cfg(test)]
         mod tests {
             use super::*;
@@ -2882,7 +2900,7 @@ Revisit when having more experiences.
 - reading command line arguments with `std::env::args()`
     ```rust
     use std::env;
-
+    
     fn main() {
         // env::args returns a String and .collect() returns an iterator
         let args: Vec<String> = env::args().collect();
@@ -2906,12 +2924,12 @@ Revisit when having more experiences.
 - read a file into String with `std::fs::read_to_string(file_path)`:
     ```rust
     use std::fs;
-
+    
     fn main() {
         // poem.txt is at the project root. Whole file read into a Results<String>
         let contents = fs::read_to_string("poem.txt")
             .expect("Should have been able to read the file");
-
+    
         println!("With text:\n{contents}");
     }
     ```
@@ -2950,12 +2968,13 @@ Revisit when having more experiences.
             // ok to use clone for small Strings
             let query = args[1].clone();
             let file_path = args[2].clone();
-
+    
             Config { query, file_path }
         }
     }
     ```
     
+
 **fixing the error handling** when query or filepath not provided in terminal
 
 - When one or two arguments are missing, for example, running `$ cargo run -- star`, we will have index out of boundary error as `args[2]` is not provided.
@@ -2969,7 +2988,7 @@ Revisit when having more experiences.
             }
             let query = args[1].clone();
             let file_path = args[2].clone();
-
+    
             Config { query, file_path }
         }
     }
@@ -2986,22 +3005,22 @@ Revisit when having more experiences.
                 if args.len() < 3 {
                     return Err("not enough arguments");
                 }
-
+        
                 let query = args[1].clone();
                 let file_path = args[2].clone();
-
+        
                 Ok(Config { query, file_path })
             }
         }
         ```
-        
+    
 - calling `Config::build()` and hadling errors in `main()`:
     ```rust
     use std::process;
-
+    
     fn main() {
         let args: Vec<String> = env::args().collect();
-
+    
         // use a closure to handle error message and exit program
         let config = Config::build(&args).unwrap_or_else(|err| {
             // users only see the printed error message
@@ -3009,10 +3028,11 @@ Revisit when having more experiences.
             // an exit code for additional processing
             process::exit(1);
         });
-
+    
         // --snip--
     ```
     
+
 **extracting logic from main**
 
 - code snipets:
@@ -3061,12 +3081,12 @@ Revisit when having more experiences.
     ```rust
     fn main() {
         let args: Vec<String> = env::args().collect();
-
+    
         let config = Config::build(&args).unwrap_or_else(|err| {
             eprintln!("Problem parsing arguments: {err}");
             process::exit(1);
         });
-
+    
         if let Err(e) = minigrep::run(config) {
             eprintln!("Application error: {e}");
             process::exit(1);
@@ -3074,7 +3094,7 @@ Revisit when having more experiences.
     }
     ```
     
-### chapeter summary: working code
+### chapter summary: working code
 
 `src/main.rs`
 ```rust
@@ -3207,7 +3227,7 @@ Trust me.";
 
 > Programming in a functional style often includes using functions as values by passing them in arguments, returning them from other functions, assigning them to variables for later execution, and so forth.
 
-### 13.1. closure: anonymous functions that capture their environment
+### 13.1. closure: anonymous functions that capture variables from their environment
 
 **closure definition**: a closure can take in environment variables without setting them as arguments as normal functions do.
 
@@ -3247,6 +3267,7 @@ Trust me.";
     }
     ```
     
+
 **reference and ownership of environment variables in closure**
 
 - Base on the how the closure is defined, the closure automatically decide ???? how an environment variables is used in three ways:
@@ -3296,19 +3317,20 @@ Trust me.";
 - take ownership with keyword `move`. It is useful when passing the closure to a new thread as the new thread needs to own the data. Threads will be discussed in chpt 16.A brief example:
     ```rust
     use std::thread;
-
+   
     fn main() {
         let list = vec![1, 2, 3];
         println!("{:?}", list);
-
+   
         // this new thread may finish after the main thread finished so if does not
         // own the list, the list will be a dangling reference.
         thread::spawn(move || println!("from thread: {:?}", list))
             .join()
             .unwrap();
     }
-   ``` 
+   ```
    
+
 **moving capture values out of closures and the Fn traits**
 
 - `FnOnce` trait applies to closures that can be called once. All closures at least implement `FnOnce`. A closure that moves captured values out of it body will only implement `FnOnce`. All ananimous functons are only called once, for example in `unwrap_or_else()`, which is defined as:
@@ -3353,14 +3375,14 @@ Trust me.";
         width: u32,
         height: u32,
     }
-
+    
     fn main() {
         let mut list = [
             Rectangle { width: 10, height: 1 },
             Rectangle { width: 3, height: 5 },
             Rectangle { width: 7, height: 12 },
         ];
-
+    
         // s represent an element in list, can be any symbol.
         list.sort_by_key(|s| s.width);  // this closure mutates list
         println!("{:#?}", list);
@@ -3371,7 +3393,7 @@ Trust me.";
 
 **closures must name captured lifetimes**
 
-- lifetimes needed when a normal function accepts or returns a closure. Wrong case:
+- lifetimes needed when a normal function accepts or returns a closure. Case with error:
     ```rust
     // This function returns a closure that returns a String from a &str.
     // It has a compiler error for missing lifetime.
@@ -3380,7 +3402,7 @@ Trust me.";
             s_ref.to_string()
         }
     }
-
+    
     // If the function passed the compiler, this use case shows the problem.
     fn main() {
         let s_own = String::from("Hello world");
@@ -3398,7 +3420,7 @@ Trust me.";
             s_ref.to_string()
         }
     }
-
+    
     fn main() {
         let s_own = String::from("Hello world");
         let cloner = make_a_cloner(&s_own);
@@ -3414,6 +3436,7 @@ Trust me.";
     }
     ```
     
+
 **Quiz**
 
 - Determine whether the program will pass the compiler. If it passes, write the expected output of the program if it were executed.
@@ -3469,6 +3492,7 @@ Trust me.";
     }
     ```
     
+
 **iterator methods provided by the standard library**
 
 - methods that consume the iteratori are called **consuming adaptors**: these methods use `next` in their definition and thus consume the iterator:
@@ -3479,7 +3503,7 @@ Trust me.";
         let it = v1.iter();
         let total: i32 = it.sum();  // explicit type required for sum
         assert_eq!(total, 6);
-
+    
         assert_eq!(it.max(), Some(&3));  // max returns an option, different from sum.
     }
     ```
@@ -3491,7 +3515,7 @@ Trust me.";
         let v1 = vec![1, 2, 3];
         let it = v1.iter();
         let v2: vec<_> = it.map(|x| x + 1).collect(); // type needed
-
+    
         assert_eq!(v2, vec![2, 3, 4]);
     }
     
@@ -3499,7 +3523,7 @@ Trust me.";
     fn iterator_filter() {
         let v1 = vec![1, 2, 3];
         let it = v1.iter();
-
+    
         // very complicated reference and ownership, dig in later
         let v2: Vec<_> = it.filter(|&&x| x > 1).cloned().collect();
         assert_eq!(v2, vec![2, 3]);
