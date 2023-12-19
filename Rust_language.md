@@ -3529,3 +3529,389 @@ Trust me.";
         assert_eq!(v2, vec![2, 3]);
     }
     ```
+    
+### 13.3 Improving our I/O project
+
+Details see the code in ~/projects/mingrp.
+
+
+### 13.4 Comparing performance: loops vs. iterartors
+
+**zero-cost abstraction** means no additional runtime overhead by using the abstractiion:
+
+- for loops are low level implementation
+- iterators are a high level abstraction of the low level for loops
+- iterators are zero-cose abstractions of for loops as they have roughly the same runtime.
+
+**common method for iterators**: zip, map
+
+- **zip** to join two iterators into pairs
+    ```rust
+    fn main() {
+        let v1 = vec![1, 2];
+        let v2 = vec!["a", "b"];
+        // v2 can be replaced with v2.iter()
+        let pair: Vec<_> = v1.iter().zip(v2).collect();
+
+        for (a, b) in &pair {
+            println!("{} and {}", a, b);
+        }
+    }
+    ```
+    
+- **map** to map an element of an iterator to another value
+    ```rust
+    fn main() {
+        let v1 = vec![1, 2];
+        let v2 = vec![3, 4];
+        let pair: Vec<_> = v1.iter().zip(v2).map(|(a, b)| a + b as i8).collect();
+        println!("{:?}", pair);
+    }
+    ```
+
+## 14. More about Cargo and Crate.io
+
+### 14.1. Customizing builds with release profiles
+
+**release profiles**
+
+- Release profiles are predifined and customizable profiles with different configurations for compiling code when we run `$ cargo build` or `$cargo build --release`.
+- Customize configurations in `Cargo.toml`, for example, `opt-level`, which has value from 0 to 3. Large values for better optimization so longer time in compiling.
+    ```toml
+    [profile.dev]
+    opt-level = 0
+    
+    [profile.release]
+    opt-level = 3
+    ```
+    
+### 14.2 Publishing a crate to Crates.io
+
+**Documentation comments with ///** 
+
+- just above a function. The comments accept markdown format
+- example:
+    ```rust
+    /// Adds one to the number given.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let arg = 5;
+    /// let answer = my_crate::add_one(arg);
+    ///
+    /// assert_eq!(6, answer);
+    /// ```
+    pub fn add_one(x: i32) -> i32 {
+        x + 1
+    }
+    ```
+- Run `$ cargo doc` to generate documentations.
+- Documentations are saved in `target/doc/` directory.
+- `$ cargo doc --open` will also build documentation and open in a web browser.
+
+**Documentation comments as tests**: In above examples, we have a sample code, which will be run when we run `$ cargo test`.
+
+**Commenting contained items with //!**
+
+- The section is at the top of a file (crate) and intented to describe the whole file instead of the function after it.
+- example:
+    ```rust
+    //! # My Crate
+    //!
+    //! `my_crate` is a collection of utilities to make performing certain
+    //! calculations more convenient.
+
+    /// Adds one to the number given.
+    // --snip--
+    ```
+    
+**exporting a convenient public API with pub use**
+
+- The purpose is to export a function or type for other uses to use it easily.
+- In the following example, we have to use `use art::kinds::PrimaryColor` to access Primary color.
+    ```rust
+    //! # Art
+    //!
+    //! A library for modeling artistic concepts.
+
+    pub mod kinds {
+        /// The primary colors according to the RYB color model.
+        pub enum PrimaryColor {
+            Red,
+            Yellow,
+            Blue,
+        }
+
+        /// The secondary colors according to the RYB color model.
+        pub enum SecondaryColor {
+            Orange,
+            Green,
+            Purple,
+        }
+    }
+
+    pub mod utils {
+        use crate::kinds::*;
+
+        /// Combines two primary colors in equal amounts to create
+        /// a secondary color.
+        pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> SecondaryColor {
+            // --snip--
+        }
+    }
+    ```
+    
+- With `pub use`, we can access it simply with `use art::PrimaryColor`
+    ```rust
+    //! # Art
+    //!
+    //! A library for modeling artistic concepts.
+
+    pub use self::kinds::PrimaryColor;
+    pub use self::kinds::SecondaryColor;
+    pub use self::utils::mix;
+
+    pub mod kinds {
+        // --snip--
+    }
+
+    pub mod utils {
+        // --snip--
+    }
+    ```
+    
+### 14.3. Cargo workspaces
+
+**Cargo workspaces**
+
+- A cargo workspace is a set of packages that share the same `Cargo.lock` and output directory.
+
+- A workspace structure: A workspace has its own `Cargo.toml` at the root and a `Cargo.toml` for each of the packages.
+    ```
+    .
+    ├── adder
+    │   ├── Cargo.toml
+    │   └── src
+    │       └── main.rs
+    ├── add_one
+    │   ├── Cargo.toml
+    │   └── src
+    │       └── lib.rs
+    ├── Cargo.lock
+    └── Cargo.toml
+    ```
+    
+### 14.4. Installing binaries from Crate.io with cargo install
+
+**only for installing binary crates and use it locally**
+
+- `$ cargo install ripgrep` to install ripgrep
+- The binary is saved in `~/.cargo/bin/` with name `rg`.
+- Use it from terminal: `$ rg -i abcd` to search `abcd` recursively in all files under current directory.
+
+### 14.5. Extending Cargo with custom commands
+
+Run `$ cargo --list` to view all sub-commands like `install` and `new` which can be run as `$ cargo install ...` and `$ cargo new ...`.
+
+
+
+## 15. Smart Pointers
+
+**A pointer** contains an address in memory, which refers to or point at some other data. In Rust, the most common pointer is the reference, which is indicated by `&` and borrows value it point to.
+
+**Smart pointers** 
+
+- are data structures that act like a pointer but also have additional metadata and capbilities. 
+- Smart poiters often own the data they point to. Smart pointer examples:
+    - String
+    - Vec<T>
+- usually implemeted using strcts with `Deref` and `Drop` traits.
+
+### 15.1. Using Box<T> to point to data on  the heap
+
+**Box<T> basics**:
+
+- It stores data of type T in heap, no matter what the type T is.
+- A typical use case is when you have a large data such as the string literal of a whole book and you do not want to copy it. You can put the whole book in a Box and then just move the smart pointer around.
+- example
+    ```rust
+    fn main() {
+        let b = Box::new(5);  // b is in stack and 5 is in heap
+        println!("b = {}", b);  // or *b to access heap data of b
+    }
+    ```
+    
+**Quiz**
+
+- Q2: Say we have a program with a variable:
+
+    ```rust
+    let x: [Box<(usize, usize)>; 4] = /* ... */
+    ```
+
+    For a compile target with a 64-bit architecture, what is the minimum possible size in memory (in bytes) of x on the stack? Write your answer in digits, e.g. 0, 1, so on.
+
+    A: 32. `x` is an array of 4 Box pointers. Each pointer is 8 bytes. So `x` is at least 32 butes.
+
+### 15.2. Treating smart pointers like regular references with the Deref trait
+
+**Deref trait** for dererence operator `*` so that a smart pointer works like a regular reference.
+
+- example of a regular reference
+    ```rust
+    fn main() {
+        let x = 5;
+        let y = &x;
+
+        assert_eq!(5, x);
+        assert_eq!(5, *y);  // dereference a regular reference
+    }
+    ```
+
+
+
+- example of a Box<T>
+    ```rust
+    fn main() {
+        let x = 5;
+        let y = Box::new(x);
+
+        assert_eq!(5, x);
+        assert_eq!(5, *y);  // Box has traint Deref so can be dererenced with *
+    }
+    ```
+    
+**define our own smart pointer**
+
+- example: MyBox<T> with `Deref` trait
+    ```rust
+    use std::ops::Deref;
+
+    fn main() {
+        let x = 5;
+        let y = MyBox::new(x);
+
+        assert_eq!(5, x);
+        assert_eq!(5, *y);  // implemented Deref trait
+    }
+
+    // define MyBox with Deref trait
+    
+    struct MyBox<T>(T);
+
+    impl<T> MyBox<T> {
+        fn new(x: T) -> MyBox<T> {
+            MyBox(x)
+        }
+    }
+
+    impl<T> Deref for MyBox<T> {
+        type Target = T;  // required
+
+        fn deref(&self) -> &Self::Target { // only required method
+            &self.0  // return a reference so to use * operator
+        }
+    }
+    ```
+    
+- **Deref coercion** converts a reference to a type that implements the `Deref` trait into a reference to another type.
+    - Deref coercion process example
+        ```rust
+        // hello function takes a string slice
+        fn hello(name: &str) {
+            println!("Hello, {name}!");
+        }
+        
+        fn main() {
+            let m = MyBox::new(String::from("Rust"));
+            hello(&m);
+            // what happens in hello(&m)?
+            // - Deref::deref(&m) to get a reference to a String s, &s
+            // - Derefe::deref(&s) to get a reference to str, which is &str
+            // - &str matches the type of the argument of function hello
+            // As both MyBox and String implement Deref trait, Rust performs Deref
+            // coercion as many time as needed to feed the function.
+        }
+        ```
+    - Deref coercion happens when Rust find types and trait implementations in three cases:
+        - From `&T` to `&U` when `T: Deref<Target=U>`
+        - From `&mut T` to `&mut U` when `T: DerefMut<Target=U>`
+        - From `&mut T` to `&U` when `T: Deref<Target=U>`
+
+### 15.3. Running code on cleanup with the Drop trait
+
+**Implement Drop trait**
+
+- Implement trait Drop for a custom struct so that when it drops automatically when out of scope. Automatically implemented in most cases.
+- Drop trait has only one required method `drop(&mut self)`, which returns unit `()`. In case of manual implementation, here is an example:
+    ```rust
+    struct CustomSmartPointer {
+        data: String,
+    }
+
+    impl Drop for CustomSmartPointer {
+        // as simple as this code to implement drop method
+        fn drop(&mut self) {
+            println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+        }
+    }
+
+    // variables are dropped in reverse order. Out of the main scope, d is 
+    // dropped before c is dropped, which is reasonable as d may depend on c.
+    fn main() {
+        let c = CustomSmartPointer {
+            data: String::from("my stuff"),
+        };
+        let d = CustomSmartPointer {
+            data: String::from("other stuff"),
+        };
+        println!("CustomSmartPointers created.");
+    }
+    ```
+    
+**Dropping a value early with std::mem::drop**
+
+- Used to drop a variable before it goes out of scope. Rarely used.
+    ```rust
+    struct CustomSmartPointer {
+        data: String,
+    }
+
+    impl Drop for CustomSmartPointer {
+        fn drop(&mut self) {
+            println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+        }
+    }
+    fn main() {
+        let c = CustomSmartPointer {
+            data: String::from("some data"),
+        };
+        println!("CustomSmartPointer created.");
+        // std::mem::drop is loaded in prelude. It calls Drop::drop() on the
+        // variable. But we cannot use c.drop() as it is called when c is out of
+        // scope, to avoid double free error.
+        drop(c);
+        println!("CustomSmartPointer dropped before the end of main.");
+    }
+    ```
+    
+
+### 15.4 Rc<T>, the reference counted smart pointer
+
+- Used in case a single value having multiple owners. This is a very rare case so we can skip it for now.
+    
+    
+### 15.5 RefCell<T> and the interior mutability pattern
+
+**interior mutability**
+
+- allows you to mutate data even when there are immutable references to the data
+- using `unsafe` code
+
+skip this section  for now.
+
+
+### 15.6. Reference cycle can leak memory
+
+skip for now as we skipped two above.
