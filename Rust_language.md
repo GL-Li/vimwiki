@@ -3915,3 +3915,251 @@ skip this section  for now.
 ### 15.6. Reference cycle can leak memory
 
 skip for now as we skipped two above.
+
+
+## 16. Fearless concurrency
+
+- **Concurrent programming**: different parts of a program execute independently.
+- **Parallel programming**: different parts of a program execute at the same time.
+- **Process**: where an executed programm's code is run.
+- **Threads**: a feature that runs the independent parts of a programm.
+
+
+### 16.1. Using threads to run code simultaneously
+
+**creating a new thread with spawn**
+
+- example: main thread, join handle
+    ```rust
+    use std::thread;
+    use std::time::Duration;
+
+    fn main() {
+        // block 1: this block of code runs in a new thread, which is
+        // different from the main thread.
+        let handle = thread::spawn(|| {
+            for i in 1..10 {
+                println!("hi number {} from the spawned thread!", i);
+                thread::sleep(Duration::from_millis(1));
+            }
+        });
+
+        // block 2: runs simutaneously in the main thread
+        for i in 1..5 {
+            println!("hi number {} from the main thread!", i);
+            thread::sleep(Duration::from_millis(1));
+        }
+
+        // block 1 one will stop once the main thread completes. This line of
+        // code is to wait for the handle thread to finish.
+        handle.join().unwrap();
+    }
+    ```
+    
+**Using move closure with threads** to move the variables from main thread to new thread
+
+- example:
+```rust
+    use std::thread;
+
+    fn main() {
+        let v = vec![1, 2, 3];
+
+        // use move to move the ownership of v into the new thread
+        // v is not available in the main thread anymore.
+        let handle = thread::spawn(move || {
+            println!("Here's a vector: {:?}", v);
+        });
+
+        handle.join().unwrap();
+    }
+    ```
+    
+- quiz Q1
+    Determine whether the program will pass the compiler. If it passes, write the expected output of the program if it were executed.
+
+    ```rust
+    use std::thread;
+    fn main() {
+        let mut n = 1;
+        let t = thread::spawn(move || {
+            n = n + 1;
+            thread::spawn(move || {
+                n = n + 1;
+            })
+        });
+        n = n + 1;
+        t.join().unwrap().join().unwrap();
+        println!("{n}");
+    }
+    ```
+    Answer: It compiles and runs. `n` is an integer living in the stack. So the `move` only makes a copy of it into the new thread. The main thread still has it.
+
+### 16.2: using message passing to transfer data between threads
+
+**mpsc - multiple producer single consumer**
+
+- send and receive a single data
+    ```rust
+    use std::sync::mpsc;
+    use std::thread;
+
+    fn main() {
+        // create a channel with a transmitter tx and a receiver rx
+        let (tx, rx) = mpsc::channel();
+
+        thread::spawn(move || {
+            let val = String::from("hi");
+            // send data from the transmitter. .send() returns a 
+            // Result<(), SendError<T>) after sending the data.
+            // val is moved by send.
+            tx.send(val).unwrap();
+        });
+
+        // receive data sent by the transmitter
+        let received = rx.recv().unwrap();
+        println!("Got: {}", received);
+    }
+    ```
+
+- send and receive multple values
+    ```rust
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    fn main() {
+        let (tx, rx) = mpsc::channel();
+
+        thread::spawn(move || {
+            let vals = vec![
+                String::from("hi"),
+                String::from("from"),
+                String::from("the"),
+                String::from("thread"),
+            ];
+
+            // send element one by one to rx
+            for val in vals {
+                tx.send(val).unwrap();
+                thread::sleep(Duration::from_secs(1));
+            }
+            // close the channel 10 sec after sending the last data
+            thread::sleep(Duration::from_secs(10));
+        });
+
+        // runs whenever rx received a piece of data until the thread from
+        // which tx sending data is closed, that is, 10 sec after the last
+        // data was sent.
+        for received in rx {
+            println!("Got: {}", received);
+        }
+        
+        // This runs only 10 secs after the last data is sent.
+        println!("The End");
+    }
+    ```
+    
+**creating multiple producers by cloning the transmitter**
+
+- sample transmitter cloned to multiple threads and send data to the same receiver in the main tread..
+
+- example
+    ```rust
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    fn main() {
+        // create a chanel and clone transmitter. The two transimtters
+        // share a receiver
+        let (tx, rx) = mpsc::channel();
+        let tx1 = tx.clone();
+        
+        // cloned transmitter used in this thread
+        thread::spawn(move || {
+            let vals = vec![
+                String::from("hi"),
+                String::from("from"),
+                String::from("the"),
+                String::from("thread"),
+            ];
+
+            for val in vals {
+                tx1.send(val).unwrap();
+                thread::sleep(Duration::from_secs(1));
+            }
+        });
+
+        // original transmitter used in this thread
+        thread::spawn(move || {
+            let vals = vec![
+                String::from("more"),
+                String::from("messages"),
+                String::from("for"),
+                String::from("you"),
+            ];
+
+            for val in vals {
+                tx.send(val).unwrap();
+                thread::sleep(Duration::from_secs(1));
+            }
+        });
+
+        // receivers receive data from both transmitters, in the order of
+        // of the time data being sent.
+        for received in rx {
+            println!("Got: {}", received);
+        }
+    }
+    ```
+    
+**Quiz**
+
+- Question 2
+    Determine whether the program will pass the compiler. If it passes, write the expected output of the program if it were executed.
+
+    ```rust
+    use std::{sync::mpsc, thread};
+    fn main() {
+        let (tx, rx) = mpsc::channel();
+        thread::spawn(move || {
+            let s = String::from("Hello world");
+            tx.send(s.clone()).unwrap();
+            tx.send(s.len()).unwrap();
+        });
+        let s = rx.recv().unwrap();
+        let n = rx.recv().unwrap();
+        println!("{s} {n}");
+    }
+    ```
+    
+    Answer: not compile. a tx can only send one type of data.
+
+### 16.3 Shared-state concurrency
+
+Involves mutiple ownership. Skip for now.
+
+
+### 16.4 Extensible concurrency with the Sync and Send traits
+
+skip for now
+
+
+## Object-oriented programming features of Rust
+
+### 17.1 Characteristics of object-oriented languages
+
+- No consensus about what features a language must have to be considered object-oriented.
+
+- The **Gang of Four** book definition:
+    >Object-oriented programs are made up of objects. An object packages both data and the procedures that operate on that data. The procedures are typically called methods or operations.
+
+- By this definiction, Struct and Enum and their methods meet the Gang of Four book definition.
+
+- Rust does not have inheritance. Instead it uses traits to achieve the same feature.
+
+
+### 17.2 Using trait objects that allow for values of different types
+
+
