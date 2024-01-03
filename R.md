@@ -52,7 +52,7 @@
     base_pkg <- installed.packages(priority = "high") |> 
         rownames()
     # non-base packages
-    non_base_pkg <- setdiff(all_pkg, base_bkg)
+    non_base_pkg <- setdiff(all_pkg, base_pkg)
     # remove non-base packages
     remove.packages(non_base_pkg)
     ```
