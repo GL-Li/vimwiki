@@ -155,6 +155,7 @@ open_save_workbook <- function(data_dir,
 
 ### QA: how to create Windows binary files for private packages?
 
+- From RStudio running on a **Window machine**, run `devtools::build(binary = TRUE)` to generate a `.zip` file, which is a Windows binary.
 - `devtools::build_win_release(email = "xxxx@yyyy.com", manual = FALSE)`
 - The command create a `tar.gz` source file and sends the file to https://win-builder.r-project.org/, where Window binary file is built
 - Once the Window binary file is ready, an email will be sent to the provided email address.
