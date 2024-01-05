@@ -62,6 +62,11 @@
     > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" dependencies_windows.R
     ```
 
+- have a test run
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" pea1.R
+    ```
+
 - use `renv` to identify the minimal set of packages required for a project
     ```r
     # initialize renv project and check the env.lock file for installed
