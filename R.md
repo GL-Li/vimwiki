@@ -464,3 +464,41 @@ Use `bench::bench_process_memory()` to retrieve current and maximum memory from 
         # [[4]]
         # [1]  2.44949  6.00000 36.00000
     ```
+
+
+### Use future with for loops without foreach
+
+To break a large data into small pieces and feed each small piece into a thread, we can use the future function, which is more flexible than `foreach ... %dofuture%`. 
+
+```R
+options(future.globals.maxSize = 5e9)
+library(doFuture)
+plan(multisession)
+library(dplyr)
+
+N <- 20
+dat_raw <- data.frame(
+  group = rep(letters[1:N], 100000),
+  value = rnorm(2000000)
+)
+
+# set up futures
+t0 <- Sys.time()
+for (grp in letters[1:N]) {
+  dat <- dat_raw |>
+    filter(group == grp)
+  assign(paste0("group", grp), future({
+    Sys.sleep(10)
+    c(total = sum(dat$value), avg = mean(dat$value))
+  }))
+}
+print(Sys.time() - t0)
+
+# collect values
+res <- list()
+t0 <- Sys.time()
+for (x in letters[1:N]) {
+  res[[x]] <- value(get(paste0("group", x)))
+}
+print(Sys.time() - t0)
+```
