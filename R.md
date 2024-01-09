@@ -501,4 +501,26 @@ for (x in letters[1:N]) {
   res[[x]] <- value(get(paste0("group", x)))
 }
 print(Sys.time() - t0)
+
+
+# here is a more efficient way to do it. The two methods give the same results.
+
+t0 <- Sys.time()
+# a list of futures
+ft <- list()
+
+for (grp in letters[1:N]) {
+  dat <- dat_raw |>
+    filter(group == grp)
+  ft[[grp]] <- future({
+    Sys.sleep(10)
+    c(total = sum(dat$value), avg = mean(dat$value))
+  })
+}
+print(Sys.time() - t0)
+
+t0 <- Sys.time()
+# use lapply to get the values
+res <- lapply(ft, value)
+print(Sys.time() - t0)
 ```
