@@ -15,7 +15,7 @@
 - [[julia]]
 - [[R|R language]]
 - [[regex|Regular Expression]]
-- [[Rust_language]]
+- [[Rust_language]] --- [[extendr]] --- [[Rust_by_example]] 
 - [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]]
 - [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
 
