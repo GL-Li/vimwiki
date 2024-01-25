@@ -70,6 +70,7 @@
 
 - `$ git log -p path/to/file`
     - It will print out commit info and changes in that commit of all commits when changes were made to that file.
+    - search the changes as if they are in vim.
 
 ### QA: how to delete a file or directory from git history and from remote repo?
 
