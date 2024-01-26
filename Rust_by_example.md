@@ -169,6 +169,50 @@ Tuples can have mixed types as elements.
     ```
 
 - practice 2: transpose a matrix
+    ```rust
+    use std::fmt;
+    #[derive(Debug)]
+    struct Matrix(f32, f32, f32, f32);
+
+    impl Matrix {
+        fn transpose(&self) -> Matrix {
+            Matrix(self.0, self.2, self.1, self.3)
+        }
+    }
+
+    impl fmt::Display for Matrix {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "[")?;
+            write!(f, "{} {}\n", self.0, self.1)?;
+            write!(f, " {} {}", self.2, self.3)?;
+            write!(f, "]")
+        }
+    }
+
+    fn main() {
+        let mtx = Matrix(1.1, 1.2, 2.1, 2.2);
+        println!(
+            "mtx is\n{}\nand it's transpose is\n{}",
+            mtx,
+            mtx.transpose()
+        );
+    }
+    ```
+
+### 2.3 Arrays and slices
+An **arrays** is a collection of objects of the same time, whose length is known at compiling time. A **slice** is a reference to a section of an array, whose length is unknown at compiling.
+
+- create an array:
+    - `let x: [i32; 5] = [1, 2, 3, 4, 5];`
+    - `let y: [i32; 500] = [99; 500];`. The `[T; N]` type T must implements `Copy` trait.
+    - `let aaa: [i32; 0] = [];` empty array, must specify type.
+- array methods:
+    - length: `x.len()`
+    - get an element with index i: `x.get(i)`, which returns a `Result`. Good to handle out of boundary error. 
+- slice:
+    - `&x` all array as a slice
+    - `&x[1..4]` elements of index  1, 2, and 3
+    - `&[] as &[i32]` empty slice, must specify type or type can be inferred.
 
 
 ## 6. Conversion
