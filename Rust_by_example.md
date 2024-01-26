@@ -93,13 +93,10 @@ struct City {
 }
 
 impl Display for City {
-    // `f` is a buffer, and this method must write the formatted string into it.
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let lat_c = if self.lat >= 0.0 { 'N' } else { 'S' };
         let lon_c = if self.lon >= 0.0 { 'E' } else { 'W' };
 
-        // `write!` is like `format!`, but it will write the formatted string
-        // into a buffer (the first argument).
         write!(f, "{}: {:.3}°{} {:.3}°{}",
                self.name, self.lat.abs(), lat_c, self.lon.abs(), lon_c)
     }
@@ -202,7 +199,7 @@ Tuples can have mixed types as elements.
             
             // into() is working if From is implemented but need
             // to explecitly specify types
-            let num_2: Number = 99i32.into();  // i32 after 99.
+            let num_2: Number = 99i32.into();  // i32 not required as type of num_2 defined
             println!("Number from into is {:?}", num_2);
         }
         ```
@@ -288,7 +285,7 @@ Tuples can have mixed types as elements.
     
     fn main() {
         let aaa = Circle { radius: 99 };
-        println!("{}", aaa.to_string());
+        println!("{}", aaa.to_string());  # to displayed string
     }
     ```
     
