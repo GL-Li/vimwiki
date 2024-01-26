@@ -24,12 +24,12 @@ Module `std::fmt` contains utilities for formatting and printing `String`s.
 - `fmt::Display`, if implemented for a type, use `{}` to print a type. It is clean and compact than `fmt::Debug`.
     ```rust
     use std::fmt;
-
+    
     struct TestDisplay {
         x: i32,
         y: String,
     }
-
+    
     // follow the signature and the order in write!().
     impl fmt::Display for TestDisplay {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -37,7 +37,7 @@ Module `std::fmt` contains utilities for formatting and printing `String`s.
             write!(f, "x: {}\ny: {}", self.x, self.y)
         }
     }
-
+    
     fn main() {
         let ttt = TestDisplay {
             x: 99,
@@ -47,19 +47,19 @@ Module `std::fmt` contains utilities for formatting and printing `String`s.
     }
     ```
 
-- a more complicated implementation of `Display` using `srite!()`
+- a more complicated implementation of `Display` using `write!()`
     ```rust
     use std::fmt;
-
+    
     struct List(Vec<i32>);
-
+    
     impl fmt::Display for List {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             // each write! write formatted  string into f, the formatter
             
             // as write! return a fmt::Result, use ? to handle error
             write!(f, "[")?;
-
+    
             let vec = &self.0;
             for (i, v) in vec.iter().enumerate() {
                 if i != 0 {
@@ -72,7 +72,7 @@ Module `std::fmt` contains utilities for formatting and printing `String`s.
             write!(f, "]")
         }
     }
-
+    
     fn main() {
         let ttt = List(vec![1, 2, 3]);
         println!("{ttt}");
@@ -184,18 +184,18 @@ Tuples can have mixed types as elements.
         ```rust
         // this example create a type Number from a type i32
         use std::convert::From;
-
+        
         #[derive(Debug)]
         struct Number {
             value: i32,
         }
-
+        
         impl From<i32> for Number {
             fn from(item: i32) -> Self {
                 Number { value: item }
             }
         }
-
+        
         fn main() {
             let num = Number::from(30);
             println!("My number is {:?}", num);
@@ -206,24 +206,24 @@ Tuples can have mixed types as elements.
             println!("Number from into is {:?}", num_2);
         }
         ```
-        
+    
 - The `Into` trait is the reciprocal of the `From` trait. 
     - need to know the type into which to convert, as there may be multipe conversion destination.
     - example:
         ```rust
         use std::convert::Into;
-
+        
         #[derive(Debug)]
         struct Number {
             value: i32,
         }
-
+        
         impl Into<Number> for i32 {
             fn into(self) -> Number {
                 Number { value: self }
             }
         }
-
+        
         fn main() {
             let int = 5;
             // neet to specify type of destination
@@ -239,10 +239,10 @@ Tuples can have mixed types as elements.
 - Example:
     ```rust
     use std::convert::{TryFrom, TryInto};
-
+    
     #[derive(Debug)]
     struct EvenNumber(i32);
-
+    
     impl TryFrom<i32> for EvenNumber {
         type Error = ();
         fn try_from(x: i32) -> Result<Self, Self::Error> {
@@ -253,13 +253,13 @@ Tuples can have mixed types as elements.
             }
         }
     }
-
+    
     fn main() {
         // use try_from
         let aaa = EvenNumber::try_from(3);
         let bbb = EvenNumber::try_from(4);
         println!("aaa is {:?} and bbb is {:?}", aaa, bbb);
-
+    
         // as TryFrom is implemented, we can use try_into after
         // specify explicitly types
         let ccc: Result<EvenNumber, ()> = 7i32.try_into();
@@ -274,18 +274,18 @@ Tuples can have mixed types as elements.
 
     ```rust
     use std::fmt;
-
+    
     struct Circle {
         radius: i32,
     }
-
+    
     // follow the template, only change write! line
     impl fmt::Display for Circle {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "Circle of radius {}", self.radius)
         }
     }
-
+    
     fn main() {
         let aaa = Circle { radius: 99 };
         println!("{}", aaa.to_string());
