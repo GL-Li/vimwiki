@@ -62,7 +62,7 @@ A: The accepted answer goes deep in the concept of clone in rextendr:
 
 ## Raw Notes
 
-### extendr_api::robj::Robj
+### Struct extendr_api::robj::Robj
 
 - definition: wrapper for an R S-expression pointer (SEXP):
     ```rust
@@ -111,8 +111,7 @@ A: The accepted answer goes deep in the concept of clone in rextendr:
         }
         ```
         
-        - `Rf_duplicate(self.get())` to ????????
+        - `Rf_duplicate(SEXP)` is a R internal function which makes a deep copy of a SEXP ??????????????????????????????????
         
 
-`fn duplicate(&self) -> Robj`: do a deep copy of the object
 
