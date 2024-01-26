@@ -134,7 +134,44 @@ fn main() {
 ```
 
 
+## 2. Primitives
 
+Rust primitives include
+
+- scalar types:
+    - signed integers
+    - unsigned integers
+    - floating point
+    - char in single quote like `'a'`, `'b'`
+    - bool, `true` or `false`
+    - unit type `()`
+- compound types:
+    - arrays like `[1, 2, 3]`
+    - typles like `(1, true)`
+
+### 2.1 Literals and operators
+
+- Literals: 1, 1.2, 'x', "abc", true, (), 1e6, 7.8e-4
+- operators:
+    - `99u32 + 78`
+    - `99i32 - 100`
+    - `true && false`, using double `&&` and `||`. Single for bitwise AND and OR
+    - `true || false`
+    - `!true`
+    - complete list: https://doc.rust-lang.org/book/appendix-02-operators.html
+
+### 2.2 Tuples
+Tuples can have mixed types as elements.
+
+- practice 1: reverse the order of tuple element
+    ```rust
+    fn reverse(pair: (i32, bool)) -> (bool, i32) {
+        let (aaa, bbb) = pair;
+        (bbb, aaa)
+    }
+    ```
+
+- practice 2: transpose a matrix
 
 
 ## 6. Conversion
