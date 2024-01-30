@@ -215,6 +215,79 @@ An **arrays** is a collection of objects of the same time, whose length is known
     - `&[] as &[i32]` empty slice, must specify type or type can be inferred.
 
 
+## 3. Custom types
+struct, enum, constant and static.
+
+### 3.1 Structures
+
+- tuple structs: `Struct Pair(i32, i32)`
+    ```rust
+    #[derive(Debug)]
+    struct Pair(i32, String);
+    fn main() {
+        let p = Pair(3, "apple".to_string());
+        // access element
+        println!("{}, {}", p.0, p.1);
+        // destructure the tuple struct
+        let Pair(x, y) = p;
+        println!("{}, {}", x, y);
+    }
+    ```
+  
+- unit structs, used in generics??????????????:
+    ```rust
+    #[derive(Debug)]
+    struct UnitXyz;  // unit struct has no field 
+    fn main() {
+        let _unit = UnitXyz;
+        println!("{:?}", _unit);
+    }
+    ```
+
+- classic C structs
+    ```rust
+    #[derive(Debug)]
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    #[derive(Debug)]
+    struct Rectangle {
+        bottom_left: Point,
+        top_right: Point,
+    }
+
+    fn main() {
+        let p1 = Point { x: 0, y: 0 };
+        let p2 = Point { x: 1, y: 2 };
+        let rec = Rectangle {
+            bottom_left: p1,
+            top_right: p2,
+        };
+        println!("{:?}", rec);
+
+        // update the top_right point
+        let rec2 = Rectangle {
+            top_right: Point { x: 3, y: 3 },
+            ..rec // base struct, no comma
+        };
+        println!("{:?}", rec2);
+
+        // destructure
+        let Rectangle {
+            bottom_left: aaa,
+            top_right: bbb,
+        } = rec2;
+        println!("{:?} and {:?}", aaa, bbb);
+    }
+    ```
+
+### 3.2 Enums
+
+
+
+
 ## 6. Conversion
 
 ### 6.1. From and Into
