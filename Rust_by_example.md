@@ -220,19 +220,23 @@ struct, enum, constant and static.
 
 ### 3.1 Structures
 
-- tuple structs: `Struct Pair(i32, i32)`
-    ```rust
-    #[derive(Debug)]
-    struct Pair(i32, String);
-    fn main() {
-        let p = Pair(3, "apple".to_string());
-        // access element
-        println!("{}, {}", p.0, p.1);
-        // destructure the tuple struct
-        let Pair(x, y) = p;
-        println!("{}, {}", x, y);
-    }
-    ```
+- tuple structs: `Struct Pair(i32, i32)`. 
+    - To assign elements of `p = Pair(11, 99)` to new variables `x` and `y`:
+        - `x = p.0`, `y = p.1` or
+        - destructure: `Pair(x, y) = p`
+    - Example
+        ```rust
+        #[derive(Debug)]
+        struct Pair(i32, String);
+        fn main() {
+            let p = Pair(3, "apple".to_string());
+            // access element
+            println!("{}, {}", p.0, p.1);
+            // destructure the tuple struct
+            let Pair(x, y) = p;
+            println!("{}, {}", x, y);
+        }
+        ```
   
 - unit structs, used in generics??????????????:
     ```rust
@@ -270,9 +274,16 @@ struct, enum, constant and static.
         // update the top_right point
         let rec2 = Rectangle {
             top_right: Point { x: 3, y: 3 },
-            ..rec // base struct, no comma
+            ..rec // the rest of rec is moved or copied here
         };
         println!("{:?}", rec2);
+        
+        // access elements
+        println!("{:?} and {:?}", rec.top_right, rec.top_right.x);
+        
+        // error, rec.bottom_left moved into rec2 above. To solve the problem,
+        // give Copy trait to Point with #[derive(Debug, Clone, Copy)]
+        println!("{:?}", rec.bottom_left);
 
         // destructure
         let Rectangle {
@@ -285,8 +296,134 @@ struct, enum, constant and static.
 
 ### 3.2 Enums
 
+**Type aliases**: rename an enum or struct to be shorter or more meaningful. `Self` is the most common alias used in `impl` block.
+    
+```rust
+#[derive(Debug)]
+enum Aaaaaaaaaaaaaa {
+    Add,
+    Substract,
+}
+// alias
+type Aaa = Aaaaaaaaaaaaaa;
 
+impl Aaa {
+    fn run(&self, x: i32, y: i32) -> i32 {
+        match self {
+            Self::Add => x + y,  // Self is an alias to Aaa or Aaaaaaaaaaaaa
+            Self::Substract => x - y,
+        }
+    }
+}
 
+#[derive(Debug)]
+struct Bbbbbbbbbbbbbbb {
+    x: i32,
+    y: i32,
+}
+// alias
+type Bbb = Bbbbbbbbbbbbbbb;
+
+fn main() {
+    let a = Aaa::Add;
+    println!("{:?}", a);
+    
+    // ways to call functions of enum
+    let x = a.run(2, 7);
+    let y = Aaa::Substract.run(2, 7);
+    println!("{x} and {y}");
+
+    let b = Bbb {x: 11, y: 99};
+    dbg!(b);  // dbg! moves b
+}
+```
+
+#### 3.2.1 `use`
+
+The `use` declaration is used to skip mnanual scoping with `::`
+
+```rust
+#![allow(dead_code)]
+
+enum Status {
+    Rich,
+    Poor,
+}
+
+enum Work {
+    Civilian,
+    Soldier,
+}
+
+fn main() {
+    // explicitly "use" enum variants
+    use crate::Status::{Poor, Rich};
+    use crate::Work::*;
+
+    let status = Poor; // instead of Status::Poor
+    let work = Civilian; // instead of Work::Civilian
+    match status {
+        Rich => println!("Rich means a lot of money"),
+        Poor => println!("Poor has little money"),
+    }
+
+    match work {
+        Civilian => println!("I am a civilian."),
+        Soldier => println!("I am a soldier."),
+    }
+}
+```
+
+#### 3.2.2 C-like
+
+```rust
+#![allow(dead_code)]
+
+// enum with implicit discriminator starting at 0
+enum Aaa {
+    Ax,
+    Ay,
+    Az,
+}
+
+// enum with explicity discriminator
+enum Bbb {
+    Bx = 111,
+    By = 0x00ff00,  // can be converted to integer in main()
+    Bz = 333,
+}
+
+fn main() {
+    // convert enum variants to index
+    println!("Ax's index is {}, Ay is {}", Aaa::Ax as i32, Aaa::Ay as i32);
+    
+    // convert enum initial value to i32
+    println!("Bx's value is {}, By is {}", Bbb::Bx as i32, Bbb::By as i32);
+}
+```
+
+### 3.3 Constant
+
+- `const`: An unchangeable value.
+- `static`: A possibly mutable variable with `static` lifetime.
+- examples:
+```rust
+#![allow(dead_code)]
+
+// define constant in global scope, accessible to any scope
+static AAA: &str = "Rust";
+const BBB: i32 = 10;
+
+fn is_big(n: i32) -> bool {
+    n > BBB
+}
+
+fn main() {
+    let n = 16;
+    println!("AAA is {AAA}");
+    println!("{} is {}", n, if is_big(n) {"big"} else {"small}"});
+}
+```
 
 ## 6. Conversion
 
