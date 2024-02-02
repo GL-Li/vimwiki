@@ -425,6 +425,66 @@ fn main() {
 }
 ```
 
+
+## 4. Variable bindings
+section 4.1-4.3 are included in Rust Book
+
+### 4.4 Freezing
+
+When data is bound by the same name immutably, it also freezes. Frozen data can't be modified until the immutable binding goes out of scope.
+
+```rust
+fn main() {
+    let mut aaa = 99;
+
+    {
+        let aaa = aaa;     // make aaa immutable in this scope
+        println!("{aaa}");
+        // aaa = 11;       // error, aaa is immutable in this scope
+    }
+    aaa = 11;
+    println!("{aaa}");
+}
+```
+
+
+## 5 Types
+Most are in the Rust Book.
+
+### 5.1 Casting
+
+Using keyword `as` to convert types
+
+```rust
+fn main() {
+    let decimal = 33333.14;
+    let integer: u8 = decimal as u8;
+    println!("{integer}"); // 255, u8 overflow from 3333.14
+
+    let character: char = decimal as u8 as char; // f32 cannot be cast to char
+    println!("{character}");
+}
+```
+
+### 5.4 Aliasing
+
+Use keyword `type` to rename a type.
+
+```rust
+fn main() {
+    type Aaa = u64;
+    type U64 = u64;
+
+    let a: Aaa = 2002;
+    let b: U64 = 99999;
+
+    println!("{a} and {b}")
+}
+```
+
+
+
+
 ## 6. Conversion
 
 ### 6.1. From and Into
