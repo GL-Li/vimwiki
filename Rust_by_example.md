@@ -613,3 +613,305 @@ fn main() {
         println!("Sum is {:?}", aaa + bbb);
     } 
     ```
+    
+    
+
+## 7: Expressions
+
+The last value of a block statement `{...}` can be assigned to a variable. 
+
+```rust
+fn main() {
+    let x = 5u32;
+    let y = {
+        let x = x * x;
+        x  // no ; so it is assigned to y
+    };  // end with ; because it is part of a let statement
+    let z = {
+        let x = x.pow(3);  // x^3 is not valid, ^ is reserved for bitwise OR
+        x;  // with ;, a unit () is assigned to z
+    };
+
+    println!("x is {}, x^2 is {:?}, and x^3 is {:?}", x, y, z);
+        // x is 5, x^2 is 25, and x^3 is ()
+}
+```
+
+
+
+## 8. Flow of control
+
+### 8.1 if ... else ...
+Be aware that variables assigned in `if () else ()` stays within the scope defined by the branch. The following code does not work
+```rust
+fn main() {
+    let x = 5;
+    if x < 0 {
+        let y = -x;
+    } else if x > 0 {
+        let y = x;
+    } else {
+        let y = 0;
+    }
+    println!("y is {y}");  // error, y is not available 
+}
+```
+
+The correct way is:
+```rust
+fn main() {
+    let x = 5;
+    let y = if x < 0 {
+        -x  // no ; as return, must be the same type at each branch
+    } else if x > 0 {
+        x
+    } else {
+        0
+    };  // end ; as part of a let state ment.
+    println!("y is {y}");
+}
+```
+
+
+### 8.2 loop
+
+covered in the rust book.
+
+
+### 8.3 while
+
+covered in the rust book
+
+### 8.4 for and range
+
+- range:
+    - `1..5` is 1, 2, 3, 4
+    - `1..=5` is 1, 2, 3, 4, 5
+
+- for and iterators:
+    - `iter()` borrows a collection
+        ```rust
+        fn main() {
+            let names = vec!["aaa", "bbb", "ccc"];
+
+            for name in names.iter() {
+                match name {
+                    &"aaa" => println!("aaa ---"),  // must be &str
+                    _ => println!("not aaa ---"),
+                }
+            }
+        }
+        dbg!(names); // names still available
+        ```
+        
+    - `into.iter()` moves and consumes the collection
+        ```rust
+        fn main() {
+            let names = vec!["aaa", "bbb", "ccc"];
+
+            for name in names.into_iter() {
+                match name {
+                    "aaa" => println!("aaa ---"),  // str not &str
+                    _ => println!("not aaa ---"),
+                }
+            }
+
+            // dbg!(names);  // names no available anymore.
+        }
+        ```
+        
+    - `inter_mut()` mutable borrowing of the collection
+        ```rust
+        fn main() {
+            let mut names = vec!["aaa", "bbb", "ccc"];
+
+            for name in names.iter_mut() {
+                *name = match name {
+                    &mut "aaa" => "AAA",
+                    _ => "~~~",
+                }
+            }
+
+            dbg!(names);
+        }
+        ```
+
+### 8.5 match
+
+`|` and `..` can be used in matching pattern
+
+```rust
+fn main() {
+    let n = 13;
+    match n {
+        1 => println!("match single value"),
+        2 | 3 | 6 | 10 => println!("match multiple values"),
+        15..=20 => println!("match a range"),
+        _ => println!("match the rest"),
+    }
+}
+```
+
+#### 8.5.1 Destructuring
+
+- destructuring **tuples**: match by selected elements of a tuple
+    ```rust
+    fn main() {
+        let tpl = (1, -2, 3);
+        match tpl {
+            (0, y, z) => println!("first is '0', y is {}, and z is {}", y, z),
+            (1, ..) => println!("first is '1' and the rest doesn't matter"),
+            (.., 4) => println!("last is '4' and the rest doesn't matter"),
+            (3, .., 7) => println!("fisrt is '3' and last is '7'. The rest doesn't matter"),  
+            (9, 1, _) => println!("firs 9 second 1 and the third doesn't matter"),
+            _ => println!("doesn't matter"),
+        }
+    }
+    ```
+    
+- destructuring **arrays/slices**: all that apply to tuple can be used for arrays, plus `@ ..` syntax for storing other elements
+    ```rust
+    fn main() {
+        let arr = [3, 2, 3, 7];
+        match arr {
+            [1, 2, other @ ..] => println!("fisrt 1 second 2 and other {:?}", other),
+            [3, middle @ .., 7] => println!("fisrt 3 last 7, the middle {:?}", middle),
+            _ => println!("doesn't matter"),
+        }
+    }
+```
+
+- destrucruring **enums**: 
+    ```rust
+    #[allow(dead_code)]
+
+    enum Color {
+        Red,
+        Blue,
+        RGB(u32, u32, u32),
+        HSV(u32, u32, u32),
+    }
+    fn main() {
+        let color = Color::RGB(12, 26, 99);
+        match color {
+            Color::Red => println!("Red"),
+            Color::Blue => println!("Blue"),
+            Color::RGB(r, g, b) => println!("red {}, green {}, blue{}", r, g, b),
+            Color::HSV(h, s, v) => println!("hue {}, saturation {}, value {}", h, s, v),
+        }
+    }
+    ```
+
+- destructuring **pointers/ref**: get the data a reference points to. Similar to dereferencing with `*`.
+    ```rust
+    fn main() {
+        let aaa = &4; // create a reference to 4 with &
+        match aaa {
+            &bbb => println!("value is {}", bbb),
+        }
+    }
+    ```
+    
+- destructuring **structs** all the way down to primitive types
+    ```rust
+    fn main() {
+        struct Aaa {
+            x: (u32, u32),
+            y: u32,
+        }
+
+        let aaa = Aaa { x: (1, 2), y: 3 };
+        match aaa {
+            Aaa { x: (1, b), y: c } => println!("second of x is {b}, y is {c}"),
+            _ => (),
+        }
+    }
+    ```
+
+#### 8.5.2 Guards
+Guards are conditions added to the match arms.
+
+    ```rust
+    fn main() {
+        let aaa = 4;
+        match aaa {
+            x if x > 0 => println!("greater than 0"),
+            x if x == 0 => println!("is 0"),
+            x if x < 0 => println!("less thant 0"),
+            _ => println!("still need this arm even if it never happens"),
+        }
+    }
+    ```
+
+
+#### Binding
+Assign values to names inside match branches.
+
+```rust
+fn main() {
+    // example 1
+    let age = 15;
+    match age {
+        0 => println!("I am a new born"),
+        n @ 1..=12 => println!("I am a child of age {}", n),
+        n @ 13..=19 => println!("I am a teenage of age {}", n),
+        n => println!("I am too old of age {}", n),
+    }
+
+    // example 2
+    let x = Some(42);
+    match x {
+        Some(n @ 42) => println!("The number is {}", n),
+        Some(n) => println!("The number is {}", n),
+        None => (),
+    }
+}
+```
+
+
+### if let
+
+Matching `enum`s needs to be exaustive. It is more concise to use `if let` if we are only interested in match one variant of an enum.
+
+```rust
+fn main() {
+    // good use of if let
+    let number = Some(7);
+    if let Some(i) = number {
+        println!("matched {}", i);
+    }
+
+    // rather use match in this case
+    let letter: Option<i32> = None;
+    if let Some(i) = letter {
+        println!("Matched to {}", i);
+    } else {
+        println!("Match failed");
+    }
+    
+    // good for non-parameterized options
+    enum Foo {
+        Bar,
+    }
+    let a = Foo::Bar;
+    if let Foo::Bar = a {
+        println!("a is Foo::Bar");
+    }
+}
+```
+
+
+### let else
+Use `if let` to do something if the pattern match is successful. Use `let ... else ...` to **diverge** (break, return, panic!).
+
+```rust
+fn main() {
+    let aaa: Option<i32> = None;
+    let Some(_i) = aaa else {
+        println!("match failed");
+        panic!("not match")
+    };
+}
+```
+
+
