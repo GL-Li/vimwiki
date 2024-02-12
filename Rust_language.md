@@ -1125,7 +1125,7 @@ impl Rectangle {
         ```
    - extract value containted in an option and handle the case of None 
         ```rust
-        assert_eq!(x.expect("x should be 2"), 2);) 
+        assert_eq!(x.expect("x should be 2"), 2);
             // if x is None, panic with the message "x should be 2"
         
         assert_eq!(Some("stuff").unwrap(), "stuff"); //returns the contained Some value
@@ -3317,11 +3317,11 @@ Trust me.";
 - take ownership with keyword `move`. It is useful when passing the closure to a new thread as the new thread needs to own the data. Threads will be discussed in chpt 16.A brief example:
     ```rust
     use std::thread;
-   
+      
     fn main() {
         let list = vec![1, 2, 3];
         println!("{:?}", list);
-   
+      
         // this new thread may finish after the main thread finished so if does not
         // own the list, the list will be a dangling reference.
         thread::spawn(move || println!("from thread: {:?}", list))
@@ -3552,7 +3552,7 @@ Details see the code in ~/projects/mingrp.
         let v2 = vec!["a", "b"];
         // v2 can be replaced with v2.iter()
         let pair: Vec<_> = v1.iter().zip(v2).collect();
-
+    
         for (a, b) in &pair {
             println!("{} and {}", a, b);
         }
@@ -3621,11 +3621,12 @@ Details see the code in ~/projects/mingrp.
     //!
     //! `my_crate` is a collection of utilities to make performing certain
     //! calculations more convenient.
-
+    
     /// Adds one to the number given.
     // --snip--
     ```
     
+
 **exporting a convenient public API with pub use**
 
 - The purpose is to export a function or type for other uses to use it easily.
@@ -3634,7 +3635,7 @@ Details see the code in ~/projects/mingrp.
     //! # Art
     //!
     //! A library for modeling artistic concepts.
-
+    
     pub mod kinds {
         /// The primary colors according to the RYB color model.
         pub enum PrimaryColor {
@@ -3642,7 +3643,7 @@ Details see the code in ~/projects/mingrp.
             Yellow,
             Blue,
         }
-
+    
         /// The secondary colors according to the RYB color model.
         pub enum SecondaryColor {
             Orange,
@@ -3650,10 +3651,10 @@ Details see the code in ~/projects/mingrp.
             Purple,
         }
     }
-
+    
     pub mod utils {
         use crate::kinds::*;
-
+    
         /// Combines two primary colors in equal amounts to create
         /// a secondary color.
         pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> SecondaryColor {
@@ -3667,15 +3668,15 @@ Details see the code in ~/projects/mingrp.
     //! # Art
     //!
     //! A library for modeling artistic concepts.
-
+    
     pub use self::kinds::PrimaryColor;
     pub use self::kinds::SecondaryColor;
     pub use self::utils::mix;
-
+    
     pub mod kinds {
         // --snip--
     }
-
+    
     pub mod utils {
         // --snip--
     }
@@ -3742,6 +3743,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     }
     ```
     
+
 **Quiz**
 
 - Q2: Say we have a program with a variable:
@@ -3763,7 +3765,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     fn main() {
         let x = 5;
         let y = &x;
-
+    
         assert_eq!(5, x);
         assert_eq!(5, *y);  // dereference a regular reference
     }
@@ -3776,39 +3778,40 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     fn main() {
         let x = 5;
         let y = Box::new(x);
-
+    
         assert_eq!(5, x);
         assert_eq!(5, *y);  // Box has traint Deref so can be dererenced with *
     }
     ```
     
+
 **define our own smart pointer**
 
 - example: MyBox<T> with `Deref` trait
     ```rust
     use std::ops::Deref;
-
+    
     fn main() {
         let x = 5;
         let y = MyBox::new(x);
-
+    
         assert_eq!(5, x);
         assert_eq!(5, *y);  // implemented Deref trait
     }
-
+    
     // define MyBox with Deref trait
     
     struct MyBox<T>(T);
-
+    
     impl<T> MyBox<T> {
         fn new(x: T) -> MyBox<T> {
             MyBox(x)
         }
     }
-
+    
     impl<T> Deref for MyBox<T> {
         type Target = T;  // required
-
+    
         fn deref(&self) -> &Self::Target { // only required method
             &self.0  // return a reference so to use * operator
         }
@@ -3849,14 +3852,14 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     struct CustomSmartPointer {
         data: String,
     }
-
+    
     impl Drop for CustomSmartPointer {
         // as simple as this code to implement drop method
         fn drop(&mut self) {
             println!("Dropping CustomSmartPointer with data `{}`!", self.data);
         }
     }
-
+    
     // variables are dropped in reverse order. Out of the main scope, d is 
     // dropped before c is dropped, which is reasonable as d may depend on c.
     fn main() {
@@ -3870,6 +3873,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     }
     ```
     
+
 **Dropping a value early with std::mem::drop**
 
 - Used to drop a variable before it goes out of scope. Rarely used.
@@ -3877,7 +3881,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     struct CustomSmartPointer {
         data: String,
     }
-
+    
     impl Drop for CustomSmartPointer {
         fn drop(&mut self) {
             println!("Dropping CustomSmartPointer with data `{}`!", self.data);
@@ -3900,7 +3904,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
 ### 15.4 Rc<T>, the reference counted smart pointer
 
 - Used in case a single value having multiple owners. This is a very rare case so we can skip it for now.
-    
+  
     
 ### 15.5 RefCell<T> and the interior mutability pattern
 
@@ -3933,7 +3937,7 @@ skip for now as we skipped two above.
     ```rust
     use std::thread;
     use std::time::Duration;
-
+    
     fn main() {
         // block 1: this block of code runs in a new thread, which is
         // different from the main thread.
@@ -3943,19 +3947,20 @@ skip for now as we skipped two above.
                 thread::sleep(Duration::from_millis(1));
             }
         });
-
+    
         // block 2: runs simutaneously in the main thread
         for i in 1..5 {
             println!("hi number {} from the main thread!", i);
             thread::sleep(Duration::from_millis(1));
         }
-
+    
         // block 1 one will stop once the main thread completes. This line of
         // code is to wait for the handle thread to finish.
         handle.join().unwrap();
     }
     ```
     
+
 **Using move closure with threads** to move the variables from main thread to new thread
 
 - example:
@@ -3973,8 +3978,8 @@ skip for now as we skipped two above.
 
         handle.join().unwrap();
     }
-    ```
-    
+```
+
 - quiz Q1
     Determine whether the program will pass the compiler. If it passes, write the expected output of the program if it were executed.
 
@@ -4003,11 +4008,11 @@ skip for now as we skipped two above.
     ```rust
     use std::sync::mpsc;
     use std::thread;
-
+    
     fn main() {
         // create a channel with a transmitter tx and a receiver rx
         let (tx, rx) = mpsc::channel();
-
+    
         thread::spawn(move || {
             let val = String::from("hi");
             // send data from the transmitter. .send() returns a 
@@ -4015,7 +4020,7 @@ skip for now as we skipped two above.
             // val is moved by send.
             tx.send(val).unwrap();
         });
-
+    
         // receive data sent by the transmitter
         let received = rx.recv().unwrap();
         println!("Got: {}", received);
@@ -4027,10 +4032,10 @@ skip for now as we skipped two above.
     use std::sync::mpsc;
     use std::thread;
     use std::time::Duration;
-
+    
     fn main() {
         let (tx, rx) = mpsc::channel();
-
+    
         thread::spawn(move || {
             let vals = vec![
                 String::from("hi"),
@@ -4038,7 +4043,7 @@ skip for now as we skipped two above.
                 String::from("the"),
                 String::from("thread"),
             ];
-
+    
             // send element one by one to rx
             for val in vals {
                 tx.send(val).unwrap();
@@ -4047,7 +4052,7 @@ skip for now as we skipped two above.
             // close the channel 10 sec after sending the last data
             thread::sleep(Duration::from_secs(10));
         });
-
+    
         // runs whenever rx received a piece of data until the thread from
         // which tx sending data is closed, that is, 10 sec after the last
         // data was sent.
@@ -4060,6 +4065,7 @@ skip for now as we skipped two above.
     }
     ```
     
+
 **creating multiple producers by cloning the transmitter**
 
 - sample transmitter cloned to multiple threads and send data to the same receiver in the main tread..
@@ -4069,7 +4075,7 @@ skip for now as we skipped two above.
     use std::sync::mpsc;
     use std::thread;
     use std::time::Duration;
-
+    
     fn main() {
         // create a chanel and clone transmitter. The two transimtters
         // share a receiver
@@ -4084,13 +4090,13 @@ skip for now as we skipped two above.
                 String::from("the"),
                 String::from("thread"),
             ];
-
+    
             for val in vals {
                 tx1.send(val).unwrap();
                 thread::sleep(Duration::from_secs(1));
             }
         });
-
+    
         // original transmitter used in this thread
         thread::spawn(move || {
             let vals = vec![
@@ -4099,13 +4105,13 @@ skip for now as we skipped two above.
                 String::from("for"),
                 String::from("you"),
             ];
-
+    
             for val in vals {
                 tx.send(val).unwrap();
                 thread::sleep(Duration::from_secs(1));
             }
         });
-
+    
         // receivers receive data from both transmitters, in the order of
         // of the time data being sent.
         for received in rx {
@@ -4114,6 +4120,7 @@ skip for now as we skipped two above.
     }
     ```
     
+
 **Quiz**
 
 - Question 2
@@ -4161,5 +4168,4 @@ skip for now
 
 
 ### 17.2 Using trait objects that allow for values of different types
-
 
