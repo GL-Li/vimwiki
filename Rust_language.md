@@ -1291,7 +1291,7 @@ impl Rectangle {
 
 ### 7.1 Packages and Crates
 
-**A create is the smallest amount of cde that the Rust compiler considers at a time**
+**A create is the smallest amount of code that the Rust compiler considers at a time**
 
 - binary crate: compiled to an executable such as command-line program. Must have a function called `main()`.
 - library crate: do not have main and do not compile to executable. They define functions to be shared with other projects. 
@@ -1616,7 +1616,7 @@ impl Rectangle {
     }
     ```
     
-- run `$ cargo run` to install rand and its dependencies if not already install, and run the code.
+- run `$ cargo run` to install rand and its dependencies if not already installed, and run the code.
 
 **Using nested paths to clean up large use lists**
 
