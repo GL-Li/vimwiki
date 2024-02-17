@@ -2280,7 +2280,7 @@ Revisit when having more experiences.
 
 - defining a trait: the definition only provides signature and is very brief as the specific implementation depends on type. A method in a trait can also have simple default body, which is overwritten when re-defined for specific types
     ```rust
-    // a trait can have multiple methods, all must be impleted 
+    // a trait can have multiple methods, all must be implemented 
     pub trait Summary {
         // take reference to a variable of certain types and return a String.
         // This is all the definition required
