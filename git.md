@@ -406,3 +406,18 @@ Add a section to `~/.gitconfig` file. good reference:
         [alias]
            ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numsta
         ```
+        
+        
+### monorepo
+
+- how to merge multiple repo into a monorepo:
+    - reference: https://mattmazzola.medium.com/creating-a-monorepo-from-separate-repos-merging-repositories-f7942885ace6
+    - key steps:
+        - clone multiple repos to local, say, their names are repo1, repo2, ...
+        - create a directory, say monorepo, and git init it
+        - from monorepo, merge repo1 following these steps:
+            - `$ git remote add repo1 /path/to/repo1`
+            - `$ git fetch repo1`
+            - `$ git merge repo1/master --allow-unrelated-histories`, flag allows to merge two commits which have no common ancestor commits.
+            - resolve possible conflicts and commit.
+        - repeat for repo2, repo3, ...

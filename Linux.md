@@ -59,6 +59,20 @@
 
 ## QA =========================================================================
 
+### QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
+Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
+
+- `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
+
+To do it automatically every day at 12:30pm, add to command to crontab:
+
+- `$ crontab -e` to edit the tasks
+- add the line to the list
+    ```
+    #  m    h    dom    mon    dow    command
+       30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
+
+    ```
 
 ### QA: how to burn an iso image onto a USB drive from terminal?
 
@@ -210,7 +224,7 @@ $ locate *abc*.md       # the path contains abc and end with .md
 
 ### Linux find command to search files by name, type, size, ...
 
-`find` has many options
+**`find` has many options**
 
 - `-maxdepth 2` search up to second level, only one `-`, not `--`
 - `-type f` show only files, `-type d` only directories
@@ -224,13 +238,7 @@ $ find -name "*01"            # find path end with 01, quote to
                               # avoid shell expansion.
 ```
 
-### Linux: grep recursively in files whose names match a pattern
-
-```shell
-$ grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
-```
-
-### Linux: find files and execute on the found
+**find files and execute on the found**
 
 - `{}`: placeholder for files found
 - `-exec` or `-ok`,  perform command on each file found.
@@ -250,7 +258,13 @@ $ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
 
 # insert "abcd efg hijk" before the first line of all found files
 find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
+```
 
+
+### Linux: grep recursively in files whose names match a pattern
+
+```shell
+$ grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
 ```
 
 ### Linux: sort command to sort lines
