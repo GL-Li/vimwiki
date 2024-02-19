@@ -901,7 +901,7 @@ fn main() {
 ```
 
 
-### let else
+### 8.6. let else
 Use `if let` to do something if the pattern match is successful. Use `let ... else ...` to **diverge** (break, return, panic!).
 
 ```rust
@@ -914,4 +914,346 @@ fn main() {
 }
 ```
 
+### 8.7. while let
+Run the while loop until the option match fails.
 
+```rust
+fn main() {
+    let mut aaa = Some(0);
+    while let Some(i) = aaa {
+        if i > 9 {
+            println!("i is {i}");
+            aaa = None;  // replace break
+        } else {
+            println!("i is {i}");
+            aaa = Some(i + 1);
+        }
+    }
+}
+```
+
+
+
+## 9. Functions
+
+### 9.1. Associated functions & methods
+
+**Associated functions** are function defined on a type generally. **Methods** are associated functions called on a particular instaance of a type.
+
+```rust
+#[derive(Debug)]
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    // associated functions do not have self in arguments
+    fn origin() -> Self {
+        Point { x: 0.0, y: 0.0 }
+    }
+    fn new(x: f64, y: f64) -> Self {
+        Point { x, y }
+    }
+
+    // method of a instance so arguments start with self, &self, or &mut self
+    fn move_by(self, delta_x: f64, delta_y: f64) -> Self {
+        Point {
+            x: self.x + delta_x,
+            y: self.y + delta_y,
+        }
+    }
+    fn mute_by(&mut self, delta_x: f64, delta_y: f64) {
+        self.x = self.x + delta_x;
+        self.y = self.y + delta_y;
+    }
+}
+
+fn main() {
+    // associated functions used with the type like Point::xxx
+    let aaa = Point::origin();
+    let bbb = Point::new(1.1, 2.2);
+    dbg!(aaa);
+    dbg!(bbb);
+
+    // methods are used on a instance like ccc.move_by
+    let ccc = Point::origin();
+    let ddd = ccc.move_by(0.1, 0.1);
+    dbg!(ddd);
+
+    let mut eee = Point::origin();
+    eee.mute_by(0.1, 0.1);
+    dbg!(eee);
+}
+```
+
+
+### 9.2 Closures
+
+#### 9.2.1. Capturing
+
+Closures can capture variables in enclosing environment by reference `&T`, by mutatable reference `&mut T`, or by value `T`. 
+
+- Capturing by reference is the default
+    ```rust
+    fn main() {
+        let aaa = 3;
+        let cls1 = |i| i + aaa; 
+        println!("closure is {}, and aaa is {}", cls1(3), aaa);
+
+        let bbb = "hello".to_string();
+        let cls2 = || &bbb; // explicit reference to values in heap
+        println!("closure is {:?}, and bbb is {}", cls2(), bbb);
+    }
+    ```
+    
+- Capturing by mutable reference
+    ```rust
+    fn main() {
+        // both clousre and variables are mutable in definition
+        let mut count = 0;
+        let mut increment = || {
+            count += 1;
+            println!("New count is {}", count);
+        };
+        increment();
+
+        let mut aaa = "hello".to_string();
+        let mut change = || aaa.push_str(" world");
+        change();
+        println!("aaa is {}", aaa);
+    }
+    ```
+    
+- Capturing by taking ownership with `move`
+    ```rust
+    fn main() {
+        let haystack = vec![1, 2, 3];
+
+        // haystack is moved into closure f and f can be used repeatedly
+        let f = move |needle| haystack.contains(needle);
+        println!("{}", f(&1));
+        println!("{}", f(&4));
+        // println!("{:?}", haystack);  // haystack not available anymore
+    }
+    ```
+    
+#### As input parameters
+
+- type annotation of closure as function input:
+    - `Fn()`: captured variables only used by reference.
+    - `FnMut()`: capture variables used by mutable reference
+    - `FnOnce()`: captured variables used by value (owned)
+    - `FnOnce` includes `FnMut` includes `Fn`.
+
+- example
+    ```rust
+    fn apply<F>(f: F)
+    where
+        F: FnOnce(),
+    {
+        f();
+    }
+
+    fn apply_to_3<F>(f: F) -> i32
+    where
+        F: Fn(i32) -> i32, // take a parameter 
+    {
+        f(3)
+    }
+
+    fn main() {
+        let greeting = "hello";
+        // string slice is &str reference, to_owned make it an owned value
+        let mut farewell = "goodby".to_owned();
+
+        let diary = || {
+            // use greeting by reference, which requires Fn
+            println!("I said {}", greeting);
+            // use farewell by mutable reference with push_str, requires FnMut
+            farewell.push_str("!!!!");
+            println!("Then I screemed {}", farewell);
+            // drop the value of farewell, requires FnOnce
+            std::mem::drop(farewell);
+        };
+
+        apply(diary); // closure diary requires FnOnce()
+        // apply(diary); // error, diary can only be called once
+
+        let aaa = 1;
+        // aaa by reference only. x is a closure parameter
+        let double = |x| 2 * x + aaa;
+        let y = apply_to_3(double);
+        println!("y is {y}");
+    }
+    ```
+    
+#### 9.2.3. Type anonymity
+When a closure is used as a function parameter, it must be of one of the generic types: `Fn`, `FnMut`, or `FnOnce`. 
+
+#### 9.2.4. Input functions
+Like closure, a function can also be used as a function parameter with the same trait boundary `Fn`, `FnMut` and `FnOnce`.
+
+```rust
+// a generic function f bounded by trait Fn as input parameter
+fn call_me<F: Fn()>(f: F) {
+    f();
+}
+
+fn func() {
+    println!("I am a function");
+}
+
+fn main() {
+    let closr = || println!("I am a closure");
+    call_me(closr);
+    call_me(func);
+}
+```
+
+#### 9.2.5. As output parameters
+
+Closures can be used as function outputs. As their type is unknown, they are bounded by trait `Fn`, `FnMut` or `FnOnce`. All captured variables must be `move`d to the closure so returned closure can live by itself.
+
+```rust
+fn create_fn() -> impl Fn() {
+    let text = "I am a Fn".to_string();
+    // text used by reference
+    move || println!("{}", text)
+}
+
+fn create_fnmut() -> impl FnMut() {
+    let mut text = "I am a FnMut".to_string();
+    text.push_str(" and I can change!");
+    move || println!("{}", text)
+}
+
+fn create_fnonce() -> impl FnOnce() {
+    let text = "I am a FnOnce. I will be moved".to_string();
+    let text_moved = text;
+    move || println!("{}", text_moved)
+}
+
+fn main() {
+    let fn_ref = create_fn();
+    let mut fn_mut = create_fnmut();  // don't forget mut
+    let fn_once = create_fnonce();
+
+    fn_ref();
+    fn_mut();
+    fn_once();
+}
+```
+
+
+#### 9.2.6. Examples in std
+**9.6.2.1 Iterator::any**
+
+- definition in standard library: this function takes a closure that returns `bool` as input. The function returns a `bool`.
+
+    ```rust
+    pub trait Iterator {
+        type Item;
+
+        fn any<F>(&mut self, f: F) -> bool where
+            F: FnMut(Self::Item) -> bool,
+    }
+    ```
+    
+- application examples
+    ```rust
+    fn main() {
+        let a = [1, 2, 3];
+        println!("{}", a.iter().any(|&x| x > 2));   // true
+        println!("{}", a.iter().any(|&x| x > 5));   // false
+    }
+    ```
+    
+**9.2.6.2. Searching throug iterators**
+
+- definition in standard library. It takes a closure that returns `bool`. The function returns a `Option`, which is `Some(first_element)` if found and `None` if not found.
+
+    ```rust
+    pub trait Iterator {
+        type Item;
+
+        fn find<P>(&mut self, predicate: P) -> Option<Self::Item> where
+            P: FnMut(&Self::Item) -> bool;
+    }
+    ```
+    
+- application examples
+    ```rust
+    fn main() {
+        let a = [1, 2, 3];
+        // why double reference &&x?
+        // - a.iter() is reference as &mut self in find<p>(&mut self, ...)
+        // - P: FnMut(&Self::Item) takes reference again.
+        println!("{:?}", a.iter().find(|&&x| x > 2)); // Some(3)
+        println!("{:?}", a.iter().find(|&&x| x > 5)); // None
+    }
+    ```
+    
+### 9.3. Higher order functions
+The functional flavor of Rust language. A simple example
+
+```rust
+fn is_odd(n: u32) -> bool {
+    n % 2 == 1
+}
+
+fn main() {
+    println!("Find the sum of all the numbers with odd squares under 1000");
+    let upper = 1000;
+
+    // Functional approach
+    let sum_of_squared_odd_numbers: u32 =
+        (0..).map(|n| n * n)                             // All natural numbers squared
+             .take_while(|&n_squared| n_squared < upper) // Below upper limit
+             .filter(|&n_squared| is_odd(n_squared))     // That are odd
+             .sum();                                     // Sum them
+    println!("functional style: {}", sum_of_squared_odd_numbers);
+}
+```
+
+### 9.4. Diverging functions and expressions
+
+Diverging functions never return and therefore there is no type restriction on return type. The return type of diverging functions is specified by `-> !`. It is different from unit `()`, which itself is a type. 
+
+Example of divering functions:
+
+    - `panic!()`
+    - `exit()`
+    - `unimplemeted!()`, which is a wrap around `panic!()`
+    
+Examples of diverging expressions
+
+    - `continue`
+    - `break`
+    - `return`
+
+Applications of diverging functions and expressions: `!` can be coreced into any type so it can be used in `if ... else ...` and `match` branches:
+
+- example 1:
+    ```rust
+    fn main() {
+        let x = -1;
+        // panic!() is coreced into i32
+        let y = if x > 0 { x + 1 } else { panic!() };
+        println!("{y}");
+    }
+    ```
+    
+- example 2:
+    ```rust
+    fn main() {
+        let x = vec![1, 2, 3, 4, 5, 6];
+        for i in x {
+            let y = match i % 2 == 0 {
+                true => i,
+                false => continue,  // coerced to type i32
+            };
+            println!("{y}");
+        }
+    }
+    ```
