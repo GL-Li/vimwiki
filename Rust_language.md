@@ -2735,7 +2735,7 @@ Revisit when having more experiences.
 
 **cargo test options**
 
-- running test in parallel or consecutively: by default, cargo test functions run in parallel. So make sure the test functions are independent from each other. Turn of the parallel run with flag --test-threads=1 if one test function depends one the output of other functions.
+- running test in parallel or consecutively: by default, cargo test functions run in parallel. So make sure the test functions are independent from each other. Turn off the parallel run with flag --test-threads=1 if one test function depends one the output of other functions.
     ```sh
     # not a typo, double -- in the command
     $ cargo test -- --test-threds=1
@@ -3231,7 +3231,7 @@ Trust me.";
 
 **closure definition**: a closure can take in environment variables without setting them as arguments as normal functions do.
 
-- often appear on the fly in method `.unwrap_or_else()`:
+- often appear on the fly in method such as `.unwrap_or_else()`:
     ```rust
     fn main() {
         let x1 = Some("hello world");
@@ -3270,7 +3270,7 @@ Trust me.";
 
 **reference and ownership of environment variables in closure**
 
-- Base on the how the closure is defined, the closure automatically decide ???? how an environment variables is used in three ways:
+- Base on how the closure is defined, the closure automatically decide ???? how an environment variables is used in three ways:
     - immutable reference
     - mutable reference
     - taking ownership
@@ -3458,7 +3458,7 @@ Trust me.";
 
 **the `Iterator` trait and the `next` method**
 
-- `Iterator` trait is defined in the standard library. Users need to define own `next` method when assign this trait to a struct.
+- `Iterator` trait is defined in the standard library. Users need to define own `next` method when assign this trait to a custom struct.
     ```rust
     pub trait Iterator {
         type Item;  // associated type for the method, more in chpt 19
