@@ -421,3 +421,31 @@ Add a section to `~/.gitconfig` file. good reference:
             - `$ git merge repo1/master --allow-unrelated-histories`, flag allows to merge two commits which have no common ancestor commits.
             - resolve possible conflicts and commit.
         - repeat for repo2, repo3, ...
+        
+        
+### git worktree: work with multiple branches 
+
+**Basic workflow** 
+Assuming we are at the dev branch with some uncommited changes. We now need to fix a bug in the master branch without commit those changes. Following these steps to fix,commit, and push the master branch.
+
+- `(dev)$ git branch master xxxxx`
+    - create a new branch xxxxx off the master branch. We usually do not want to work on master branch directory.
+- `(dev)$ git worktree add wt-xxxxx master`
+    - The commit create a `wt-xxxxx` directory under current project. This directory is associated with the xxxxx branch. As long as this directory exists, we cannot `$ git switch xxxxx` from anywhere.
+    - Add `wt-*` to `.gitignore` to avoid accidentally commit the new directory.
+- `(dev)$ cd wt-xxxxx` and work on this worktree
+    - This command switch the project to the master branch. The terminal now looks like `wt-xxxxx (master)$`.
+    - Make changes to fix the bug.
+    - `wt-xxxxx (master)$ git add .` to add files
+    - `wt-xxxxx (master)$ git commit -m "xxxx"` to commit the changes.
+    - `wt-xxxxx (master)$ git push origin xxx` to push the commit to remote origin.
+    - Create pull request on github or bitbucket, ...
+- `wt-xxxxx (master)$ cd ..` to go back to the project root and `dev` branch
+    - continueing working on the dev branch. 
+- cleaning up
+    - `(dev)$ git worktree remove wt-xxxxx` to delete the worktree 
+    - `(dev)$ git branch -D xxxxx` to delete the temporary branch.
+
+**Problem with this workflow**
+
+- If the project is opened in an text editor or IDE such as RStudio, switching worktree does not change files in opened in the text editor. AS the files in edtor are those in the project root, not in wt-xxxxx.
