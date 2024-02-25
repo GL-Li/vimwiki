@@ -350,7 +350,7 @@ search **in document** and replace
 - `:vsplit file1` split current window into left and right part
 - `:only` close all other split windows but keep current one.
 
-### vim text object, word, sentence, paragraph, inside bracket,
+##### vim text object, word, sentence, paragraph, inside bracket,
 
 `{operator}{a}{motion}` or `{operator}{i}{motion}`
 
@@ -362,7 +362,7 @@ search **in document** and replace
 **sentence**:
 
 - `das` delete whole sentence
-` `dis` delete sentence but keep space after the sentence.
+- `dis` delete sentence but keep space after the sentence.
 
 **paragraph**:
 
@@ -460,7 +460,8 @@ Trouble in comment lines. The operation may fail in commented lines. If this hap
 - `:bufdo %s/aaa/bbb/g | w` openrating on all buffers and save
 - `:bufdo %s/aaa/bbb/g` will work if `:set hiddeen` to skip the saving.
 - `:bufdo normal u` undo changes to all buffers.
-- `:E` to open a list of files as a buffer and select a file to open into buffer. `:bd` to close current buffer.
+- `:E` to open a list of files as a buffer and select a file to open into buffer. 
+- `:bd` to close current buffer.
 
 ### vim working with multiple windows
 
