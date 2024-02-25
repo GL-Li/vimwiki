@@ -449,3 +449,4 @@ Assuming we are at the dev branch with some uncommited changes. We now need to f
 **Problem with this workflow**
 
 - If the project is opened in an text editor or IDE such as RStudio, switching worktree does not change files in opened in the text editor. AS the files in edtor are those in the project root, not in wt-xxxxx.
+- Only commit file moved to wt-xxxx directory. Ignored and Untracted files are left behind.
