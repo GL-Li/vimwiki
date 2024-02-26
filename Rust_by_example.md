@@ -1257,3 +1257,282 @@ Applications of diverging functions and expressions: `!` can be coreced into any
         }
     }
     ```
+    
+    
+## 10. Modules
+
+### 10.1. Visibility
+By default, a function is only available within the module defined the functions. Using `pub` to declair its visibility to other modules.
+
+```rust
+// mod_a is at the same level as fn main() and is visible to main(),
+// no pub declaration needed
+mod mod_a {
+    pub fn print_a() {
+        println!("a");
+    }
+
+    // mod_a1 is within the scope of mod_a, not visible to main,
+    // need pub declaration
+    pub mod mod_a1 {
+        pub fn print_a1() {
+            println!("a1");
+        }
+
+        pub mod mod_a2 {
+            pub fn print_a2() {
+                println!("a2");
+            }
+        }
+    }
+}
+
+fn main() {
+    // every modules and function in the chain of :: must be visible to main()
+    mod_a::print_a();
+    mod_a::mod_a1::print_a1();
+    mod_a::mod_a1::mod_a2::print_a2();
+}
+```
+
+### 10.2. Struct visibility
+The fields of a Struct, if used outside of the module where it is defined, need to declaired `pub`.
+
+```rust
+mod mod_a {
+    #[derive(Debug)]
+    pub struct Point {
+        pub x: i32,
+        pub y: i32,
+    }
+
+    // no pub before impl
+    impl Point {
+        pub fn get_x(&self) -> i32 {
+            self.x
+        }
+    }
+}
+
+fn main() {
+    let x = mod_a::Point { x: 1, y: 2 };
+    dbg!(x);
+
+    let y = mod_a::Point { x: 11, y: 99 };
+    // get_x is restricted to the scope of y, so no path to get_x needed.
+    println!("x is {}", y.get_x());
+}
+```
+
+
+### 10.3. The `use` declairation
+
+To avoid full path to a function. The declairation only accessible within the scope where it is declaired.
+
+### 10.4. super and self
+
+- `self::func()`: call function `func` within current module scope.
+- `super::func()`: call function in parent scope.
+
+### 10.5. File hierarchy
+
+A sample project structure
+```
+$ tree .
+.
+├── my
+│   ├── inaccessible.rs
+│   └── nested.rs
+├── my.rs
+└── split.rs
+```
+
+How to understand the structure with `my`:
+
+- `my.rs` is a module.
+- `inaccessible.rs` and `nested.rs` are sub modules of `my.rs` as they are under the directory of `my`. Their code are inserted into `my.rs` with `mod inaccessible` and `pub mod nested`.
+- code example:
+    - `./my/inaccessbiel.rs`
+        ```rust
+       fn privat_function() {
+           println!("This is a private function"); 
+       }
+       ```
+    - `./my/nested.rs`
+        ```rust
+        pub fn func() {
+            println!("This is a public function");
+        }
+        
+        pub mod aaa {
+            pub func() {
+                println!("This is a nested public functions"):
+            ]
+        }
+        ```
+    - `./my.rs`
+        ```rust
+        //import code from above files
+        mod inaccessible;
+        pub mod nested;
+        
+        //skip
+        ```
+- How to use all functions in `my.rs`? Just add `mod my;` to, for example, `split.rs`.
+
+
+## 11. Crates
+
+A crate is a compilation unit. This chapter describe a way to convert a single crate into a library and how to use the library. This is a more obsolete method compared to library structure created by cargo.
+
+### 11.1. create a library
+
+A library can be created from a single `.rs` file. Here is a simple example:
+
+- `aaa.rs` is a collection of functions and modules
+    ```rust
+    pub fn print_aaa() {
+        println!("aaa");
+    }
+
+    pub mod mod1 {
+        pub fn print_mod1() {
+            println!("module 1");
+        }
+    }
+    ```
+
+- `rustc --crate-type=lib aaa.rs` to compile `aaa.rs` to a library. The library name is `libaaa.rlib` by default, which is at the same directory.
+- `libaaa.rlib` is not installed in the system, so we cannot delcair it with `use aaa;`
+
+### 11.2. Using a library
+
+To use this library, create `bbb.rs` in the same directory. `bbb.rs` has a `main()` function.
+
+- `bbb.rs`
+    ```rust
+    fn main() {
+        aaa::print_aaa();
+        aaa::mod1::print_mod1();
+    }
+    ```
+
+- compile and run `bbb.rs`
+    - `rustc bbb.rs --extern aaa=libaaa.rlib` to  compile to executable `bbb`. Need to specify what is `aaa` in `bbb.rs`.
+    - `./bbb` to run the file.
+- I'd rather copy `aaa.rs` to `bbb.rs` and compile `bbb.rs` into an executable if `libaaa.rlib` is not used in other executables.
+
+
+## Cargo
+
+### 12.1. Dependencies
+
+The dependencies can be from multiple sources. Here is an example `cargo.tmol` file.
+
+```toml
+[package]
+name = "foo"
+version = "0.1.0"
+authors = ["mark"]
+
+[dependencies]
+clap = "2.27.1" # from crates.io
+rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
+bar = { path = "../bar" } # from a path in the local filesystem
+```
+
+### 12.2. Conventions
+
+Cargo support more than one binaries in one project. Besides `main.rs`, other binaries are in `./src/bin/` directory:
+
+```
+foo
+├── Cargo.toml
+└── src
+    ├── main.rs
+    └── bin
+        └── my_other_bin.rs
+```
+
+To compile a specific binary, run `$ cargo run --bin my_other_bin`. 
+
+### 12.2. Tests
+
+Unit tests are in the file with the module to be tested. Integration tests have its own subdirectory `./tests/`.
+
+### 12.3. Build scripts
+
+Not now
+
+
+## 13. Attributes
+Attributes are metadata applied to some module, crate, or item.
+
+- #[outer_attribute] applies to the item immediatedly following it. Examples:
+    ```rust
+    #[derive(Debug)]
+    struct Point {x: i32, y: i32}
+    ```
+    
+- #[inner_attribute] applies to enclosing item, typically a module or a crate:
+    ```rust
+    #![allow(unused_variables)]
+    
+    fn main() { 
+        let x = 3; // disable warning about unsed variables
+    }
+    ```
+    
+### 13.1. dead_code
+
+`#[all(dead_code)]` turns off dead code lint waring about an unused function:
+
+```rust
+fn used_function() {}
+
+// `#[allow(dead_code)]` is an attribute that disables the `dead_code` lint
+#[allow(dead_code)]
+fn unused_function() {}  // no warning for this function
+
+fn noisy_unused_function() {}  // warning for this one
+
+fn main() {
+    used_function();
+}
+```
+
+### 12.2. crates
+
+Limited usage. No effect on cargo.
+
+### 12.3. cfg
+Configuration conditional checks.
+
+- `#[cfg()]` vs `cfg!()`:
+    - `#[cfg(...)]` is attribute applied to function below it.
+    - `cfg(...)` returns a bool in a boolean expression.
+- Example:
+    ```rust
+    // This function only gets compiled if the target OS is linux
+    #[cfg(target_os = "linux")]
+    fn are_you_on_linux() {
+        println!("You are running linux!");
+    }
+
+    // And this function only gets compiled if the target OS is *not* linux
+    #[cfg(not(target_os = "linux"))]
+    fn are_you_on_linux() {
+        println!("You are *not* running linux!");
+    }
+
+    fn main() {
+        are_you_on_linux();
+
+        println!("Are you sure?");
+        if cfg!(target_os = "linux") {
+            println!("Yes. It's definitely linux!");
+        } else {
+            println!("Yes. It's definitely *not* linux!");
+        }
+    }
+    ```
