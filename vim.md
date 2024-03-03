@@ -54,6 +54,27 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+### QA: How to format a messy markdown table in vim?
+
+For example, we have a table looks like
+
+```
+| Foo| Bar | Detailed comment | Bla     |
+| --- | --- | -------- -------| ---     |
+| First | Second | This is the first row of the tablei   | %       |
+| O | O | Some very long sentence for this entry| :emoji: |
+| Bla | bleeeeeeeeeeeeeeeeeeee | blii | x       |
+```
+We can use terminal utility `column` inside Vim to align the table:
+
+- select all line in visual mode with `Shift v` in vim.
+- run command `:!column -t -s '|' -o '|'`
+    - `:!"` to run terminal command from Vim.
+    - `-t` to determine number of columns
+    - `-s '|'`: column seperator in input is `|`
+    - `-o '|'`: column seperator in output is `|`, can be changed to other seperator.
+- Note that utilities `column` needs to be installed in the system. 
+
 ### QA: how to delete leading white space in multiple line in visual mode
 
 Select the lines into visual mode and then using `:` to go into command mode to display `:'<,'>`. Then type in search/replace command `s/^\s//`
