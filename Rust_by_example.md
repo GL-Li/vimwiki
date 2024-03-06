@@ -1536,3 +1536,327 @@ Configuration conditional checks.
         }
     }
     ```
+    
+    
+## 14. Generics
+
+**generic struct**
+
+```rust
+#[derive(Debug)]
+struct A;  // concrete type
+#[derive(Debug)]
+struct Single(A)  // concrete type, typple-like struct
+#[derive(Debug)]
+struct SingleGeneric<T>(T)  // generic type, tupple-like struc
+
+fn main() {
+    let _s = Single(A);
+    println!("{:?}", _s)  // Single(A)
+    let _char = SingleGeneric('a')
+    println!("{:?}", _char)  // SingleGeneric('a')
+    let_i32 = SingleGendric(99)
+    println!("{:?}", _i32)   // SingleGeneric(99)
+}
+```
+
+### 14.4. Functions
+
+To define a generic function, the function must be followed by `<T>` or like explicityly. The generic type `T` usually need to be bounded by traits for the code to work.
+
+```rust
+struct SGen<T>(T); // a generic type
+fn gen_spec_t(x: SGen<i32>) {}  // not a generic function
+fn generic<T>(x: SGen<T>) {}  // generic function
+
+fn generic<T>(x: T)
+where
+    T: std::fmt::Display,
+{
+    println!("{x}");  // require T to have Display trait
+}
+
+fn main() {
+    generic(123);
+    generic("abc")
+} 
+
+```
+
+
+### 14.2. Implementation
+
+To implement methods for generic struct, we need `impl<T>` like definition.
+
+```rust
+use std::fmt::Display;
+
+struct GenVal<T> {
+    val: T,
+}
+
+impl<T> GenVal<T> {
+    fn value(&self) -> &T {
+        &self.val
+    }
+}
+
+// start another impl if a method requres different traits of T
+impl<T: Display> GenVal<T> {
+    fn prt(&self) {
+        println!("{}", self.val);
+    }
+}
+
+fn main() {
+    let x = GenVal { val: 99 };
+    x.prt();
+    let y = x.value();
+    println!("{}", y);
+}
+```
+
+
+### 14.3. Traits
+A trait can be generic, which has generic parameters.
+
+```rust
+struct Empty;
+struct Null;
+
+// trait with a generic parameter.
+// Its method will have two parameters
+trait DoubleDrop<T> {
+    fn double_drop(self, _: T);
+}
+
+// impl has two generic parameters,
+// one for the type U implementing the trait,
+// one for the parameter of the trait itself.
+impl<T, U> DoubleDrop<T> for U {
+    fn double_drop(self, _: T) {
+        // nothing required
+        println!("Dropped");
+    }
+}
+
+fn main() {
+    let aaa = Empty;
+    let bbb = Null;
+    
+    // both aaa and bbb are dropped
+    aaa.double_drop(bbb);
+}
+```
+
+
+### 14.4 Bounds
+Two pupurses of trait bound restriction:
+
+- Restric the generic to types that conform to the bounds.
+- Allow the generic to access the methods of the traits.
+
+### 14.5. Multiple bounds
+
+Use `+` to apply multiple bounds, for example, .
+```rust
+fn aaa<T: Debug + Display>(t: &T) {
+    // pass
+}
+```
+
+### 14.6. Where clause
+Above example can be written as
+```rust
+fn aaa<T>(t: &T)
+where T: Debug + Display,
+{
+    // pass
+}
+```
+
+### 14.7. New tuype idiom
+
+The idea is to create and use new types instead of using common types such as `i32` and `f64`. The purpose is to reduce accidental errors.
+
+```rust
+struct ProductID(u32);
+fn print_productid(id: ProductID) {
+    println!("{}", id.0);
+}
+
+fn main() {
+    let pid = ProductID(13579);
+    print_productid(pid); // 13579, the same as an integer but need type ProductID
+
+    // the following is incorrect
+    // print_productid(13579);  // error, wrong type.
+}
+```
+
+### 14.8. Associated items
+
+**What is associated items?**
+
+- An item is a component of a crate, such as:
+    - nodules
+    - `use` declarations
+    - function definitions
+    - type definitions
+    - struct definitions
+    - constant items
+    - trait definitions
+    - implementations
+    - and more
+- An associated item is an extension to trait generics, which allows trait to internally define new items.
+    - One such associated items is assocated type, providing simpler usage patterns whe nthe trait is generic over its container type. 
+
+
+**Why use associated types in trait definition**
+
+- avoid declair explicitly the generic type when using the trait, therefore make the code more readable???????????
+- example
+    ```rust
+    struct Container(i32, i32);
+
+    // trait defined explicitly by generic type A and B
+    trait Contains1<A, B> {
+        // explicity <A, B>
+        fn first(&self) -> i32;
+        fn last(&self) -> i32;
+    }
+    impl Contains1<i32, i32> for Container {
+        fn first(&self) -> i32 {
+            self.0
+        }
+        fn last(&self) -> i32 {
+            self.1
+        }
+    }
+    fn difference1<A, B, C>(container: &C) -> i32
+    where
+        // explicity <A, B, C>
+        C: Contains1<A, B>,
+    {
+        container.last() - container.first()
+    }
+
+    // trait with associated types
+    trait Contains2 {
+        type A;  // declair associated types A and B in trait definition
+        type B;  // They are still generic here
+
+        fn first(&self) -> i32;
+        fn last(&self) -> i32;
+    }
+    impl Contains2 for Container {
+        type A = i32;  // specify associated type when implement method for a type
+        type B = i32;  // be explicit
+
+        fn first(&self) -> i32 {
+            self.0
+        }
+        fn last(&self) -> i32 {
+            self.1
+        }
+    }
+    fn difference2<C: Contains2>(container: &C) -> i32 {  // use trait bound for C, 
+        container.last() - container.first()              // no more A and B
+    }                                                     // they are inferred from C
+
+    fn main() {
+        let number_1 = 3;
+        let number_2 = 10;
+
+        let container1 = Container(number_1, number_2);
+        println!("The difference1 is: {}", difference1(&container1));
+
+        let container2 = Container(number_1, number_2);
+        println!("The difference2 is: {}", difference2(&container2));
+    }
+    ```
+    
+### 14.9. Phantom type parameters
+
+**What is phantom type parameters**
+
+- Do not show up at runtime but are checked statically at compile time.
+- Are used as markers or to perform type checking at compile time.
+- `use std::marker::PhantomData`
+
+**Example**: 
+```rust
+use std::marker::PhantomData;
+#[derive(PartialEq)]
+struct PhantomTuple<A, B>(A, PhantomData<B>);
+
+fn main() {
+    let aaa: PhantomTuple<char, i32> = PhantomTuple('Q', PhantomData);
+    let aaa1: PhantomTuple<char, i32> = PhantomTuple('S', PhantomData);
+    let bbb: PhantomTuple<char, f64> = PhantomTuple('R', PhantomData);
+
+    println!("aaa is the same as aaa1: {}", aaa == aaa1); // false
+    // println!("aaa is the same as bbb: {}", aaa == bbb); // error, type mismatrch
+}
+```
+
+#### 14.9.1. Testcase: unit clarification
+This is a more realistic use case where a number is associated with a unit.
+
+```rust
+use std::marker::PhantomData;
+use std::ops::Add;
+
+// define unit type
+#[derive(Debug, Copy, Clone)]
+enum Inch {}
+#[derive(Debug, Copy, Clone)]
+enum Mm {}
+
+// define a f64 Length type with Phantom type parameter "Unit" so that the f64
+// number may have a different unit.
+#[derive(Debug, Copy, Clone)]
+struct Length<Unit>(f64, PhantomData<Unit>);
+
+// implement Add trait, which defines the behavior of `+`
+impl<Unit> Add for Length<Unit> {
+    // type Output = Self; works the same as below. Length<Unit> can be replace
+    // with Self in the function in all occurances
+    type Output = Length<Unit>; // Output is an associated type of trait Add
+
+    // this function allows adding two Length types using "+"
+    // f64 already implemented + so we can self.0 + rhs.0 in this function.
+    // After implement add for Length type, we can run L1 + L2
+    fn add(self, rhs: Length<Unit>) -> Length<Unit> {
+        Length(self.0 + rhs.0, PhantomData)
+    }
+}
+
+fn main() {
+    let one_foot: Length<Inch> = Length(12.0, PhantomData);
+    let one_meter: Length<Mm> = Length(1000.0, PhantomData);
+
+    println!("Two feet is {:?}", one_foot + one_foot);
+    println!("Two meters is {:?}", one_meter + one_meter);
+    // error: mismatched type
+    // println!("Two feters is {:?}", one_meter + one_foot);
+}
+
+
+// The print out is
+// Two feet is Length(24.0, PhantomData<main::Inch>)
+// Two meters is Length(2000.0, PhantomData<main::Mm>)
+```
+
+**Trait std::ops::Add** is defined as
+
+```rust
+pub trait Add<Rhs = Self> {
+    type Output;
+
+    // Required method
+    fn add(self, rhs: Rhs) -> Self::Output;
+}
+```
+
+where `Rhs = Self` means the default type the generic parameter `Rhs` is `Self`, which is the type to implementing trait `Add`. It can take other type if specified.
