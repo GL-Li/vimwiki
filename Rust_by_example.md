@@ -1860,3 +1860,143 @@ pub trait Add<Rhs = Self> {
 ```
 
 where `Rhs = Self` means the default type the generic parameter `Rhs` is `Self`, which is the type to implementing trait `Add`. It can take other type if specified.
+
+
+## 15. Scoping rules
+
+### 15.1. RAII
+
+**RAII: Resource Acquisition Is Initialization**: Rust enforces RAII so whenever an object goes out of scope, its destructor is called and its owned resources are freed.
+
+### 15.2. Ownership and moves
+
+#### 15.2.1. Mutability
+Mutability can be changed when ownership is transferred.
+```rust
+fn main() {
+    let aaa = Box::new(999i32);
+    // *aaa = 4;  // error, immutable
+    
+    let mut bbb = aaa;  // move and change mutability
+    *bbb = 111;
+    println!("{bbb}");
+}
+```
+
+#### 15.2.2. Partial moves
+```rust
+fn main() {
+    #[derive(Debug)]
+    struct Person {
+        name: String,
+        age: Box<u32>,
+    }
+
+    let aaa = Person {
+        name: "Tom".to_string(),
+        age: Box::new(37),
+    };
+
+    // partially destructure aaa. Destructure name only
+    let Person { name: xxx, ref age } = aaa;
+    println!("The unnamed person's name is {} and age is {}", xxx, age);
+    // aaa.name is not available but aaa.age is available
+    // println!("{:?}", aaa.name);  // error, borrow of moved value
+    println!("{:?}", aaa.age);
+}
+```
+
+### 15.3. Borrowing
+
+#### 15.3.1. Mutability
+Already know mutable borrow `$mut`.
+
+#### 15.3.2. Aliasing
+
+Only allow one mutable borrowing when no other borrowing, mutable or not.
+
+#### 15.3.3. The ref pattern
+
+**keyword** `ref`
+
+- `ref` is used at the left side of a `let` binding, equivalent to `&` on the right side.
+- The `ref` keyword can be used to take references to the fields of a struct or tuple when doing pattern matching or destructuring via the `let` binding.
+
+**Example**
+
+```rust
+fn main() {
+    let aaa = "tom".to_string();
+    // abb and acc both borrow from aaa
+    let abb = &aaa;
+    let ref acc = aaa;
+    println!("{:?} and {:?}", abb, acc);
+
+    #[derive(Debug)]
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    let p1 = Point { x: 11, y: 22 };
+
+    let copy_p1_x = {
+        // destructure
+        let Point { x: ref xxx, y: _ } = p1;
+        *xxx // xxx is a reference to p1.x
+    };
+    println!("{}", copy_p1_x);
+
+    // ref mut for mutable reference at left side.
+    let mut p2 = p1;
+    {
+        let Point {
+            x: _,
+            y: ref mut yyy,
+        } = p2;
+        *yyy += 33;
+    }
+    println!("{}", p2.y);
+}
+```
+
+### 15.4. Lifetimes
+Most examples can be simplified by elision. Do not pay much attentions to the details. Rust Book has better discussion on lifetimes.
+
+#### 15.4.2. Explicity annotation
+already know
+
+#### 15.4.2. Functions
+already know
+
+#### 15.4.3. Methods
+already know
+
+#### 15.4.4. Structs
+Similar
+
+#### 15.4.5. Traits
+Similar
+
+#### 15.4.6. Bounds
+Generic types can be bounded by lifetimes. Exmaple:
+
+```rust
+fn print_ref<'a, T>(t: &'a T) 
+    where T: Debug + 'a
+{
+   println!("{:?}", t); 
+}
+```
+
+#### 15.4.7. Coercion
+Do not see why need lifetime coercion from the examples. The examples can be simplified.
+
+
+#### 15.4.8. Static
+Need a better intro. The examples here are not sufficient to understand static.
+
+#### 15.4.9. Elission
+Refer to the Rust Book.
+
+## Traits
