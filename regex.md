@@ -200,8 +200,8 @@ They are used to extract capture group before/after or not before/after a given 
 - lookbehind with `(?<=xxx)` to look behind "xxx"
     ```R
     # look for word after "ghi"
-    str_extract(x, "(?<=ghi)\\s?(?<word>\\w+)")
-    	# [1,] " jkl" "456"
+    str_extract(x, "(?<=ghi\\s?)(\\w+)")
+    	# [1] "jkl" "456"
     ```
     
 - negative lookahead with `(?!xxx)` to find match not before "xxx"

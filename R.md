@@ -78,6 +78,17 @@
 
 ## General R settings =========================================================
 
+### QA: how to install R packages in Linux as binaries using r2u?
+
+- Support Ubuntu 20.4 and 22.04
+- Docker image: https://hub.docker.com/r/eddelbuettel/r2u/tags
+- install latest vim: copy file `jonathonf-ubuntu-vim-jammy.list` to docker image at `/etc/apt/source.list.d/`. This file has the PPA for vim in Ubuntu 22.04.
+    ```
+    deb https://ppa.launchpadcontent.net/jonathonf/vim/ubuntu/ jammy main
+    # deb-src https://ppa.launchpadcontent.net/jonathonf/vim/ubuntu/ jammy main
+    ```
+
+
 ### QA: Excel workbook: open save close to activate formulas
 
 ```r
