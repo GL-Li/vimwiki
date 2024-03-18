@@ -54,6 +54,27 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+### QA: How to format a messy markdown table in vim?
+
+For example, we have a table looks like
+
+```
+| Foo| Bar | Detailed comment | Bla     |
+| --- | --- | -------- -------| ---     |
+| First | Second | This is the first row of the tablei   | %       |
+| O | O | Some very long sentence for this entry| :emoji: |
+| Bla | bleeeeeeeeeeeeeeeeeeee | blii | x       |
+```
+We can use terminal utility `column` inside Vim to align the table:
+
+- select all line in visual mode with `Shift v` in vim.
+- run command `:!column -t -s '|' -o '|'`
+    - `:!"` to run terminal command from Vim.
+    - `-t` to determine number of columns
+    - `-s '|'`: column seperator in input is `|`
+    - `-o '|'`: column seperator in output is `|`, can be changed to other seperator.
+- Note that utilities `column` needs to be installed in the system. 
+
 ### QA: how to delete leading white space in multiple line in visual mode
 
 Select the lines into visual mode and then using `:` to go into command mode to display `:'<,'>`. Then type in search/replace command `s/^\s//`
@@ -350,7 +371,7 @@ search **in document** and replace
 - `:vsplit file1` split current window into left and right part
 - `:only` close all other split windows but keep current one.
 
-### vim text object, word, sentence, paragraph, inside bracket,
+##### vim text object, word, sentence, paragraph, inside bracket,
 
 `{operator}{a}{motion}` or `{operator}{i}{motion}`
 
@@ -362,7 +383,7 @@ search **in document** and replace
 **sentence**:
 
 - `das` delete whole sentence
-` `dis` delete sentence but keep space after the sentence.
+- `dis` delete sentence but keep space after the sentence.
 
 **paragraph**:
 
@@ -460,7 +481,8 @@ Trouble in comment lines. The operation may fail in commented lines. If this hap
 - `:bufdo %s/aaa/bbb/g | w` openrating on all buffers and save
 - `:bufdo %s/aaa/bbb/g` will work if `:set hiddeen` to skip the saving.
 - `:bufdo normal u` undo changes to all buffers.
-- `:E` to open a list of files as a buffer and select a file to open into buffer. `:bd` to close current buffer.
+- `:E` to open a list of files as a buffer and select a file to open into buffer. 
+- `:bd` to close current buffer.
 
 ### vim working with multiple windows
 

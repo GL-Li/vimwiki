@@ -1257,3 +1257,746 @@ Applications of diverging functions and expressions: `!` can be coreced into any
         }
     }
     ```
+    
+    
+## 10. Modules
+
+### 10.1. Visibility
+By default, a function is only available within the module defined the functions. Using `pub` to declair its visibility to other modules.
+
+```rust
+// mod_a is at the same level as fn main() and is visible to main(),
+// no pub declaration needed
+mod mod_a {
+    pub fn print_a() {
+        println!("a");
+    }
+
+    // mod_a1 is within the scope of mod_a, not visible to main,
+    // need pub declaration
+    pub mod mod_a1 {
+        pub fn print_a1() {
+            println!("a1");
+        }
+
+        pub mod mod_a2 {
+            pub fn print_a2() {
+                println!("a2");
+            }
+        }
+    }
+}
+
+fn main() {
+    // every modules and function in the chain of :: must be visible to main()
+    mod_a::print_a();
+    mod_a::mod_a1::print_a1();
+    mod_a::mod_a1::mod_a2::print_a2();
+}
+```
+
+### 10.2. Struct visibility
+The fields of a Struct, if used outside of the module where it is defined, need to declaired `pub`.
+
+```rust
+mod mod_a {
+    #[derive(Debug)]
+    pub struct Point {
+        pub x: i32,
+        pub y: i32,
+    }
+
+    // no pub before impl
+    impl Point {
+        pub fn get_x(&self) -> i32 {
+            self.x
+        }
+    }
+}
+
+fn main() {
+    let x = mod_a::Point { x: 1, y: 2 };
+    dbg!(x);
+
+    let y = mod_a::Point { x: 11, y: 99 };
+    // get_x is restricted to the scope of y, so no path to get_x needed.
+    println!("x is {}", y.get_x());
+}
+```
+
+
+### 10.3. The `use` declairation
+
+To avoid full path to a function. The declairation only accessible within the scope where it is declaired.
+
+### 10.4. super and self
+
+- `self::func()`: call function `func` within current module scope.
+- `super::func()`: call function in parent scope.
+
+### 10.5. File hierarchy
+
+A sample project structure
+```
+$ tree .
+.
+├── my
+│   ├── inaccessible.rs
+│   └── nested.rs
+├── my.rs
+└── split.rs
+```
+
+How to understand the structure with `my`:
+
+- `my.rs` is a module.
+- `inaccessible.rs` and `nested.rs` are sub modules of `my.rs` as they are under the directory of `my`. Their code are inserted into `my.rs` with `mod inaccessible` and `pub mod nested`.
+- code example:
+    - `./my/inaccessbiel.rs`
+        ```rust
+       fn privat_function() {
+           println!("This is a private function"); 
+       }
+       ```
+    - `./my/nested.rs`
+        ```rust
+        pub fn func() {
+            println!("This is a public function");
+        }
+        
+        pub mod aaa {
+            pub func() {
+                println!("This is a nested public functions"):
+            ]
+        }
+        ```
+    - `./my.rs`
+        ```rust
+        //import code from above files
+        mod inaccessible;
+        pub mod nested;
+        
+        //skip
+        ```
+- How to use all functions in `my.rs`? Just add `mod my;` to, for example, `split.rs`.
+
+
+## 11. Crates
+
+A crate is a compilation unit. This chapter describe a way to convert a single crate into a library and how to use the library. This is a more obsolete method compared to library structure created by cargo.
+
+### 11.1. create a library
+
+A library can be created from a single `.rs` file. Here is a simple example:
+
+- `aaa.rs` is a collection of functions and modules
+    ```rust
+    pub fn print_aaa() {
+        println!("aaa");
+    }
+
+    pub mod mod1 {
+        pub fn print_mod1() {
+            println!("module 1");
+        }
+    }
+    ```
+
+- `rustc --crate-type=lib aaa.rs` to compile `aaa.rs` to a library. The library name is `libaaa.rlib` by default, which is at the same directory.
+- `libaaa.rlib` is not installed in the system, so we cannot delcair it with `use aaa;`
+
+### 11.2. Using a library
+
+To use this library, create `bbb.rs` in the same directory. `bbb.rs` has a `main()` function.
+
+- `bbb.rs`
+    ```rust
+    fn main() {
+        aaa::print_aaa();
+        aaa::mod1::print_mod1();
+    }
+    ```
+
+- compile and run `bbb.rs`
+    - `rustc bbb.rs --extern aaa=libaaa.rlib` to  compile to executable `bbb`. Need to specify what is `aaa` in `bbb.rs`.
+    - `./bbb` to run the file.
+- I'd rather copy `aaa.rs` to `bbb.rs` and compile `bbb.rs` into an executable if `libaaa.rlib` is not used in other executables.
+
+
+## Cargo
+
+### 12.1. Dependencies
+
+The dependencies can be from multiple sources. Here is an example `cargo.tmol` file.
+
+```toml
+[package]
+name = "foo"
+version = "0.1.0"
+authors = ["mark"]
+
+[dependencies]
+clap = "2.27.1" # from crates.io
+rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
+bar = { path = "../bar" } # from a path in the local filesystem
+```
+
+### 12.2. Conventions
+
+Cargo support more than one binaries in one project. Besides `main.rs`, other binaries are in `./src/bin/` directory:
+
+```
+foo
+├── Cargo.toml
+└── src
+    ├── main.rs
+    └── bin
+        └── my_other_bin.rs
+```
+
+To compile a specific binary, run `$ cargo run --bin my_other_bin`. 
+
+### 12.2. Tests
+
+Unit tests are in the file with the module to be tested. Integration tests have its own subdirectory `./tests/`.
+
+### 12.3. Build scripts
+
+Not now
+
+
+## 13. Attributes
+Attributes are metadata applied to some module, crate, or item.
+
+- #[outer_attribute] applies to the item immediatedly following it. Examples:
+    ```rust
+    #[derive(Debug)]
+    struct Point {x: i32, y: i32}
+    ```
+    
+- #[inner_attribute] applies to enclosing item, typically a module or a crate:
+    ```rust
+    #![allow(unused_variables)]
+    
+    fn main() { 
+        let x = 3; // disable warning about unsed variables
+    }
+    ```
+    
+### 13.1. dead_code
+
+`#[all(dead_code)]` turns off dead code lint waring about an unused function:
+
+```rust
+fn used_function() {}
+
+// `#[allow(dead_code)]` is an attribute that disables the `dead_code` lint
+#[allow(dead_code)]
+fn unused_function() {}  // no warning for this function
+
+fn noisy_unused_function() {}  // warning for this one
+
+fn main() {
+    used_function();
+}
+```
+
+### 12.2. crates
+
+Limited usage. No effect on cargo.
+
+### 12.3. cfg
+Configuration conditional checks.
+
+- `#[cfg()]` vs `cfg!()`:
+    - `#[cfg(...)]` is attribute applied to function below it.
+    - `cfg(...)` returns a bool in a boolean expression.
+- Example:
+    ```rust
+    // This function only gets compiled if the target OS is linux
+    #[cfg(target_os = "linux")]
+    fn are_you_on_linux() {
+        println!("You are running linux!");
+    }
+
+    // And this function only gets compiled if the target OS is *not* linux
+    #[cfg(not(target_os = "linux"))]
+    fn are_you_on_linux() {
+        println!("You are *not* running linux!");
+    }
+
+    fn main() {
+        are_you_on_linux();
+
+        println!("Are you sure?");
+        if cfg!(target_os = "linux") {
+            println!("Yes. It's definitely linux!");
+        } else {
+            println!("Yes. It's definitely *not* linux!");
+        }
+    }
+    ```
+    
+    
+## 14. Generics
+
+**generic struct**
+
+```rust
+#[derive(Debug)]
+struct A;  // concrete type
+#[derive(Debug)]
+struct Single(A)  // concrete type, typple-like struct
+#[derive(Debug)]
+struct SingleGeneric<T>(T)  // generic type, tupple-like struc
+
+fn main() {
+    let _s = Single(A);
+    println!("{:?}", _s)  // Single(A)
+    let _char = SingleGeneric('a')
+    println!("{:?}", _char)  // SingleGeneric('a')
+    let_i32 = SingleGendric(99)
+    println!("{:?}", _i32)   // SingleGeneric(99)
+}
+```
+
+### 14.4. Functions
+
+To define a generic function, the function must be followed by `<T>` or like explicityly. The generic type `T` usually need to be bounded by traits for the code to work.
+
+```rust
+struct SGen<T>(T); // a generic type
+fn gen_spec_t(x: SGen<i32>) {}  // not a generic function
+fn generic<T>(x: SGen<T>) {}  // generic function
+
+fn generic<T>(x: T)
+where
+    T: std::fmt::Display,
+{
+    println!("{x}");  // require T to have Display trait
+}
+
+fn main() {
+    generic(123);
+    generic("abc")
+} 
+
+```
+
+
+### 14.2. Implementation
+
+To implement methods for generic struct, we need `impl<T>` like definition.
+
+```rust
+use std::fmt::Display;
+
+struct GenVal<T> {
+    val: T,
+}
+
+impl<T> GenVal<T> {
+    fn value(&self) -> &T {
+        &self.val
+    }
+}
+
+// start another impl if a method requres different traits of T
+impl<T: Display> GenVal<T> {
+    fn prt(&self) {
+        println!("{}", self.val);
+    }
+}
+
+fn main() {
+    let x = GenVal { val: 99 };
+    x.prt();
+    let y = x.value();
+    println!("{}", y);
+}
+```
+
+
+### 14.3. Traits
+A trait can be generic, which has generic parameters.
+
+```rust
+struct Empty;
+struct Null;
+
+// trait with a generic parameter.
+// Its method will have two parameters
+trait DoubleDrop<T> {
+    fn double_drop(self, _: T);
+}
+
+// impl has two generic parameters,
+// one for the type U implementing the trait,
+// one for the parameter of the trait itself.
+impl<T, U> DoubleDrop<T> for U {
+    fn double_drop(self, _: T) {
+        // nothing required
+        println!("Dropped");
+    }
+}
+
+fn main() {
+    let aaa = Empty;
+    let bbb = Null;
+    
+    // both aaa and bbb are dropped
+    aaa.double_drop(bbb);
+}
+```
+
+
+### 14.4 Bounds
+Two pupurses of trait bound restriction:
+
+- Restric the generic to types that conform to the bounds.
+- Allow the generic to access the methods of the traits.
+
+### 14.5. Multiple bounds
+
+Use `+` to apply multiple bounds, for example, .
+```rust
+fn aaa<T: Debug + Display>(t: &T) {
+    // pass
+}
+```
+
+### 14.6. Where clause
+Above example can be written as
+```rust
+fn aaa<T>(t: &T)
+where T: Debug + Display,
+{
+    // pass
+}
+```
+
+### 14.7. New tuype idiom
+
+The idea is to create and use new types instead of using common types such as `i32` and `f64`. The purpose is to reduce accidental errors.
+
+```rust
+struct ProductID(u32);
+fn print_productid(id: ProductID) {
+    println!("{}", id.0);
+}
+
+fn main() {
+    let pid = ProductID(13579);
+    print_productid(pid); // 13579, the same as an integer but need type ProductID
+
+    // the following is incorrect
+    // print_productid(13579);  // error, wrong type.
+}
+```
+
+### 14.8. Associated items
+
+**What is associated items?**
+
+- An item is a component of a crate, such as:
+    - nodules
+    - `use` declarations
+    - function definitions
+    - type definitions
+    - struct definitions
+    - constant items
+    - trait definitions
+    - implementations
+    - and more
+- An associated item is an extension to trait generics, which allows trait to internally define new items.
+    - One such associated items is assocated type, providing simpler usage patterns whe nthe trait is generic over its container type. 
+
+
+**Why use associated types in trait definition**
+
+- avoid declair explicitly the generic type when using the trait, therefore make the code more readable???????????
+- example
+    ```rust
+    struct Container(i32, i32);
+
+    // trait defined explicitly by generic type A and B
+    trait Contains1<A, B> {
+        // explicity <A, B>
+        fn first(&self) -> i32;
+        fn last(&self) -> i32;
+    }
+    impl Contains1<i32, i32> for Container {
+        fn first(&self) -> i32 {
+            self.0
+        }
+        fn last(&self) -> i32 {
+            self.1
+        }
+    }
+    fn difference1<A, B, C>(container: &C) -> i32
+    where
+        // explicity <A, B, C>
+        C: Contains1<A, B>,
+    {
+        container.last() - container.first()
+    }
+
+    // trait with associated types
+    trait Contains2 {
+        type A;  // declair associated types A and B in trait definition
+        type B;  // They are still generic here
+
+        fn first(&self) -> i32;
+        fn last(&self) -> i32;
+    }
+    impl Contains2 for Container {
+        type A = i32;  // specify associated type when implement method for a type
+        type B = i32;  // be explicit
+
+        fn first(&self) -> i32 {
+            self.0
+        }
+        fn last(&self) -> i32 {
+            self.1
+        }
+    }
+    fn difference2<C: Contains2>(container: &C) -> i32 {  // use trait bound for C, 
+        container.last() - container.first()              // no more A and B
+    }                                                     // they are inferred from C
+
+    fn main() {
+        let number_1 = 3;
+        let number_2 = 10;
+
+        let container1 = Container(number_1, number_2);
+        println!("The difference1 is: {}", difference1(&container1));
+
+        let container2 = Container(number_1, number_2);
+        println!("The difference2 is: {}", difference2(&container2));
+    }
+    ```
+    
+### 14.9. Phantom type parameters
+
+**What is phantom type parameters**
+
+- Do not show up at runtime but are checked statically at compile time.
+- Are used as markers or to perform type checking at compile time.
+- `use std::marker::PhantomData`
+
+**Example**: 
+```rust
+use std::marker::PhantomData;
+#[derive(PartialEq)]
+struct PhantomTuple<A, B>(A, PhantomData<B>);
+
+fn main() {
+    let aaa: PhantomTuple<char, i32> = PhantomTuple('Q', PhantomData);
+    let aaa1: PhantomTuple<char, i32> = PhantomTuple('S', PhantomData);
+    let bbb: PhantomTuple<char, f64> = PhantomTuple('R', PhantomData);
+
+    println!("aaa is the same as aaa1: {}", aaa == aaa1); // false
+    // println!("aaa is the same as bbb: {}", aaa == bbb); // error, type mismatrch
+}
+```
+
+#### 14.9.1. Testcase: unit clarification
+This is a more realistic use case where a number is associated with a unit.
+
+```rust
+use std::marker::PhantomData;
+use std::ops::Add;
+
+// define unit type
+#[derive(Debug, Copy, Clone)]
+enum Inch {}
+#[derive(Debug, Copy, Clone)]
+enum Mm {}
+
+// define a f64 Length type with Phantom type parameter "Unit" so that the f64
+// number may have a different unit.
+#[derive(Debug, Copy, Clone)]
+struct Length<Unit>(f64, PhantomData<Unit>);
+
+// implement Add trait, which defines the behavior of `+`
+impl<Unit> Add for Length<Unit> {
+    // type Output = Self; works the same as below. Length<Unit> can be replace
+    // with Self in the function in all occurances
+    type Output = Length<Unit>; // Output is an associated type of trait Add
+
+    // this function allows adding two Length types using "+"
+    // f64 already implemented + so we can self.0 + rhs.0 in this function.
+    // After implement add for Length type, we can run L1 + L2
+    fn add(self, rhs: Length<Unit>) -> Length<Unit> {
+        Length(self.0 + rhs.0, PhantomData)
+    }
+}
+
+fn main() {
+    let one_foot: Length<Inch> = Length(12.0, PhantomData);
+    let one_meter: Length<Mm> = Length(1000.0, PhantomData);
+
+    println!("Two feet is {:?}", one_foot + one_foot);
+    println!("Two meters is {:?}", one_meter + one_meter);
+    // error: mismatched type
+    // println!("Two feters is {:?}", one_meter + one_foot);
+}
+
+
+// The print out is
+// Two feet is Length(24.0, PhantomData<main::Inch>)
+// Two meters is Length(2000.0, PhantomData<main::Mm>)
+```
+
+**Trait std::ops::Add** is defined as
+
+```rust
+pub trait Add<Rhs = Self> {
+    type Output;
+
+    // Required method
+    fn add(self, rhs: Rhs) -> Self::Output;
+}
+```
+
+where `Rhs = Self` means the default type the generic parameter `Rhs` is `Self`, which is the type to implementing trait `Add`. It can take other type if specified.
+
+
+## 15. Scoping rules
+
+### 15.1. RAII
+
+**RAII: Resource Acquisition Is Initialization**: Rust enforces RAII so whenever an object goes out of scope, its destructor is called and its owned resources are freed.
+
+### 15.2. Ownership and moves
+
+#### 15.2.1. Mutability
+Mutability can be changed when ownership is transferred.
+```rust
+fn main() {
+    let aaa = Box::new(999i32);
+    // *aaa = 4;  // error, immutable
+    
+    let mut bbb = aaa;  // move and change mutability
+    *bbb = 111;
+    println!("{bbb}");
+}
+```
+
+#### 15.2.2. Partial moves
+```rust
+fn main() {
+    #[derive(Debug)]
+    struct Person {
+        name: String,
+        age: Box<u32>,
+    }
+
+    let aaa = Person {
+        name: "Tom".to_string(),
+        age: Box::new(37),
+    };
+
+    // partially destructure aaa. Destructure name only
+    let Person { name: xxx, ref age } = aaa;
+    println!("The unnamed person's name is {} and age is {}", xxx, age);
+    // aaa.name is not available but aaa.age is available
+    // println!("{:?}", aaa.name);  // error, borrow of moved value
+    println!("{:?}", aaa.age);
+}
+```
+
+### 15.3. Borrowing
+
+#### 15.3.1. Mutability
+Already know mutable borrow `$mut`.
+
+#### 15.3.2. Aliasing
+
+Only allow one mutable borrowing when no other borrowing, mutable or not.
+
+#### 15.3.3. The ref pattern
+
+**keyword** `ref`
+
+- `ref` is used at the left side of a `let` binding, equivalent to `&` on the right side.
+- The `ref` keyword can be used to take references to the fields of a struct or tuple when doing pattern matching or destructuring via the `let` binding.
+
+**Example**
+
+```rust
+fn main() {
+    let aaa = "tom".to_string();
+    // abb and acc both borrow from aaa
+    let abb = &aaa;
+    let ref acc = aaa;
+    println!("{:?} and {:?}", abb, acc);
+
+    #[derive(Debug)]
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    let p1 = Point { x: 11, y: 22 };
+
+    let copy_p1_x = {
+        // destructure
+        let Point { x: ref xxx, y: _ } = p1;
+        *xxx // xxx is a reference to p1.x
+    };
+    println!("{}", copy_p1_x);
+
+    // ref mut for mutable reference at left side.
+    let mut p2 = p1;
+    {
+        let Point {
+            x: _,
+            y: ref mut yyy,
+        } = p2;
+        *yyy += 33;
+    }
+    println!("{}", p2.y);
+}
+```
+
+### 15.4. Lifetimes
+Most examples can be simplified by elision. Do not pay much attentions to the details. Rust Book has better discussion on lifetimes.
+
+#### 15.4.2. Explicity annotation
+already know
+
+#### 15.4.2. Functions
+already know
+
+#### 15.4.3. Methods
+already know
+
+#### 15.4.4. Structs
+Similar
+
+#### 15.4.5. Traits
+Similar
+
+#### 15.4.6. Bounds
+Generic types can be bounded by lifetimes. Exmaple:
+
+```rust
+fn print_ref<'a, T>(t: &'a T) 
+    where T: Debug + 'a
+{
+   println!("{:?}", t); 
+}
+```
+
+#### 15.4.7. Coercion
+Do not see why need lifetime coercion from the examples. The examples can be simplified.
+
+
+#### 15.4.8. Static
+Need a better intro. The examples here are not sufficient to understand static.
+
+#### 15.4.9. Elission
+Refer to the Rust Book.
+
+## Traits

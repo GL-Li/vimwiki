@@ -201,6 +201,17 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
 
 ## QA =================================================================
 
+### QA: How to install and config the latest Neovim in a Docker image from the latest tag.gz file?
+
+- Download latest tar.gz file:
+    - `$ wget https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz` to download to current directory
+    - not fiinished ?????????????????
+
+### QA: how to start a Docker container at terminal?
+
+In Dockerfile, set `ENTRYPOINT [ "bin/bash" ]`, which overwrites the entry point set in base images.
+
+
 ### QA: kubernetes pod with two containers
 - https://minikube.sigs.k8s.io/docs/tutorials/multi_node/ to create two nodes in minikube
 - https://kubernetes.io/docs/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume/ to create a pod with two containers

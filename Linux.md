@@ -59,6 +59,48 @@
 
 ## QA =========================================================================
 
+### QA: how to find specific directories and files and process them one by one?
+
+Use `find ... | while read ...`: The example below includs find directory and files.
+
+- `while read dir` corresponding to `-type d`.
+- `while read fname` corresponding to `-type f`.
+- to run the example in crontab, give full path to the bash script
+    ```
+    # min hour day month dayOfWeek command
+    # 30  12   *   *     MON       echo "Hello World" >> ~/hellow.txt
+      11   11   *   *     *         $HOME/bin/delete_clients_data $HOME/tmp 1
+    ```
+- example: delete csv and xlsx file in xtmp* subdirectories in `$1` if the subdirectory has not been accesss in a given `$2` days.
+    ```sh
+    #!/bin/bash
+    #
+    # delete xxx.csv and xxx.xlsx files in sub-directories
+    #   - of directory specified by parameter $1
+    #   - starting with xtmp
+    #   - not accessed for at least $2 day specified by parameter $2
+    #
+
+    # find all the directory met above conditions
+
+    data_dir="$1"
+    min_access_time="$2"
+
+    echo "Delete old client files:"
+    find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
+
+      find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
+
+        echo "  - $fname"
+        rm "$fname"
+
+      done
+
+    done
+
+    echo "Finished deleting files."
+    ```
+
 ### QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
 Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
 
