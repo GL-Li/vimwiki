@@ -54,20 +54,6 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
-### QA: how to format a Markdown table in vim?
-
-Example: original table
-| col1 | col2 | col3 |
-|:--- | :--- | :--- |
-|abc | def |ghi|
-|1 |2 | 3 |
-
-After format selected rows with `:!column -t -s "|" -o "|"`.
-| col1 | col2 | col3 |
-|:---  | :--- | :--- |
-|abc   | def  |ghi   |
-|1     |2     | 3    |
-
 ### QA: how to delete leading white space in multiple line in visual mode
 
 Select the lines into visual mode and then using `:` to go into command mode to display `:'<,'>`. Then type in search/replace command `s/^\s//`
@@ -1055,3 +1041,4 @@ https://github.com/tpope/vim-markdown/issues/21
 - add a new column, \tic
 - delete a column, \tdc
 - delete row, \tdd
+
