@@ -1,3 +1,39 @@
+## Trusaic SOPs
+
+### Test code on vdi2
+- prepare files
+    - generate selfSrv-vx.x.xx.zip file:
+        - follow examples in /mnt/d/other-teams/engineering/
+    - upload the zip file to Google Drive https://drive.google.com/drive/folders/1BvFmAiMuk_hkNeN7WrzTE5rOklu9nvID
+    - Download to vdi2
+
+- install R packages on vid2
+    - delete installed third-party packages but keep all base packages
+
+        ```r
+        # all packages
+        all_pkg <- installed.packages() |>
+            rownames()
+        # all base packages
+        base_pkg <- installed.packages(priority = "high") |> 
+            rownames()
+        # non-base packages
+        non_base_pkg <- setdiff(all_pkg, base_pkg)
+        # remove non-base packages
+        remove.packages(non_base_pkg)
+        ```
+
+    - to install a set of packages in Windows from a file, run from command
+        ```
+        > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" dependencies_windows.R
+        ```
+
+- have a test run
+    ```
+    > "C:\program Files\R\R-4.3.1\bin\Rscript.exe" pea1.R
+    ```
+
+
 ## Trusaic package workflow
 
 ### Develop package in WSL and end2end test in Windows

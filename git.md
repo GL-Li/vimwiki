@@ -58,6 +58,12 @@
     ```
 ## QA =========================================================================
 
+### How to reduce the size of a git repo?
+
+`$ du -sh .git` to check the size of the git repo
+`$ git count-objects -vH` to count files, list file size, and identify garbages and prune-packables.
+`$ git gc --aggressive` to clean up the repo.
+
 ## QA: how to push, delete, and modify a tag in remote?
 
 - `$ git tag v0.1.23` to add a tag to current commit
