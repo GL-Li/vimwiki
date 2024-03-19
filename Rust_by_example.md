@@ -1999,4 +1999,310 @@ Need a better intro. The examples here are not sufficient to understand static.
 #### 15.4.9. Elission
 Refer to the Rust Book.
 
-## Traits
+## 16. Traits
+A trait is a collection of methods defined for an unknown type: `Self`.
+
+### 16.1. Derive
+A list of traits can be `#[derive(...)]`ed.
+
+- `std::cmp::PartialEq`: for a **partial equivalence relation**, which is symetric and transitive, but not reflexive.
+    - symetric: `a == b` inmplies `b == a`
+    - transitive: `a == b` and `b == c` implies `a == c`
+    - reflexive: `a == a`. This is not true, for example, for `NaN` in type `f32` and `f64`
+    - definition.
+        ```rust
+        pub trait PartialEq<Rhs = Self>
+        where
+            Rhs: ?Sized,
+        {
+            // Required method, x.eq(y) is x == y
+            fn eq(&self, other: &Rhs) -> bool;
+
+            // Provided method, x.ne(y) is x != y
+            fn ne(&self, other: &Rhs) -> bool { ... }
+        }
+        ```
+
+- `std::cmo::Eq`: for equivalence relation, which is symmetric, transitive, and reflexive.
+
+- `std::cmp::PartialOrd`: is used when not all two values of a type can be compared, for example, we cannot compare two `NaN`s of type `f32` or `f64`.
+    ```rust
+    pub trait PartialOrd<Rhs = Self>: PartialEq<Rhs>
+    where
+        Rhs: ?Sized,
+    {
+        // Required method
+        fn partial_cmp(&self, other: &Rhs) -> Option<Ordering>;
+
+        // Provided methods
+        fn lt(&self, other: &Rhs) -> bool { ... }  // for a < b
+        fn le(&self, other: &Rhs) -> bool { ... }  // for a <= b
+        fn gt(&self, other: &Rhs) -> bool { ... }  // for a > b
+        fn ge(&self, other: &Rhs) -> bool { ... }  // for a >= b
+    }
+    ```
+    
+- `std::cmp::Ord` to compare any two pairs. Applicable to type like `i32` and `char`.
+    ```rust
+    pub trait Ord: Eq + PartialOrd {
+        // Required method
+        fn cmp(&self, other: &Self) -> Ordering;
+
+        // Provided methods
+        fn max(self, other: Self) -> Self
+           where Self: Sized { ... }
+        fn min(self, other: Self) -> Self
+           where Self: Sized { ... }
+        fn clamp(self, min: Self, max: Self) -> Self // return max or min if
+           where Self: Sized + PartialOrd { ... }    // self is out of the range
+    }
+    ```
+    
+- example
+    ```rust
+    #[derive(PartialEq, PartialOrd)]
+    struct Aaa(f64);
+
+    fn main() {
+        let a1 = Aaa(3.14);
+        let a2 = Aaa(9.82);
+        if a1 > a2 {
+            println!("{}", a1.0);
+        } else {
+            println!("{}", a2.0);
+        }
+    }
+    ```
+    
+### 16.2. Returning Traits with `dyn`
+When a function returns different types that implements a common trait Xxxx, we use `-> Box<dyn Xxxx>` as the function return.
+
+- example:
+    ```rust
+    struct Sheep {}
+    struct Cow {}
+
+    trait Animal {
+        fn noise(&self) -> &'static str;
+    }
+
+    impl Animal for Sheep {
+        fn noise(&self) -> &'static str {
+            "baaaah!"
+        }
+    }
+
+    impl Animal for Cow {
+        fn noise(&self) -> &'static str {
+            "mooooo!"
+        }
+    }
+
+    // a function whose return signature is -> impl Animal can only possible return
+    // one type, which must be pre-determine in function body at compile time.
+    fn one_animal() -> impl Animal {
+        Sheep {} // only return type Sheep
+    }
+
+    // The return type Cow or Sheep is determine in run time. In compile time the
+    // function still return one type Box. Yes, Box is a type that is stored in
+    // stack and points to values in heap.
+    fn random_animal(random_number: f64) -> Box<dyn Animal> {
+        if random_number < 0.5 {
+            Box::new(Sheep {})
+        } else {
+            Box::new(Cow {})
+        }
+    }
+
+    fn main() {
+        let animal = random_animal(0.1);
+        println!("{}", animal.noise());
+
+        let aaa = one_animal();
+        println!("{}", aaa.noise());
+    }
+    ```
+    
+### 16.3 Operator overloading
+
+Many operators can be overloaded via traits. For example, if a type implemented trait `Add`, then `a + b` is equivalent to `a.add(b)`. The operator `+` acts differently based on the method `add` implemeted for each type.
+
+- trait `std::ope::Add`:
+    - signature: the default Rhs is Self, but can be other types. 
+        ```rust
+        pub trait Add<Rhs = Self> {
+            type Output;
+
+            // Required method
+            fn add(self, rhs: Rhs) -> Self::Output;
+        }
+        ```
+    - example
+        ```rust
+        use std::ops::Add;
+
+        // create a set of zero-sized types (ZST) for demonstration
+        struct Foo;
+        struct Bar;
+
+        #[derive(Debug)]
+        struct FooBar;
+        #[derive(Debug)]
+        struct BarFoo;
+
+        // Add trait most used to add two variables of the same type. But it can be
+        // to joint two different types, for example String + &str.
+        impl Add<Bar> for Foo {
+            type Output = FooBar;
+            fn add(self, _: Bar) -> FooBar {
+                FooBar
+            }
+        }
+
+        // a + b can be different from b + a
+        impl Add<Foo> for Bar {
+            type Output = BarFoo;
+            fn add(self, _: Foo) -> BarFoo {
+                BarFoo
+            }
+        }
+
+        fn main() {
+            let x = Foo;
+            let y = Bar;
+            println!("{:?}", x + y); // operator + moves both x and y
+
+            let x = Foo;
+            let y = Bar;
+            println!("{:?}", x.add(y)); // another way of using add
+
+            let x = Foo;
+            let y = Bar;
+            println!("{:?}", Add::add(y, x)); // one more way of using add
+        }
+        ```
+        
+### 16.4. Drop
+Rust automatically drop a variable when it goes out of scope by calling `Drop::Drop`. Users, however, can still implement the trait for type to, for example, print out message when a variable is dropped.
+
+- signature of trait `std::ops::Drop`
+    ```rust
+    pub trait Drop {
+        // Required method
+        fn drop(&mut self);
+    }
+    ```
+    
+- example
+    ```rust
+    struct Droppable {
+        name: &'static str,
+    }
+
+    impl std::ops::Drop for Droppable {
+        fn drop(&mut self) {
+            println!("{} is dropped!", self.name);
+        }
+    }
+
+    fn main() {
+        let x = Droppable { name: "Tom" };
+        {
+            let _y = Droppable { name: "Jerry" };
+        }  // print message when _y goes out of scope here
+        
+        drop(x);  // print message when x is dropped
+    }
+    ```
+    
+### 16.5. Iterators
+
+**Iterator basics**
+
+- `for` construct turns some collections into iterators using the `.into_iter()` method implicitly.
+- `.take(n)` method keep the first n element, `.skip(n)` method skips the first n element.
+- example
+    ```rust
+    fn main() {
+        let x = 1..5;
+        for i in x {
+            println!("{i}");
+        }
+
+        let y = 1..10;
+        for i in y.take(3) {
+            println!("{i}");
+        }
+
+        let y = 1..10;
+        for i in y.skip(2).take(3) {
+            println!("{i}");
+        }
+    }
+    ```
+    
+**Fibonacci sequence**
+
+    ```rust
+    #[derive(Debug)]
+    struct Fibonacci {
+        cur: u32,
+        next: u32,
+    }
+
+    impl Iterator for Fibonacci {
+        type Item = u32;a // must use name Item
+
+        // .next() returns an Option
+        fn next(&mut self) -> Option<Self::Item> {
+            let current = self.cur;
+            self.cur = self.next;
+            self.next = current + self.next;
+
+            // Fibonacci never ends, so None is never returned.
+            Some(current)
+        }
+    }
+
+    fn fib() -> Fibonacci {
+        Fibonacci { cur: 0, next: 1 }
+    }
+
+    fn main() {
+        let mut x = fib();
+        println!("{:?}", x.next());  // Some(0)
+        println!("{:?}", x.next());  // Some(1)
+        println!("{:?}", x.next());  // Some(1)
+        println!("{:?}", x.take(3)); // Take { iter: Fibonacci { cur: 2, next: 3 }, n: 3 }
+
+        let x = fib();
+        for i in x.take(6) {
+            println!("{}", i);
+        }
+    }
+    ```
+
+### 16.6. impl trait
+
+**Normal use**: Declair function argument or return type by traits like `fn aaa(x: TraitA) -> impl TraitB {}`.
+
+**use impl with closures**: `Fn`, `FnMut`, and `FnOnce` are traits for closures.
+
+    ```rust
+    // This function returns a closure that has one parameters
+    fn make_adder_function(y: i32) -> impl Fn(i32) -> i32 {
+        let closure = move |x: i32| x + y;
+        closure
+    }
+
+    fn main() {
+        let aaa = 99;
+        // add_9 is a closure that returns x + 9
+        let add_9 = make_adder_function(9);
+        println!("{}", add_9(aaa));
+    }
+    ```
+
+
+
