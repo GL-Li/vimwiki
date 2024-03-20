@@ -35,6 +35,57 @@
 
 ## QA ===
 
+### QA: how to avoid the error of moving out a String behind reference?
+Use `.clone()`, `to_string()`, or `to_owned` method.
+
+```rust
+struct DummyStudent {
+    info1: &'static str,
+    info2: String,
+    info3: String,
+    info4: String,
+}
+
+fn name(student: &DummyStudent) -> String {
+    student.info1.to_string()
+}
+
+fn university(student: &DummyStudent) -> String {
+    // self.info2  // error, move out behind reference
+    // make a clone
+    student.info2.clone()
+}
+
+fn fav_language(student: &DummyStudent) -> String {
+    // to_string takes a reference of self.info3 and convert it to String so
+    // to avoid move out behind reference error.
+    student.info3.to_string()
+}
+
+fn git_username(student: &DummyStudent) -> String {
+    // to_owned take a reference of self.info4 and make it an owned value,
+    // much like .clone()
+    student.info4.to_owned()
+}
+
+fn main() {
+    let dummy_student = DummyStudent {
+        info1: "Tom",
+        info2: "Duke".to_string(),
+        info3: "Rust".to_string(),
+        info4: "xxx".to_string(),
+    };
+
+    println!(
+        "Name: {}, university: {}, Language: {}, git username: {}",
+        name(&dummy_student),
+        university(&dummy_student),
+        fav_language(&dummy_student),
+        git_username(&dummy_student)
+    );
+}
+```
+
 ### QA: what is the error "cannot move of out xxx which is behind a reference?
 
 This happens when you try to move a variable you do not own and the data does not implement Copy trait..
