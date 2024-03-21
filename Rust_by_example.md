@@ -2305,4 +2305,97 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
     ```
 
 
+### 16.7. Clone
+use method `.clone()` to make a copy if the type implements `Clone` trait.
+
+
+### 16.8. Supertraits
+
+A supertrait B is like a trait bound to a trait A. When implementing A for a type T, we need the type is also implementetd with trait B.Simply speaking, A can only be implemeted to type that implements A's super trait B.
+
+```rust
+use std::fmt;
+
+// supertrait fmt::Display is a trait bound on trait OutlinePrint
+trait OutlinePrint: fmt::Display {
+    fn outline_print(&self) {
+        // to_string() require self to have Display trait, so we add 
+        // fmt::Display as the super trait of trait OutlinePrint
+        let output = self.to_string(); 
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+// must implement fmt::Display for Point before implementing OutlinePrint
+// for Point.
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+impl OutlinePrint for Point {}
+
+fn main() {
+    let p = Point { x: 11, y: 22 };
+    p.outline_print();
+}
+```
+
+### 16.9. Disambiguating overlapping traits
+
+When a type is implemeted with two or more traits and the traits have the same method name like `.get()`, how to resolve the conflict in names? Using **Fully Qualified Syntax**.
+
+```rust
+trait NameGetter {
+    fn get(&self) -> String;
+}
+
+trait AgeGetter {
+    fn get(&self) -> u8;
+}
+
+struct Aaa {
+    name: String,
+    age: u8,
+}
+
+impl NameGetter for Aaa {
+    fn get(&self) -> String {
+        self.name.to_string()
+    }
+}
+
+impl AgeGetter for Aaa {
+    fn get(&self) -> u8 {
+        self.age
+    }
+}
+
+fn main() {
+    let aaa = Aaa {
+        name: "Tom".to_string(),
+        age: 77,
+    };
+    
+    // use fully qualified syntax
+    let name = <Aaa as NameGetter>::get(&aaa);
+    let age = <Aaa as AgeGetter>::get(&aaa);
+    println!("Name: {}, Age: {}", name, age);
+}
+```
+
+
+## 17. macro_rules
+
 
