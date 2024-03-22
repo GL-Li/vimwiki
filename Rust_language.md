@@ -4220,3 +4220,84 @@ skip for now
 
 ### 17.2 Using trait objects that allow for values of different types
 
+
+
+## 19. Advanced features
+
+### 19.5. Macros
+
+**Macros**
+
+Macros are Rust code that generate Rust code. There are three types of macros:
+
+- custom `#[derive]` macros that specify code added with the `derive` attribute used on structs and enums
+- attribute-like macros that define custom attributes usable on any item.
+- function-like macros that look like function calls but operate on  the tokens specified as their argument
+
+**The difference between macros and functions**
+
+- A function must declair number and type of parameters. A macro can take a variable number of parameters.
+- Macros are more complicated
+- Macros must be defined before calling them.
+
+**delcarative macros with `macro_rules!` for general metaprogramming**
+
+- simple example similar to a simplified `vec!` macro, which has only one match arm.
+    ```rust
+    // a simplified vec! macro
+    #[macro_export]
+    macro_rules! vec_test {
+        // allowed separators after $( $x:expr ) are "," and ";".
+        // the astroid * act like a regular expression but repeat the whole
+        // pattern $( $x:expr ); zero or more times
+        ( $( $x:expr );* ) => {
+            {
+                let mut temp_vec = Vec::new();
+                // repeat the following $() zero or more time till run out of $x
+                $(
+                    temp_vec.push($x);
+                )*
+                // return of this branch
+                temp_vec
+            }
+        };
+    }
+
+    fn main() {
+        // macros can be called with xxx!() or xxx![]
+        let aaa = vec_test!(1; 2; 3);
+        let bbb = vec_test![1; 2; 3];
+        let ccc = vec![7, 8, 9];
+        let ddd = vec!(99, 8, 9);
+        println!("aaa: {:?} and bbb: {:?}", aaa, bbb);
+        println!("ccc: {:?} and ddd: {:?}", ccc, ddd);
+    }
+    ```
+    
+- macro `pringln!` has two match arms. Here is the official definition, which calls other macros.
+    ```rust
+    #[macro_export]
+    #[stable(feature = "rust1", since = "1.0.0")]
+    #[cfg_attr(not(test), rustc_diagnostic_item = "println_macro")]
+    #[allow_internal_unstable(print_internals, format_args_nl)]
+    macro_rules! println {
+        () => {
+            $crate::print!("\n")
+        };
+        ($($arg:tt)*) => {{  // tt for token tree in Rust macro system
+            $crate::io::_print($crate::format_args_nl!($($arg)*));
+        }};
+    }
+    ```
+    
+**Procedural macros for generating code from attributes**
+
+Three types procedural macros:
+
+- custom derive
+- attribute-like
+- function-like
+
+**How to write a custom derive macro**
+
+
