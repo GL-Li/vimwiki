@@ -209,7 +209,7 @@ An **arrays** is a collection of objects of the same time, whose length is known
 - array methods:
     - length: `x.len()`
     - get an element with index i: `x.get(i)`, which returns a `Result`. Good to handle out of boundary error. 
-- slice:
+- slice must be a reference to an array with `&`:
     - `&x` all array as a slice
     - `&x[1..4]` elements of index  1, 2, and 3
     - `&[] as &[i32]` empty slice, must specify type or type can be inferred.
