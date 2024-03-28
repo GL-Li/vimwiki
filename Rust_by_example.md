@@ -209,7 +209,7 @@ An **arrays** is a collection of objects of the same time, whose length is known
 - array methods:
     - length: `x.len()`
     - get an element with index i: `x.get(i)`, which returns a `Result`. Good to handle out of boundary error. 
-- slice:
+- slice must be a reference to an array with `&`:
     - `&x` all array as a slice
     - `&x[1..4]` elements of index  1, 2, and 3
     - `&[] as &[i32]` empty slice, must specify type or type can be inferred.
@@ -2398,4 +2398,129 @@ fn main() {
 
 ## 17. macro_rules
 
+Macros generate source code that gets compiled with the rest of program.
 
+### 17.1. syntax
+
+#### 17.1.1. Designators
+
+**list of common designators**
+
+- `expr` for expressions
+- `ident` for variable/function names
+- `ty` for type
+- `stmt` for statement
+- `literal` for literal constant
+- `tt` for token tree
+- ...
+
+**examples**
+
+- a macro that generats functions
+    ```rust
+    macro_rules! create_function {
+        ($func_name:ident) => {
+            fn $func_name() {
+                // stringify! is a macro that converts an ident into a string
+                println!("You are calling function {:?}", stringify!($func_name));
+            }
+        };
+    }
+
+    fn main() {
+        create_function!(func1);
+        create_function!(func2);
+        func1();
+        func2();
+    }
+    ```
+
+- a macro that process expressions
+    ```rust
+    macro_rules! print_result {
+        ($x:expr) => {
+            println!("{:?} = {:?}", stringify!($x), $x);
+        };
+    }
+
+    fn main() {
+        // output "{ let x = 1u32; x * x + 2 * x - 1 }" = 2
+        print_result!({
+            let x = 1u32;
+            x * x + 2 * x - 1
+        });
+
+        // output "9 + 2" = 11
+        print_result!(9 + 2);
+    }
+    ```
+    
+#### 17.1.2. Overload
+
+Macros can be overloaded to accept different combinations of arguments.
+
+    ```rust
+    macro_rules! aaa {
+        // --- can be replaced with a random string. It is used as a identifier
+        // for this branch.
+        ($left:expr; --- $right:expr) => {
+            println!(
+                "{:?} and {:?} is {:?}",
+                stringify!($left),
+                stringify!($right),
+                $left && $right
+            );
+        };
+        
+        // similarly, orrr can be replaced with another random string.
+        ($left:expr; orrr $right:expr) => {
+            println!(
+                "{:?} or {:?} is {:?}",
+                stringify!($left),
+                stringify!($right),
+                $left || $right
+            );
+        };
+    }
+
+    fn main() {
+        aaa!(true; --- false);
+        aaa!(3 + 5 == 8; orrr false);
+    }
+    ```
+    
+#### 17.1.3. Repeat
+
+Use `+` and `*` like in regular expression but repeat an argument.
+
+    ```rust
+    macro_rules! bbb {
+        // base case
+        ($x:expr) => {
+            $x
+        };
+
+        // repeat "$($y:expr)," one or more times.
+        ($x:expr, $($y:expr),+) => {
+            // call bbb! recursively
+            std::cmp::min($x, bbb!($($y),+))
+        }
+    }
+
+    fn main() {
+        println!("{}", bbb!(3, 2, 5));
+    }
+    ```
+    
+### 17.2. DRY (Don't Repeat Yourself)
+
+skip for now
+
+### 17.3. DSL (Domain Specific Languages)
+
+Use rust macros to construct the syntax of another language that is compiled into Rust.
+
+
+### 17.4. Variadic interfaces
+
+A variadic interface takes an arbitrary number of arguments.

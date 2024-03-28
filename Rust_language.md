@@ -4300,4 +4300,7 @@ Three types procedural macros:
 
 **How to write a custom derive macro**
 
+The goal is to write a marco xxxx so a user can apply the macro to a user-defined type with `#[derive(xxxx)`.
+
+There is a standard procedure to create this macro. Skip for now.
 
