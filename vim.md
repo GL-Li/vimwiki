@@ -85,7 +85,9 @@ Select the lines into visual mode and then using `:` to go into command mode to 
 
 ### QA: how to run vim command from Linux terminal
 
-**vim c command_name** where command_name is a command that, if in vim editor, would be run in normal mode. Examples
+**vim -c command_name** where command_name is a command that, if in vim editor, would be run in normal mode. Examples
+
+Do not include `:` for the normal mode.
     - `$ vim -c '10,20s/^/#/' -c 'wq' file1.txt` to comment out line 10-20 of file1.txt
     - `$ vim -c VimwikiIndex` to start VimWiki, which is equivalent to run `:VimwikiIndex` in normal mode.
     - `$ vim -c "%s/foo/bar/g | wq" file1` which replaces all `foo` with `bar` and then save and quit with `:wq`.
