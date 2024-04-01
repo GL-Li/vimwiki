@@ -16,7 +16,7 @@
 - [[R|R language]]
 - [[regex|Regular Expression]]
 - [[Rust_language]] --- [[extendr]] --- [[Rust_by_example]] 
-- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]]
+- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[sed]]
 - [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
 
 # Sample project study - learn best practice from good project

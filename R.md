@@ -571,3 +571,32 @@ t0 <- Sys.time()
 res <- lapply(ft, value)
 print(Sys.time() - t0)
 ```
+
+
+## QA =========================================================================
+
+### QA: how to create an executable R script that takes argument from Linux terminal and run from the terminal?
+
+Example: save as `test.R` and make it executable with `$ chmod 766 test.R`,
+
+```r
+#!/usr/bin/env Rscript
+
+cat("check data summary =============\n")
+args = commandArgs(trailingOnly=TRUE)
+
+f <- args[1]
+dat <- data.table::fread(f)
+# print(dat)
+summary(dat)
+
+if (length(args) > 1) {
+  cat("Count categorical variables =========\n")
+  for (col in names(dat)) {
+    if (is.character(dat[[col]])) {
+      cat(col, "---------")
+      print(table(dat[[col]]))
+    }
+  }
+}
+```
