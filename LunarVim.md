@@ -104,6 +104,18 @@ Use Window Terminal installed from Windows store.
 
 ### Lunarvim nerd font - JetBrainsMono
 
+**UPDATE: easy way to install:**
+
+Follow instructions on this github repo: https://github.com/getnf/getnf
+
+- Make sure `~/.local/bin/` is in PATH
+- Install `getnf` with `curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash`
+- Run `$ getnf` and select JetBrainMon. It has been tested to be working.
+- Wait for a while and then start `lvim`.
+
+
+**old methods**
+
 - icons will not displayed correctly without Nerd fonts
 - to install Nerd fonts
     - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
