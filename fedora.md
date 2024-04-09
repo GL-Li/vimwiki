@@ -58,7 +58,7 @@
         - add to `/etc/fstab` to auto-mount at reboot:
             - `$ ls -al /dev/disk/by-uuid/` to list the uuid of each parition.
             - add `/dev/sda` to `/etc/fstab` by uuid like 
-              `uuid=1c23fddafar-j3fd-fda4-3f5difjdas45 /mnt/e  ext4  default  0 0`
+              `uuid=1c23fddafar-j3fd-fda4-3f5difjdas45 /mnt/e  ext4  defaults  0 0`
             - `$ sudo systemctl daemon-reload` to load the changes
             - `$ sudo findmnt --verify` to make sure no error reported
             - reboot

@@ -2186,6 +2186,7 @@ impl Rectangle {
         // ? means that move on if successful, Err(e) if failed
         // read_username_from_file must return Result or Option or
         // other types implementing FromResidual
+        // The two question marks must return the smae error type io::Error.
         File::open("hello.txt")?.read_to_string(&mut username)?;
     
         Ok(username)
@@ -2283,6 +2284,7 @@ Revisit when having more experiences.
         }
         
         // we can also define a method for a specific type of generic struct
+        // no generics such as impl<T>  or Point<T>
         impl Point<f32> {
             fn distance_from_origin(&self) -> f32 {
                 (self.x.powi(2) + self.y.powi(2)).sqrt()
@@ -2702,11 +2704,13 @@ Revisit when having more experiences.
         left + right
     }
     
-    #[cfg(test)]
+    // #[cfg(test)] attribute declairs the mod not to be used in build binary
+    // with a !, #![cfg(test)] declair whole file as a test file.
+    #[cfg(test)]  
     mod tests {
         use super::*;
     
-        #[test]     // indicate this is a test function
+        #[test]     // indicate this is a test function even without #[cfg(test)]
         fn it_works() {
             let result = add(2, 2);
             assert_eq!(result, 4);
