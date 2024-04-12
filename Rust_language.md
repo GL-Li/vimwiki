@@ -3958,8 +3958,85 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
 
 ### 15.4 Rc<T>, the reference counted smart pointer
 
-- Used in case a single value having multiple owners. This is a very rare case so we can skip it for now.
+**Using Rc<T> to share data**
+
+- What is `Rc<T>`
+    - Used in case a single value having multiple owners. 
+    - `Rc<T>` can create multiple pointer in stack that point to the same data in heap. 
+        - Read only, immutable
+        - The heap data is dropped only after all pointers are dropped.
+        - Only used in single thread scenarios.
   
+- Example
+    ```rust
+    #[derive(Debug)]
+    enum List {
+        Cons(i32, Rc<List>),
+        Nil,
+    }
+
+    use crate::List::{Cons, Nil};
+    use std::rc::Rc;
+
+    fn main() {
+        // create the first reference `a` to a cons list with Rc::new()
+        let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+        // create more the second and third reference to the same list with
+        // Rc::clone(&a)
+        let b = Cons(3, Rc::clone(&a));  // part of b is reference to the list `a` points to
+        let c = Cons(4, Rc::clone(&a));
+
+        dbg!(a);  // reference a is dropped but data still exists for b and c
+        dbg!(b);
+        dbg!(c);
+    }
+    ```
+    
+**Cloning an Rc<T> imcreases the reference count**
+
+- `Rc::strong_count` to count references
+    ```rust
+    #[derive(Debug)]
+    enum List {
+        Cons(i32, Rc<List>),
+        Nil,
+    }
+
+    use crate::List::{Cons, Nil};
+    use std::rc::Rc;
+
+    fn main() {
+        let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+        println!("Count after creating a = {}", Rc::strong_count(&a)); // 1
+        let b = Cons(3, Rc::clone(&a));
+        println!("Count after creating b = {}", Rc::strong_count(&a));  // 2
+        {
+            let c = Cons(4, Rc::clone(&a));
+            println!("Count after creating c = {}", Rc::strong_count(&a));  // 3
+        }
+        println!("Count after c out of scope = {}", Rc::strong_count(&a));  // 2
+    }
+    ```
+    
+- tricky question 2: what the result of the following code
+    ```rust
+    use std::rc::Rc;
+    struct Example;
+    impl Drop for Example {
+        fn drop(&mut self) {
+            println!("drop");
+        }
+    }
+    fn main() {
+        let x = Rc::new(Example);
+        let y = Rc::clone(&x);
+        println!("A");  // A
+        drop(x);        // nothing print because Example not dropped
+        println!("B");  // B
+        drop(y);        // drop, Example is dropped
+        println!("C");  // C
+    }
+    ```
     
 ### 15.5 RefCell<T> and the interior mutability pattern
 
