@@ -1005,6 +1005,30 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
         println!("({}, {})", x, y);
     }
     ```
+    
+**field has its own type** 
+- not in the book)
+    ```rust
+    #[derive(Debug)]
+    struct Aaa {
+        x: i32,
+        y: Box<i32>,
+    }
+    fn main() {
+        let mut aaa = Box::new(Aaa {
+            x: 0,
+            y: Box::new(0),
+        });
+
+        // mutate x, x is an i32
+        aaa.x = 111;
+        println!("{:?}", aaa);
+
+        // mutate y, y is a Box<i32> of type &i32 so need dereference before change
+        *aaa.y = 999;
+        println!("{:?}", aaa);
+    }
+    ```
 
 ### 5.2 An example programming using stucts
 
