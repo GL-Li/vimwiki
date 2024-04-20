@@ -3982,7 +3982,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         // create the first reference `a` to a cons list with Rc::new()
         let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
         // create more the second and third reference to the same list with
-        // Rc::clone(&a)
+        // Rc::clone(&a). Rc::clone does not copy data, but reference
         let b = Cons(3, Rc::clone(&a));  // part of b is reference to the list `a` points to
         let c = Cons(4, Rc::clone(&a));
 
@@ -4040,17 +4040,68 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     
 ### 15.5 RefCell<T> and the interior mutability pattern
 
-**interior mutability**
+**Enforcing borrowing rules at runtime with RefCell<T>**
 
 - allows you to mutate data even when there are immutable references to the data
+- single owner
 - using `unsafe` code
+- borrowing rules are followed in runtime.
+- only used when the compiler reject your code but you are sure your code is correct.
+- single thread only
 
-skip this section  for now.
+**Interior mutability: a mutable borrow to an immutable value**
 
+- test double: a type is used in place of another type (external dependencies like database, web, api, library, networks, and etc that are not available within the code) during test. A test double is used to simulate the external dependencies.
+- mock object: specific types of test double that records what happens during a test so you can assert that the correct actions took place.
+
+skip examples for now
 
 ### 15.6. Reference cycle can leak memory
 
 skip for now as we skipped two above.
+
+### 15.xxx Cow, clone on write
+
+- What is Cow
+    - a smart pointer
+    - an enum that has two variants:
+        - Borrowed variant if no mutation occurred 
+        - Owned variant if mutation occurred
+
+- example from official documentation
+    ```rust
+    `use std::borrow::Cow;
+
+    fn abs_all(input: &mut Cow<'_, [i32]>) {
+        for i in 0..input.len() {
+            let v = input[i];
+            if v < 0 {
+                // Clones into a vector if not already owned.
+                input.to_mut()[i] = -v;
+            }
+        }
+    }
+
+    fn main() {
+        // No clone occurs because `input` doesn't need to be mutated.
+        let slice = [0, 1, 2];
+        let mut input = Cow::from(&slice[..]);
+        println!("{:?}", input); // [0, 1, 2]
+        abs_all(&mut input);
+        println!("{:?}", input); // [0, 1, 2]
+
+        // Clone occurs because `input` needs to be mutated.
+        let slice = [-1, 0, 1];
+        let mut input = Cow::from(&slice[..]);
+        abs_all(&mut input);
+        println!("{:?}", input); // [1, 0, 1]
+
+        // No clone occurs because `input` is already owned.
+        let mut input = Cow::from(vec![-1, 0, 1]);
+        abs_all(&mut input);
+        println!("{:?}", input); // [1, 0, 1]
+    }
+    ```
 
 
 ## 16. Fearless concurrency
@@ -4123,15 +4174,50 @@ skip for now as we skipped two above.
             n = n + 1;
             thread::spawn(move || {
                 n = n + 1;
+                println!("deepest n is {n}");  // 3
             })
         });
         n = n + 1;
         t.join().unwrap().join().unwrap();
-        println!("{n}");
+        println!("{n}");  // 2
     }
     ```
     Answer: It compiles and runs. `n` is an integer living in the stack. So the `move` only makes a copy of it into the new thread. The main thread still has it.
 
+- example in Rustling practice
+```rust
+    use std::thread;
+    use std::time::{Duration, Instant};
+
+    fn main() {
+        let mut handles = vec![];
+        for i in 0..10 {
+            handles.push(thread::spawn(move || {
+                let start = Instant::now();
+                thread::sleep(Duration::from_millis(250));
+                println!("thread {} is complete", i);
+                // closure return is the return of the thread, which
+                // is accessed with handle.join().unwrap()
+                start.elapsed().as_millis()
+            }));
+        }
+
+        let mut results: Vec<u128> = vec![];
+        for handle in handles {
+            // TODO: a struct is returned from thread::spawn, can you use it?
+            results.push(handle.join().unwrap());
+        }
+
+        if results.len() != 10 {
+            panic!("Oh no! All the spawned threads did not finish!");
+        }
+
+        println!();
+        for (i, result) in results.into_iter().enumerate() {
+            println!("thread {} took {}ms", i, result);
+        }
+    }
+```
 ### 16.2: using message passing to transfer data between threads
 
 **mpsc - multiple producer single consumer**
@@ -4277,7 +4363,94 @@ skip for now as we skipped two above.
 
 ### 16.3 Shared-state concurrency
 
-Involves mutiple ownership. Skip for now.
+In addition to handling concurrency by sending message, multiple threads can have access to the same data, the so calledd shared memory. Shared memory means multiple ownership to a data.
+
+**Using mutexes to allow access to data from one thread at a time**
+
+- mutexes: mutual exclusion, allow only one thread to access a data at any given time.
+- difficult to use, must
+    - acquire the lock before using the data
+    - unlock the data when done so other thread can use the data.
+- example on single thread; the API of `Mutex<T>`
+    ```rust
+    use std::sync::Mutex;
+
+    fn main() {
+        let m = Mutex::new(5);
+        // simulate two threads with two scopes. unlock when out of scope
+        {
+            // m.lock() returns a LockResult<MutexGuard<'_, T>> type
+            let mut num = m.lock().unwrap();
+            // num is a mutable reference to a i32 type. We can
+            // mutate the data in heap below
+            *num = 6;
+            println!("m = {:?}", m); // locked
+        }
+        {
+            let mut num = m.lock().unwrap();
+            *num = 9;
+        }
+        println!("m = {:?}", m); // not locked
+    }
+    ```
+    The output:
+    ```
+    m = Mutex { data: <locked>, poisoned: false, .. }
+    m = Mutex { data: 9, poisoned: false, .. }
+    ```
+- sharing a `Mutex<T>` between multiple threads, with the help of `Rc<T>`
+    - No, it does not work. `Rc<T>` cannot be used in multiple thread
+- atomic reference counting with `Arc<T>`
+    ```rust
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+
+    fn main() {
+        let counter = Arc::new(Mutex::new(0));
+        let mut handles = vec![];
+
+        for _ in 0..10 {
+            let counter = Arc::clone(&counter);
+            let handle = thread::spawn(move || {
+                let mut num = counter.lock().unwrap();
+
+                *num += 1;
+            });
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        println!("Resultss: {}", *counter.lock().unwrap()); // 10
+    }
+    ```
+
+- another use cae from Ruslting
+    ```rust
+    #![forbid(unused_imports)] // Do not change this, (or the next) line.
+    use std::sync::Arc;
+    use std::thread;
+
+    fn main() {
+        let numbers: Vec<_> = (0..100u32).collect();
+        // take the ownership of numbers as it is not mutated in threads
+        let shared_numbers = Arc::new(numbers); // TODO
+        let mut joinhandles = Vec::new();
+
+        for offset in 0..8 {
+            let child_numbers = Arc::clone(&shared_numbers); // TODO
+            joinhandles.push(thread::spawn(move || {
+                let sum: u32 = child_numbers.iter().filter(|&&n| n % 8 == offset).sum();
+                println!("Sum of offset {} is {}", offset, sum);
+            }));
+        }
+        for handle in joinhandles.into_iter() {
+            handle.join().unwrap();
+        }
+    }
+    ```
 
 
 ### 16.4 Extensible concurrency with the Sync and Send traits
