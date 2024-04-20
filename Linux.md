@@ -49,7 +49,7 @@
     $ chmod 777 aaa.sh          # change to executable file for owner, group, and other
     ```
 
-- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`
+- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`, or copy the file to `bin/`.
     ```sh
     $  cd ~/bin
     $ ln -s path/to/aaa.sh aaa
@@ -57,7 +57,7 @@
 
 - Run command `aaa` from anywhere.
 
-## QA =========================================================================
+## QA ==========
 
 ### QA: how to find specific directories and files and process them one by one?
 
@@ -80,24 +80,24 @@ Use `find ... | while read ...`: The example below includs find directory and fi
     #   - starting with xtmp
     #   - not accessed for at least $2 day specified by parameter $2
     #
-
+    
     # find all the directory met above conditions
-
+    
     data_dir="$1"
     min_access_time="$2"
-
+    
     echo "Delete old client files:"
     find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
-
+    
       find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
-
+    
         echo "  - $fname"
         rm "$fname"
-
+    
       done
-
+    
     done
-
+    
     echo "Finished deleting files."
     ```
 
@@ -113,7 +113,7 @@ To do it automatically every day at 12:30pm, add to command to crontab:
     ```
     #  m    h    dom    mon    dow    command
        30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
-
+    
     ```
 
 ### QA: how to burn an iso image onto a USB drive from terminal?
@@ -122,9 +122,10 @@ To do it automatically every day at 12:30pm, add to command to crontab:
 - `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
     - be extremely careful. If a wrong disc, the data on the disc will be wiped out
     - explain:
-        - bs: block size
-        - if: input file
-        - of: output file. Device is a file in Linux
+        - `dd`: command that converts and copies a file
+        - `bs`: block size
+        - `if`: input file, an arch linux iso image in above example
+        - `of`: output file. Device is a file in Linux
 
 
 ### QA: how to set system time?
@@ -138,7 +139,7 @@ Ways to check and manually set
 - `$ sudo timedatectl set-time 17:23:55` to set time
 
 ### QA: how to use systemd to automatically start docker when computer starts?
-**Use case**: docker is not automatically started at some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
+**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
 
 **What is systemd**:
 - `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
@@ -214,7 +215,7 @@ Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To u
 
 Using Unison.
 
-## Raw notes ==================================================================
+## Raw notes ==========
 
 ### Linux brace expansion using {}
 
@@ -231,7 +232,7 @@ $ echo {a..h..2}                  # a, c, e, g
 $ echo month_{01..12}             # month_01, month_02, ..., month_12
 ```
 
-### Linux command wildcards *, ?, and [ in file / directory names
+### Linux command wildcards `*`, `?`, and `[` in file / directory names
 
 **Note**: these wildcards only work in pathnames like file and directory names. `/` in pathname cannot be matched. They are similar to, but not, regular expressions.
 
@@ -241,13 +242,13 @@ $ echo month_{01..12}             # month_01, month_02, ..., month_12
 - `[!abcd]` any one character not in string "abcd"
 
 ```shell
-$ man 7 glob          # manual page of wildcard matching
+$ man ? glob          # manual page of wildcard matching
 $ grep abc *.R        # find lines containing "abc" in all .R files
 $ grep abc file?.R    # find lines containing "abc" in file1, fileA, ...
 $ grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
 ```
 
-### Linux locate to search path names, update database before search
+### Linux `locate` to search path names, update database before search
 
 `locate` search all path names in a database, which is updated one time a day. To search for new files, update the database.
 
@@ -264,7 +265,7 @@ $ locate abc*.md        # the path start with abc and end with .md
 $ locate *abc*.md       # the path contains abc and end with .md
 ```
 
-### Linux find command to search files by name, type, size, ...
+### Linux `find` command to search files by name, type, size, ...
 
 **`find` has many options**
 
@@ -278,6 +279,8 @@ $ find                        # show all diretories and files in current diretor
 $ find eee/                   # list everything in eee/
 $ find -name "*01"            # find path end with 01, quote to
                               # avoid shell expansion.
+$ find -type d | grep src     # find all directories having src in the path
+$ find -type f -name *rs      # find all .rs files
 ```
 
 **find files and execute on the found**
