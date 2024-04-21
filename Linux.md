@@ -543,7 +543,7 @@ $ source ~/.profile
 
 ```shell
 student="Sarah"  # NO spaces around "=" sign, otherwise bash treat student as a command
-echo "Hello ${student}"  # ${} called shell expansion
+echo "Hello ${student}"  # ${} called shell expansion, curly bracket can be skipped if you are sure there is no space and special characters in $student. As a general rule, use {}
 ```
 
 **Shell variables**: or called environment variables, usually in upper case, with special names. Common shell variables. $PATH, $HOME, $USER, $HOSTNAME, $PS1, $PWD, $OLDPWD, $?
@@ -579,7 +579,7 @@ echo "Hello ${student}"  # ${} called shell expansion
   echo ${#name}  # "#" count the number of characters
   ```
 
-- slice a string: position of characters in a string is index by 0, 1, 2, 3, ..., from 0
+- slice a string: position of characters in a string is **index** by 0, 1, 2, 3, ..., **from 0**
 
   ```shell
   echo ${name:3:5}  # substring of length 5 from the 4th character
@@ -705,11 +705,11 @@ $ cd ~-     # switch back
 
 ### Bash: quoting, single quote and double quote are different
 
-Quoting is about removing special meanings. Backslash removes special meaning of next character, single quote remove all inside, double quote removes all but dollar sign $, backtick `, and those in **command substitution**.
+Quoting is about removing special meanings. Backslash removes special meaning of next character, single quote remove all inside, double quote removes all but dollar sign `$`, backtick `, and those in **command substitution**.
 
 - `\`: next character
-- `''`: all characters inside
-- `""`: all character except dollar signs `$` and backslash `\` and command substitution.
+- `'xxxxx'`: all characters inside
+- `"xxxxx"`: all character except dollar signs `$` and backtick and command substitution.
 
 ```shell
 $ echo aaa \& bbb # print aaa & bbb, backslash \ removes special meaning of &
@@ -737,7 +737,7 @@ $ echo $NAME > file.txt
 
 ```shell
 $ echo a b echo c d  # print a b echo c d. The command is terminated by newline
-$ echo a b; echo c d # print a b then c d. The two command terminated by ";" and new line
+$ echo a b; echo c d # print a b then c d. The two commands are terminated by ";" and new line respectively
 ```
 
 **compound commands**: such as if statement and loops
@@ -909,7 +909,7 @@ $ cd /root &> stdoutstderr.txt
                                # The third parameter is 999
   ```
 
-### Bash: special parameters $#, $0, $#, $@, "$@", $*, "S*" for script and positional paramers
+### Bash: special parameters `$#`, `$0`, `$*`, `$@`, `"$@"`, `"$*"` for script and positional paramers
 
 **$#**: number of positional parameters, can be used to specify number of positional parameters as condition
 
@@ -1008,7 +1008,7 @@ $ type -a shellcheck # ls is aliased to `ls --color=auto'
 
 - info: for external command only, more information with links to other sources
 
-### Bash: select ... in ... do ... done, space is the delimiter, not `,`
+### Bash: `select ... in ... do ... done`, space is the delimiter, not `,`
 
 Select from options each separated by space, not `,`.  Keep in quote if not want to split a option.
 
@@ -1028,7 +1028,7 @@ gg to get to the beginning of the file, = is the indent command, G to go to the 
 
 see [Bash: control operators]
 
-### Bash: test commands and operators, [ space=around ] or [[ ... ]], `!` to negate
+### Bash: test commands and operators, `[ space=around ]` or `[[ ... ]]`, `!` to negate
 
 Return exit status 0 if true, exit status 1 if false.
 
@@ -1086,7 +1086,7 @@ else
 fi
 ```
 
-### Base: case ... esac, double quote, `;;` and `)`
+### Bash: `case ... esac`, double quote, `;;` and `)`
 
 Must put variable in double quote to prevent word splitting, each case must end with `;;`, which is a specific operator only for `case` statement.
 
@@ -1100,7 +1100,7 @@ case "$number" in
 esac
 ```
 
-### Bash: while loop
+### Bash: `while` loop
 
 ```bash
 read -p "Enter your number: " num
@@ -1111,15 +1111,18 @@ while [ $num -gt 10 ]; do
 done
 ```
 
-### Bash: getopts, define options for bash script
+### Bash: `getopts`, define options for bash script
 
 Save the code as fc_converter, which convert temperature between F and C. The command has two options: `-c` and `-f`. The value of the option is stored in `$OPTARG`.
 
 ```bash
 #!/bin/bash
 
-while getopts "f:c:" opt; do    # define options here, allow -f and -c
-	case "$opt" in
+# define options here, allow -f and -c, 
+# selection passed to variable temp_unit and
+# value is passed to OPTARG
+while getopts "f:c:" temp_unit; do    
+	case "$temp_unit" in
 		c) result=$(echo "scale=2; ($OPTARG * (9 / 5)) + 32" | bc);;
 		f) result=$(echo "scale=2; ($OPTARG -32) * (5 / 9)" | bc);;
 		\?) ;;   # for any other single character
@@ -1142,6 +1145,7 @@ $ fc_converter -f 32  # 0
 ```bash
 #!/bin/bash
 
+# the code block adds up all time from selection -m and -s
 time=0
 while getopts "m:s:" opt; do
 	case "$opt" in
@@ -1190,7 +1194,7 @@ $ echo ${number[2]} # third element 333
 $ echo ${number[@]} # all element
 $ echo ${number[@]:1}  # from second element to the end, slicing
 $ echo ${number[@]:1:2} # two elements from the second
-$ numbers+=(555)  # add new element to the end
+$ number+=(555)  # add new element to the end
 $ unset number[2] # delete the third element, it also deleted the index 2.
                   # the remaining index are 0 1 3 4
 $ echo ${!number[@]}  # check index
@@ -1198,7 +1202,7 @@ $ number[0]=999   # change a element
 
 ```
 
-### Bash: readarray to generate index arrays
+### Bash: `readarray` to generate index arrays
 
 Read standard input into an array line by line. Each element has a `\n` at the end, which may mess up with string processing.
 
@@ -1213,8 +1217,8 @@ $ echo ${days[@]@Q}  # show the raw string, which ends with \n
 # the prefered readarray
 $ readarray -t days < weekday.txt
 
-# read from other command output using process substitution
-readarrays -t files < <(ls)
+# read from other command output using process substitution, space between < <
+$ readarray -t files < <(ls)
 ```
 
 ### Bash: for loop, on-the-fly list, array, no quote for index
@@ -1278,7 +1282,7 @@ $ sudo apt install at  # install at
 $ service atd status   # check if at is running
 $ sudo service atd start  # start atd service, stop to stop
 
-# to schedule tasks to run at back ground
+# to schedule tasks to run at background
 $ at 9:30am  # press enter
 > echo "Hello world"   # one task
 > cp xxx bbb           # another task
@@ -1297,7 +1301,7 @@ $ at now + 5 min -f my_bash_script    # 2 days ...
 
 **System cron directories** are in `/etc`. All executable scripts in each directory runs as shown in names like `cron.daily`, `cron.hourly`, `cron.weekly` and `cron.monthly`. The exact time can be found in file `/etc/crontab`.
 
-- no dot "." in script names
+- no dot include dot `.` in script names
 
 **Custom cron directories** are easy to create. Follow steps below to create a folder in home directory to hold scripts that run at 2am each day
 
@@ -1314,7 +1318,7 @@ $ crontab -e
 
 ### reboot required after package upgrade
 
-Check /var/run/reboot-required.pkgs for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
+Check `/var/run/reboot-required.pkgs` for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
 
 We want to create a cron task that upgrades packages every day. We first need to create a bash script called `update_packages`:
 
@@ -1334,7 +1338,7 @@ As upgrade affect the whole system, we will modify `/etc/crobtab` to schedule th
 0 0 * * * /path/to/update_script    # not use ~ for home as this file is in root.
 ```
 
-For t his to take effect, run
+For this to take effect, run
 
 ```shell
 $ sudo service cron restart
