@@ -4244,7 +4244,7 @@ skip for now as we skipped two above.
 ```
 ### 16.2: using message passing to transfer data between threads
 
-**mpsc - multiple producer single consumer**
+**mpsc - multiple producer single consumer**: usually the main thread if the single comsumer.
 
 - send and receive a single data
     ```rust
