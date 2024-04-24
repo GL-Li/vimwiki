@@ -423,6 +423,11 @@ fn main() {
     let ele_1 = aaa.0
     println!("aaa first element is {ele_1}");
     println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
+    
+    // use tuple to swap two values
+    let a = 11;
+    let b = 22;
+    (a, b) = (b, a);
     ```
 - array type can only have elements of the same type and have a fixed length. Arrays live in stack, not heap as the length is fixed.
     ```rust
@@ -4561,13 +4566,31 @@ Macros are Rust code that generate Rust code. There are three types of macros:
     macro_rules! println {
         () => {
             $crate::print!("\n")
-        };
+        };  // do not forget the ;
         ($($arg:tt)*) => {{  // tt for token tree in Rust macro system
             $crate::io::_print($crate::format_args_nl!($($arg)*));
         }};
     }
     ```
     
+**Use macros defined in a module** with `#[macro_use]`
+
+```rust
+#[macro_use]
+mod macros {
+    macro_rules! my_macro {
+        () => {
+            println!("Check out my macro!");
+        };
+    }
+}
+
+fn main() {
+    my_macro!();
+}
+```
+
+
 **Procedural macros for generating code from attributes**
 
 Three types procedural macros:
