@@ -12,7 +12,8 @@ Manual:
 - hold space: keep data between cycles.
 
 ### Structure of a sed script
-`[ADDR]X[OPTIONS]`
+select lines followed by one or more commands and their options:
+- `[ADDR]{X[OPTIONS];Y[OPTIONS];Z[OPTIONS]}`
 
 - `[ADDR]`: optional, used to select lines
     - by line number: 
@@ -42,23 +43,21 @@ Manual:
         - `sed -n '/^5/!p' iris.csv` print lines that do not start with "5"
         - `sed -i '/^5/!d' iris.csv` delete lines that do not start with "5"
   
-
-
-### List of commonly used command
-- `=`
-- `a`
-- `c`
-- `d`
-- `e`
-- `i`
-- `l`
-- `n`
-- `p`
-- `q`
-- `Q`
-- `s///`
-- `y///`
-- `z`
+- List of commonly used command
+    - `=`
+    - `a`
+    - `c`
+    - `d`
+    - `e`
+    - `i`
+    - `l`
+    - `n`
+    - `p`
+    - `q`
+    - `Q`
+    - `s///`
+    - `y///`
+    - `z`
 
 
 ### The `s` command (substitute)
@@ -77,8 +76,8 @@ sed -i 's/Setosa/hahah/g' iris.csv
 # replace a file and print all lines to stdout
 sed 's/hahah/xxxx/g' iris.csv
 
-# replace a file and print only replaced lines to stdout
-sed -n 's/hahah/xxxx/g' iris.csv
+# replace a file and print only replaced lines to stdout, need both -n and /p
+sed -n 's/hahah/xxxx/p' iris.csv
 ```
 
 **replace string from stdout**
@@ -97,9 +96,30 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
 - `n`: replace the nth match
     - `sed 's/aaa/bbb/2`   match the second match in each line
 - `ng`: replace all matches from the nth one
+- `i`: case-insensitive matching
+    - `echo "Abc abc" | sed 's/a/xxx/gi'` print xxxbc xxxbc, both "a" and "A" matched and replaced 
 
 **back reference** using capture group
 
 - `$ echo "James Bond" | sed -E 's/(.*) (.*)/My name is \2, \1 \2./'`
+
+**back reference** using matched pattern
+
+- `echo "fox foot" | sed -E 's/o+/&&&/g'` print fooox foooooot, where `&` represent a matched pattern.
+
+**case conversion**
+
+- common converters in REPLACEMENT:
+    - `\U`: all to upper case
+    - `\u`: first character to upper case
+    - `\L`: all to lower case
+    - `\l`: first character to lower case
+
+- examples
+    - `echo "foo bar foo baz" | sed -E 's/(foo)/\uaaa/g'`
+        - print Aaa bar Aaa baz. In the replacement section, `\u` convert 'aaa' to 'Aaa'
+    - `echo "foo bar foo baz" | sed -E 's/(foo)/\u\1/g'`
+        - print Foo bar Foo baz. In the replacement, `\1` back references to matched pattern. 
+
 
 ### delete lines
