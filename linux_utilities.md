@@ -124,7 +124,7 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
 
 ## awk
 
-### concepts
+### awk field and separator
 https://www.youtube.com/watch?v=oPEnvuj9QrI
 
 - Records: each line is a record
@@ -146,7 +146,7 @@ https://www.youtube.com/watch?v=oPEnvuj9QrI
     - `echo "Ihahaamhahahappy" | awk -F "haha" 'BEGIN {OFS="---"} {print $1,$2,$3}'` prints I---am---happy.
  
 
-### built-in variables
+### awk built-in variables
 https://github.com/adrianlarion/simple-awk
 
 - `FILENAME`: the name of the current file being processed.
@@ -157,3 +157,9 @@ https://github.com/adrianlarion/simple-awk
 - `NF`: number of field (word) in a line
 - `RS`: record seperator, `\n` by default.
 
+
+### awk select lines
+
+- `awk '/this/' aaa.txt`  print lines containing "this" in aaa.txt.
+- `awk '$2 == "is"' aaa.txt` print lines whose second field is "is"
+- `awk '$1 ~ /i/' aaa.txt` print lines whose first field matches pattern 'i'. Use `~` for pattern match and `!~` for not match.
