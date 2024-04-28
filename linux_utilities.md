@@ -122,4 +122,38 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
         - print Foo bar Foo baz. In the replacement, `\1` back references to matched pattern. 
 
 
-### delete lines
+## awk
+
+### concepts
+https://www.youtube.com/watch?v=oPEnvuj9QrI
+
+- Records: each line is a record
+- field: a line is seperated into multiple fields by space (default), that is, a word is a field.
+    - example:
+        - aaa.txt
+            ```
+            this is line1
+            line2
+            ```
+        - `$ awk '{print $1,$3}'` prints the first and third fields. Empty if a field does not exist:
+            ```
+            this line2
+            line2
+            ```
+- field seperator: we can set it to anything instead of the default space
+    - `echo "Ihahaamhahahappy" | aws -F 'haha' '{print $1,$2,  $3, "!!!"}'` print I am happy !!!. The default seperator between printed fields is space.
+- output field separator, `OFS`. We can change `OFS` so the output fields is seperated by other strings
+    - `echo "Ihahaamhahahappy" | awk -F "haha" 'BEGIN {OFS="---"} {print $1,$2,$3}'` prints I---am---happy.
+ 
+
+### built-in variables
+https://github.com/adrianlarion/simple-awk
+
+- `FILENAME`: the name of the current file being processed.
+- `NR`: number of record, counted from all files
+- `FNR`: file number of record, line number of current file being processed.
+- `FS`: field seperator, default to space ' '.
+- `IGNORECASE`: ignore case if 1, no if 0.
+- `NF`: number of field (word) in a line
+- `RS`: record seperator, `\n` by default.
+
