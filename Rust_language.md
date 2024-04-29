@@ -423,6 +423,11 @@ fn main() {
     let ele_1 = aaa.0
     println!("aaa first element is {ele_1}");
     println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
+    
+    // use tuple to swap two values
+    let a = 11;
+    let b = 22;
+    (a, b) = (b, a);
     ```
 - array type can only have elements of the same type and have a fixed length. Arrays live in stack, not heap as the length is fixed.
     ```rust
@@ -1003,6 +1008,30 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
         // error, mutable borrow above
         let x1 = &p.x;
         println!("({}, {})", x, y);
+    }
+    ```
+    
+**field has its own type** 
+- not in the book)
+    ```rust
+    #[derive(Debug)]
+    struct Aaa {
+        x: i32,
+        y: Box<i32>,
+    }
+    fn main() {
+        let mut aaa = Box::new(Aaa {
+            x: 0,
+            y: Box::new(0),
+        });
+
+        // mutate x, x is an i32
+        aaa.x = 111;
+        println!("{:?}", aaa);
+
+        // mutate y, y is a Box<i32> of type &i32 so need dereference before change
+        *aaa.y = 999;
+        println!("{:?}", aaa);
     }
     ```
 
@@ -2186,6 +2215,7 @@ impl Rectangle {
         // ? means that move on if successful, Err(e) if failed
         // read_username_from_file must return Result or Option or
         // other types implementing FromResidual
+        // The two question marks must return the smae error type io::Error.
         File::open("hello.txt")?.read_to_string(&mut username)?;
     
         Ok(username)
@@ -2283,6 +2313,7 @@ Revisit when having more experiences.
         }
         
         // we can also define a method for a specific type of generic struct
+        // no generics such as impl<T>  or Point<T>
         impl Point<f32> {
             fn distance_from_origin(&self) -> f32 {
                 (self.x.powi(2) + self.y.powi(2)).sqrt()
@@ -2702,11 +2733,13 @@ Revisit when having more experiences.
         left + right
     }
     
-    #[cfg(test)]
+    // #[cfg(test)] attribute declairs the mod not to be used in build binary
+    // with a !, #![cfg(test)] declair whole file as a test file.
+    #[cfg(test)]  
     mod tests {
         use super::*;
     
-        #[test]     // indicate this is a test function
+        #[test]     // indicate this is a test function even without #[cfg(test)]
         fn it_works() {
             let result = add(2, 2);
             assert_eq!(result, 4);
@@ -3954,22 +3987,150 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
 
 ### 15.4 Rc<T>, the reference counted smart pointer
 
-- Used in case a single value having multiple owners. This is a very rare case so we can skip it for now.
+**Using Rc<T> to share data**
+
+- What is `Rc<T>`
+    - Used in case a single value having multiple owners. 
+    - `Rc<T>` can create multiple pointer in stack that point to the same data in heap. 
+        - Read only, immutable
+        - The heap data is dropped only after all pointers are dropped.
+        - Only used in single thread scenarios.
   
+- Example
+    ```rust
+    #[derive(Debug)]
+    enum List {
+        Cons(i32, Rc<List>),
+        Nil,
+    }
+
+    use crate::List::{Cons, Nil};
+    use std::rc::Rc;
+
+    fn main() {
+        // create the first reference `a` to a cons list with Rc::new()
+        let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+        // create more the second and third reference to the same list with
+        // Rc::clone(&a). Rc::clone does not copy data, but reference
+        let b = Cons(3, Rc::clone(&a));  // part of b is reference to the list `a` points to
+        let c = Cons(4, Rc::clone(&a));
+
+        dbg!(a);  // reference a is dropped but data still exists for b and c
+        dbg!(b);
+        dbg!(c);
+    }
+    ```
+    
+**Cloning an Rc<T> imcreases the reference count**
+
+- `Rc::strong_count` to count references
+    ```rust
+    #[derive(Debug)]
+    enum List {
+        Cons(i32, Rc<List>),
+        Nil,
+    }
+
+    use crate::List::{Cons, Nil};
+    use std::rc::Rc;
+
+    fn main() {
+        let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+        println!("Count after creating a = {}", Rc::strong_count(&a)); // 1
+        let b = Cons(3, Rc::clone(&a));
+        println!("Count after creating b = {}", Rc::strong_count(&a));  // 2
+        {
+            let c = Cons(4, Rc::clone(&a));
+            println!("Count after creating c = {}", Rc::strong_count(&a));  // 3
+        }
+        println!("Count after c out of scope = {}", Rc::strong_count(&a));  // 2
+    }
+    ```
+    
+- tricky question 2: what the result of the following code
+    ```rust
+    use std::rc::Rc;
+    struct Example;
+    impl Drop for Example {
+        fn drop(&mut self) {
+            println!("drop");
+        }
+    }
+    fn main() {
+        let x = Rc::new(Example);
+        let y = Rc::clone(&x);
+        println!("A");  // A
+        drop(x);        // nothing print because Example not dropped
+        println!("B");  // B
+        drop(y);        // drop, Example is dropped
+        println!("C");  // C
+    }
+    ```
     
 ### 15.5 RefCell<T> and the interior mutability pattern
 
-**interior mutability**
+**Enforcing borrowing rules at runtime with RefCell<T>**
 
 - allows you to mutate data even when there are immutable references to the data
+- single owner
 - using `unsafe` code
+- borrowing rules are followed in runtime.
+- only used when the compiler reject your code but you are sure your code is correct.
+- single thread only
 
-skip this section  for now.
+**Interior mutability: a mutable borrow to an immutable value**
 
+- test double: a type is used in place of another type (external dependencies like database, web, api, library, networks, and etc that are not available within the code) during test. A test double is used to simulate the external dependencies.
+- mock object: specific types of test double that records what happens during a test so you can assert that the correct actions took place.
+
+skip examples for now
 
 ### 15.6. Reference cycle can leak memory
 
 skip for now as we skipped two above.
+
+### 15.xxx Cow, clone on write
+
+- What is Cow
+    - a smart pointer
+    - an enum that has two variants:
+        - Borrowed variant if no mutation occurred 
+        - Owned variant if mutation occurred
+
+- example from official documentation
+    ```rust
+    `use std::borrow::Cow;
+
+    fn abs_all(input: &mut Cow<'_, [i32]>) {
+        for i in 0..input.len() {
+            let v = input[i];
+            if v < 0 {
+                // Clones into a vector if not already owned.
+                input.to_mut()[i] = -v;
+            }
+        }
+    }
+
+    fn main() {
+        // No clone occurs because `input` doesn't need to be mutated.
+        let slice = [0, 1, 2];
+        let mut input = Cow::from(&slice[..]);
+        println!("{:?}", input); // [0, 1, 2]
+        abs_all(&mut input);
+        println!("{:?}", input); // [0, 1, 2]
+
+        // Clone occurs because `input` needs to be mutated.
+        let slice = [-1, 0, 1];
+        let mut input = Cow::from(&slice[..]);
+        abs_all(&mut input);
+        println!("{:?}", input); // [1, 0, 1]
+
+        // No clone occurs because `input` is already owned.
+        let mut input = Cow::from(vec![-1, 0, 1]);
+        abs_all(&mut input);
+        println!("{:?}", input); // [1, 0, 1]
+    }
+    ```
 
 
 ## 16. Fearless concurrency
@@ -4042,18 +4203,53 @@ skip for now as we skipped two above.
             n = n + 1;
             thread::spawn(move || {
                 n = n + 1;
+                println!("deepest n is {n}");  // 3
             })
         });
         n = n + 1;
         t.join().unwrap().join().unwrap();
-        println!("{n}");
+        println!("{n}");  // 2
     }
     ```
     Answer: It compiles and runs. `n` is an integer living in the stack. So the `move` only makes a copy of it into the new thread. The main thread still has it.
 
+- example in Rustling practice
+```rust
+    use std::thread;
+    use std::time::{Duration, Instant};
+
+    fn main() {
+        let mut handles = vec![];
+        for i in 0..10 {
+            handles.push(thread::spawn(move || {
+                let start = Instant::now();
+                thread::sleep(Duration::from_millis(250));
+                println!("thread {} is complete", i);
+                // closure return is the return of the thread, which
+                // is accessed with handle.join().unwrap()
+                start.elapsed().as_millis()
+            }));
+        }
+
+        let mut results: Vec<u128> = vec![];
+        for handle in handles {
+            // TODO: a struct is returned from thread::spawn, can you use it?
+            results.push(handle.join().unwrap());
+        }
+
+        if results.len() != 10 {
+            panic!("Oh no! All the spawned threads did not finish!");
+        }
+
+        println!();
+        for (i, result) in results.into_iter().enumerate() {
+            println!("thread {} took {}ms", i, result);
+        }
+    }
+```
 ### 16.2: using message passing to transfer data between threads
 
-**mpsc - multiple producer single consumer**
+**mpsc - multiple producer single consumer**: usually the main thread if the single comsumer.
 
 - send and receive a single data
     ```rust
@@ -4196,7 +4392,94 @@ skip for now as we skipped two above.
 
 ### 16.3 Shared-state concurrency
 
-Involves mutiple ownership. Skip for now.
+In addition to handling concurrency by sending message, multiple threads can have access to the same data, the so calledd shared memory. Shared memory means multiple ownership to a data.
+
+**Using mutexes to allow access to data from one thread at a time**
+
+- mutexes: mutual exclusion, allow only one thread to access a data at any given time.
+- difficult to use, must
+    - acquire the lock before using the data
+    - unlock the data when done so other thread can use the data.
+- example on single thread; the API of `Mutex<T>`
+    ```rust
+    use std::sync::Mutex;
+
+    fn main() {
+        let m = Mutex::new(5);
+        // simulate two threads with two scopes. unlock when out of scope
+        {
+            // m.lock() returns a LockResult<MutexGuard<'_, T>> type
+            let mut num = m.lock().unwrap();
+            // num is a mutable reference to a i32 type. We can
+            // mutate the data in heap below
+            *num = 6;
+            println!("m = {:?}", m); // locked
+        }
+        {
+            let mut num = m.lock().unwrap();
+            *num = 9;
+        }
+        println!("m = {:?}", m); // not locked
+    }
+    ```
+    The output:
+    ```
+    m = Mutex { data: <locked>, poisoned: false, .. }
+    m = Mutex { data: 9, poisoned: false, .. }
+    ```
+- sharing a `Mutex<T>` between multiple threads, with the help of `Rc<T>`
+    - No, it does not work. `Rc<T>` cannot be used in multiple thread
+- atomic reference counting with `Arc<T>`
+    ```rust
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+
+    fn main() {
+        let counter = Arc::new(Mutex::new(0));
+        let mut handles = vec![];
+
+        for _ in 0..10 {
+            let counter = Arc::clone(&counter);
+            let handle = thread::spawn(move || {
+                let mut num = counter.lock().unwrap();
+
+                *num += 1;
+            });
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        println!("Resultss: {}", *counter.lock().unwrap()); // 10
+    }
+    ```
+
+- another use cae from Ruslting
+    ```rust
+    #![forbid(unused_imports)] // Do not change this, (or the next) line.
+    use std::sync::Arc;
+    use std::thread;
+
+    fn main() {
+        let numbers: Vec<_> = (0..100u32).collect();
+        // take the ownership of numbers as it is not mutated in threads
+        let shared_numbers = Arc::new(numbers); // TODO
+        let mut joinhandles = Vec::new();
+
+        for offset in 0..8 {
+            let child_numbers = Arc::clone(&shared_numbers); // TODO
+            joinhandles.push(thread::spawn(move || {
+                let sum: u32 = child_numbers.iter().filter(|&&n| n % 8 == offset).sum();
+                println!("Sum of offset {} is {}", offset, sum);
+            }));
+        }
+        for handle in joinhandles.into_iter() {
+            handle.join().unwrap();
+        }
+    }
+    ```
 
 
 ### 16.4 Extensible concurrency with the Sync and Send traits
@@ -4283,13 +4566,31 @@ Macros are Rust code that generate Rust code. There are three types of macros:
     macro_rules! println {
         () => {
             $crate::print!("\n")
-        };
+        };  // do not forget the ;
         ($($arg:tt)*) => {{  // tt for token tree in Rust macro system
             $crate::io::_print($crate::format_args_nl!($($arg)*));
         }};
     }
     ```
     
+**Use macros defined in a module** with `#[macro_use]`
+
+```rust
+#[macro_use]
+mod macros {
+    macro_rules! my_macro {
+        () => {
+            println!("Check out my macro!");
+        };
+    }
+}
+
+fn main() {
+    my_macro!();
+}
+```
+
+
 **Procedural macros for generating code from attributes**
 
 Three types procedural macros:

@@ -104,6 +104,18 @@ Use Window Terminal installed from Windows store.
 
 ### Lunarvim nerd font - JetBrainsMono
 
+**UPDATE: easy way to install:**
+
+Follow instructions on this github repo: https://github.com/getnf/getnf
+
+- Make sure `~/.local/bin/` is in PATH
+- Install `getnf` with `curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash`
+- Run `$ getnf` and select JetBrainMon. It has been tested to be working.
+- Wait for a while and then start `lvim`.
+
+
+**old methods**
+
 - icons will not displayed correctly without Nerd fonts
 - to install Nerd fonts
     - download JetBrainsMono Nerd Font from https://www.nerdfonts.com/font-downloads
@@ -141,7 +153,14 @@ Only need to install Nvim-R plugin. All other plugins are already managed by Lun
     
     - `:Rstop`: stop R excution
 
-**R language server**: if r_language_server is not automatically detected in LunarVim after opening a `.R` file, add the following line to `config.lua`:
+**R language server**: 
+
+- Install R language server following instructions at https://github.com/REditorSupport/languageserver
+    -  install Linux dependencies
+    - `install.packages("languageserver")`
+    - restart lvim, r_language_server should be detected.
+
+if r_language_server is not automatically detected in LunarVim after opening a `.R` file, add the following line to `config.lua`:
     ```lua
     -- require install.packages("languageserver") in R
     require'lspconfig'.r_language_server.setup{}

@@ -59,3 +59,9 @@ https://github.com/dccsillag/magma-nvim, remember to use key mappings that do no
 https://www.youtube.com/watch?v=wzrZPcwh-bE
 
 
+## QA ======================================================================== 
+
+### QA: how to install neovim using appimage?
+
+- copy `nvim.appimage` executable and rename it to `/usr/local/bin/nvim`.
+- save `config.lua` in `~/.config/nvim/`.

@@ -49,7 +49,7 @@
     $ chmod 777 aaa.sh          # change to executable file for owner, group, and other
     ```
 
-- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`
+- To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`, or copy the file to `bin/`.
     ```sh
     $  cd ~/bin
     $ ln -s path/to/aaa.sh aaa
@@ -57,7 +57,7 @@
 
 - Run command `aaa` from anywhere.
 
-## QA =========================================================================
+## QA ==========
 
 ### QA: how to find specific directories and files and process them one by one?
 
@@ -80,24 +80,24 @@ Use `find ... | while read ...`: The example below includs find directory and fi
     #   - starting with xtmp
     #   - not accessed for at least $2 day specified by parameter $2
     #
-
+    
     # find all the directory met above conditions
-
+    
     data_dir="$1"
     min_access_time="$2"
-
+    
     echo "Delete old client files:"
     find "$data_dir" -type d -atime +$2 -name "xtmp*" | while read dir; do
-
+    
       find "$dir" -type f \( -name "*.csv" -or -name "*.xlsx" \) | while read fname; do
-
+    
         echo "  - $fname"
         rm "$fname"
-
+    
       done
-
+    
     done
-
+    
     echo "Finished deleting files."
     ```
 
@@ -113,7 +113,7 @@ To do it automatically every day at 12:30pm, add to command to crontab:
     ```
     #  m    h    dom    mon    dow    command
        30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
-
+    
     ```
 
 ### QA: how to burn an iso image onto a USB drive from terminal?
@@ -122,9 +122,10 @@ To do it automatically every day at 12:30pm, add to command to crontab:
 - `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
     - be extremely careful. If a wrong disc, the data on the disc will be wiped out
     - explain:
-        - bs: block size
-        - if: input file
-        - of: output file. Device is a file in Linux
+        - `dd`: command that converts and copies a file
+        - `bs`: block size
+        - `if`: input file, an arch linux iso image in above example
+        - `of`: output file. Device is a file in Linux
 
 
 ### QA: how to set system time?
@@ -138,7 +139,7 @@ Ways to check and manually set
 - `$ sudo timedatectl set-time 17:23:55` to set time
 
 ### QA: how to use systemd to automatically start docker when computer starts?
-**Use case**: docker is not automatically started at some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
+**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
 
 **What is systemd**:
 - `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
@@ -214,7 +215,7 @@ Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To u
 
 Using Unison.
 
-## Raw notes ==================================================================
+## Raw notes ==========
 
 ### Linux brace expansion using {}
 
@@ -231,7 +232,7 @@ $ echo {a..h..2}                  # a, c, e, g
 $ echo month_{01..12}             # month_01, month_02, ..., month_12
 ```
 
-### Linux command wildcards *, ?, and [ in file / directory names
+### Linux command wildcards `*`, `?`, and `[` in file / directory names
 
 **Note**: these wildcards only work in pathnames like file and directory names. `/` in pathname cannot be matched. They are similar to, but not, regular expressions.
 
@@ -241,13 +242,13 @@ $ echo month_{01..12}             # month_01, month_02, ..., month_12
 - `[!abcd]` any one character not in string "abcd"
 
 ```shell
-$ man 7 glob          # manual page of wildcard matching
+$ man ? glob          # manual page of wildcard matching
 $ grep abc *.R        # find lines containing "abc" in all .R files
 $ grep abc file?.R    # find lines containing "abc" in file1, fileA, ...
 $ grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
 ```
 
-### Linux locate to search path names, update database before search
+### Linux `locate` to search path names, update database before search
 
 `locate` search all path names in a database, which is updated one time a day. To search for new files, update the database.
 
@@ -264,7 +265,7 @@ $ locate abc*.md        # the path start with abc and end with .md
 $ locate *abc*.md       # the path contains abc and end with .md
 ```
 
-### Linux find command to search files by name, type, size, ...
+### Linux `find` command to search files by name, type, size, ...
 
 **`find` has many options**
 
@@ -278,6 +279,8 @@ $ find                        # show all diretories and files in current diretor
 $ find eee/                   # list everything in eee/
 $ find -name "*01"            # find path end with 01, quote to
                               # avoid shell expansion.
+$ find -type d | grep src     # find all directories having src in the path
+$ find -type f -name *rs      # find all .rs files
 ```
 
 **find files and execute on the found**
@@ -540,7 +543,7 @@ $ source ~/.profile
 
 ```shell
 student="Sarah"  # NO spaces around "=" sign, otherwise bash treat student as a command
-echo "Hello ${student}"  # ${} called shell expansion
+echo "Hello ${student}"  # ${} called shell expansion, curly bracket can be skipped if you are sure there is no space and special characters in $student. As a general rule, use {}
 ```
 
 **Shell variables**: or called environment variables, usually in upper case, with special names. Common shell variables. $PATH, $HOME, $USER, $HOSTNAME, $PS1, $PWD, $OLDPWD, $?
@@ -576,7 +579,7 @@ echo "Hello ${student}"  # ${} called shell expansion
   echo ${#name}  # "#" count the number of characters
   ```
 
-- slice a string: position of characters in a string is index by 0, 1, 2, 3, ..., from 0
+- slice a string: position of characters in a string is **index** by 0, 1, 2, 3, ..., **from 0**
 
   ```shell
   echo ${name:3:5}  # substring of length 5 from the 4th character
@@ -702,11 +705,11 @@ $ cd ~-     # switch back
 
 ### Bash: quoting, single quote and double quote are different
 
-Quoting is about removing special meanings. Backslash removes special meaning of next character, single quote remove all inside, double quote removes all but dollar sign $, backtick `, and those in **command substitution**.
+Quoting is about removing special meanings. Backslash removes special meaning of next character, single quote remove all inside, double quote removes all but dollar sign `$`, backtick `, and those in **command substitution**.
 
 - `\`: next character
-- `''`: all characters inside
-- `""`: all character except dollar signs `$` and backslash `\` and command substitution.
+- `'xxxxx'`: all characters inside
+- `"xxxxx"`: all character except dollar signs `$` and backtick and command substitution.
 
 ```shell
 $ echo aaa \& bbb # print aaa & bbb, backslash \ removes special meaning of &
@@ -734,7 +737,7 @@ $ echo $NAME > file.txt
 
 ```shell
 $ echo a b echo c d  # print a b echo c d. The command is terminated by newline
-$ echo a b; echo c d # print a b then c d. The two command terminated by ";" and new line
+$ echo a b; echo c d # print a b then c d. The two commands are terminated by ";" and new line respectively
 ```
 
 **compound commands**: such as if statement and loops
@@ -906,7 +909,7 @@ $ cd /root &> stdoutstderr.txt
                                # The third parameter is 999
   ```
 
-### Bash: special parameters $#, $0, $#, $@, "$@", $*, "S*" for script and positional paramers
+### Bash: special parameters `$#`, `$0`, `$*`, `$@`, `"$@"`, `"$*"` for script and positional paramers
 
 **$#**: number of positional parameters, can be used to specify number of positional parameters as condition
 
@@ -1005,7 +1008,7 @@ $ type -a shellcheck # ls is aliased to `ls --color=auto'
 
 - info: for external command only, more information with links to other sources
 
-### Bash: select ... in ... do ... done, space is the delimiter, not `,`
+### Bash: `select ... in ... do ... done`, space is the delimiter, not `,`
 
 Select from options each separated by space, not `,`.  Keep in quote if not want to split a option.
 
@@ -1025,7 +1028,7 @@ gg to get to the beginning of the file, = is the indent command, G to go to the 
 
 see [Bash: control operators]
 
-### Bash: test commands and operators, [ space=around ] or [[ ... ]], `!` to negate
+### Bash: test commands and operators, `[ space=around ]` or `[[ ... ]]`, `!` to negate
 
 Return exit status 0 if true, exit status 1 if false.
 
@@ -1083,7 +1086,7 @@ else
 fi
 ```
 
-### Base: case ... esac, double quote, `;;` and `)`
+### Bash: `case ... esac`, double quote, `;;` and `)`
 
 Must put variable in double quote to prevent word splitting, each case must end with `;;`, which is a specific operator only for `case` statement.
 
@@ -1097,7 +1100,7 @@ case "$number" in
 esac
 ```
 
-### Bash: while loop
+### Bash: `while` loop
 
 ```bash
 read -p "Enter your number: " num
@@ -1108,15 +1111,18 @@ while [ $num -gt 10 ]; do
 done
 ```
 
-### Bash: getopts, define options for bash script
+### Bash: `getopts`, define options for bash script
 
 Save the code as fc_converter, which convert temperature between F and C. The command has two options: `-c` and `-f`. The value of the option is stored in `$OPTARG`.
 
 ```bash
 #!/bin/bash
 
-while getopts "f:c:" opt; do    # define options here, allow -f and -c
-	case "$opt" in
+# define options here, allow -f and -c, 
+# selection passed to variable temp_unit and
+# value is passed to OPTARG
+while getopts "f:c:" temp_unit; do    
+	case "$temp_unit" in
 		c) result=$(echo "scale=2; ($OPTARG * (9 / 5)) + 32" | bc);;
 		f) result=$(echo "scale=2; ($OPTARG -32) * (5 / 9)" | bc);;
 		\?) ;;   # for any other single character
@@ -1139,6 +1145,7 @@ $ fc_converter -f 32  # 0
 ```bash
 #!/bin/bash
 
+# the code block adds up all time from selection -m and -s
 time=0
 while getopts "m:s:" opt; do
 	case "$opt" in
@@ -1187,7 +1194,7 @@ $ echo ${number[2]} # third element 333
 $ echo ${number[@]} # all element
 $ echo ${number[@]:1}  # from second element to the end, slicing
 $ echo ${number[@]:1:2} # two elements from the second
-$ numbers+=(555)  # add new element to the end
+$ number+=(555)  # add new element to the end
 $ unset number[2] # delete the third element, it also deleted the index 2.
                   # the remaining index are 0 1 3 4
 $ echo ${!number[@]}  # check index
@@ -1195,7 +1202,7 @@ $ number[0]=999   # change a element
 
 ```
 
-### Bash: readarray to generate index arrays
+### Bash: `readarray` to generate index arrays
 
 Read standard input into an array line by line. Each element has a `\n` at the end, which may mess up with string processing.
 
@@ -1210,8 +1217,8 @@ $ echo ${days[@]@Q}  # show the raw string, which ends with \n
 # the prefered readarray
 $ readarray -t days < weekday.txt
 
-# read from other command output using process substitution
-readarrays -t files < <(ls)
+# read from other command output using process substitution, space between < <
+$ readarray -t files < <(ls)
 ```
 
 ### Bash: for loop, on-the-fly list, array, no quote for index
@@ -1275,7 +1282,7 @@ $ sudo apt install at  # install at
 $ service atd status   # check if at is running
 $ sudo service atd start  # start atd service, stop to stop
 
-# to schedule tasks to run at back ground
+# to schedule tasks to run at background
 $ at 9:30am  # press enter
 > echo "Hello world"   # one task
 > cp xxx bbb           # another task
@@ -1294,7 +1301,7 @@ $ at now + 5 min -f my_bash_script    # 2 days ...
 
 **System cron directories** are in `/etc`. All executable scripts in each directory runs as shown in names like `cron.daily`, `cron.hourly`, `cron.weekly` and `cron.monthly`. The exact time can be found in file `/etc/crontab`.
 
-- no dot "." in script names
+- no dot include dot `.` in script names
 
 **Custom cron directories** are easy to create. Follow steps below to create a folder in home directory to hold scripts that run at 2am each day
 
@@ -1311,7 +1318,7 @@ $ crontab -e
 
 ### reboot required after package upgrade
 
-Check /var/run/reboot-required.pkgs for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
+Check `/var/run/reboot-required.pkgs` for the list of packages that require reboot. For example, linux-base upgrade needs reboot.
 
 We want to create a cron task that upgrades packages every day. We first need to create a bash script called `update_packages`:
 
@@ -1331,7 +1338,7 @@ As upgrade affect the whole system, we will modify `/etc/crobtab` to schedule th
 0 0 * * * /path/to/update_script    # not use ~ for home as this file is in root.
 ```
 
-For t his to take effect, run
+For this to take effect, run
 
 ```shell
 $ sudo service cron restart
