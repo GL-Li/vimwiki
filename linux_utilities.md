@@ -163,3 +163,35 @@ https://github.com/adrianlarion/simple-awk
 - `awk '/this/' aaa.txt`  print lines containing "this" in aaa.txt.
 - `awk '$2 == "is"' aaa.txt` print lines whose second field is "is"
 - `awk '$1 ~ /i/' aaa.txt` print lines whose first field matches pattern 'i'. Use `~` for pattern match and `!~` for not match.
+
+
+### awk `printf` to format output
+
+- `awk -F ',' '{printf "%15s %-15s %-10s\n", $5, $2, $3}' iris.csv`
+    - `%15s`: total width 15 character, right aligned
+    - `%-15s`: left aligned
+    - line ending `\n` is required for new lines
+
+
+### awk `BEGIN` and `END` block
+The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process line by line} END {summarize results}' file.txt`.
+
+- `awk -F "," 'BEGIN {count = 100} {count ++} END{print count}' iris.csv` total number of lines
+    - set initial `count` in `BEGIN` block
+    - increment line by line in middle block
+    - print out final result in `END` block
+    - `BEGIN` and `END` blocks are optional
+
+
+
+### awk math
+
+- `echo "4,2,5" | awk -F "," '{sum = $1 + $2 + $3; print sum}'` print 11
+- `awk -F ',' '{cumsum = cumsum + $3; print cumsum}' iris.csv` cumulative sum of field 3, no need to initialize cumsum.
+- `awk -F ',' '{cumsum = cumsum + $3} END {print "average =", cumsum / NR}' iris.csv` print average of field 3
+
+### awk functions
+
+- `substr($3, 1, 5)` to extract character 1 - 5 of a string field `$3`.
+    - `echo "aaabbbccc" | awk '{print substr($0, 1, 5)}'`  print aaabb
+    - `awk -F ',' '{printf "%15s %-15s %-10s\n", substr($5, 1, 5), $2, $3}' iris.csv` substring of field 5
