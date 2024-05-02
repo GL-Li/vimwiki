@@ -54,6 +54,13 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+## QA: how to do tag jumping in vim?
+- `$ sudo apt install universal-ctags` if not have it
+- `$ ctags -R .` to create a file called `tags` under current directory
+    - add the file to .gitignore
+- use key binding `Ctr ]` to jump to the definition of the tag under cursor and `Ctr t` to jump back
+    - if the key binding if assigned to other tasks in LunarVim or NeoVim, modify the key binding for those "other" tasks. Reserve the Vim's default key bindings.
+
 ### QA: How to map Esc key to CapsLok key?
 
 
