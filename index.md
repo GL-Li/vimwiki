@@ -13,7 +13,7 @@
 - [[docker_kubernetes]]
 - [[git]] --- [[bitbucket]]
 - [[julia]]
-- [[R|R language]]
+- [[R|R language]] --- [[R_packages]]
 - [[regex|Regular Expression]]
 - [[Rust_language]] --- [[extendr]] --- [[Rust_by_example]] 
 - [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[linux_utilities]]
