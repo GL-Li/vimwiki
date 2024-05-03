@@ -37,3 +37,35 @@ clean <- function() {
 }
 clean()
 ```
+
+## withr
+
+This package is used to temporarily change global state within a scope. The global state is restored when out of the scope.It has two set of functions
+
+- `with_xxx(...)`: changes state of `xxx` inside this function
+- `local_xxx(...)`: usually called inside a custom function and change the state inside the custom function
+
+**Examples** graphics parameters
+```r
+# the default global color and pch for graphic parameters are "black" and 1
+# which can be checked with par("col") and par("pch")
+plot(mtcars$hp, mtcars$wt) # the plot takes global par parameters
+
+# with_par changes parameters in function par() inside the scope
+# of with_par(...)
+withr::with_par(
+    list(col = "red", pch = 19), # change color and pch
+    plot(mtcars$hp, mtcars$wt) # the plot takes par parameters inside this scope
+)
+
+# out of the scope, restore to global par parameters
+plot(mtcars$hp, mtcars$wt) # the plot takes global par parameters
+
+
+# local_par changes state inside my_plot function
+my_plot <- function() {
+  withr::local_par(list(col = "red", pch = 19))
+  plot(mtcars$hp, mtcars$wt) # the plot takes par parameters inside this scope
+}
+my_plot()
+```
