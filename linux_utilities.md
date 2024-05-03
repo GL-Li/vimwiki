@@ -195,3 +195,17 @@ The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process
 - `substr($3, 1, 5)` to extract character 1 - 5 of a string field `$3`.
     - `echo "aaabbbccc" | awk '{print substr($0, 1, 5)}'`  print aaabb
     - `awk -F ',' '{printf "%15s %-15s %-10s\n", substr($5, 1, 5), $2, $3}' iris.csv` substring of field 5
+
+
+## tr
+translate or delete **characters**.
+
+**translate characters**
+
+- `echo "Abc Def" | tr [a-z] [A-Z]`  to upper case ABC DEF
+- `echo "Abc Def" | tr be XY` to AXc DYf, that is, treat be and XY as two arrays and map b -> X and e -> Y
+
+**delete characters**
+
+- `echo "Abc Def" | tr -d [a-z]` to delete all lower case characters
+- `echo "Abb Effff" | tr -s bf` to squeeze duplicated b and f to a single character
