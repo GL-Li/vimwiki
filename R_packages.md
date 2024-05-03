@@ -46,6 +46,7 @@ This package is used to temporarily change global state within a scope. The glob
 - `local_xxx(...)`: usually called inside a custom function and change the state inside the custom function
 
 **Examples** graphics parameters
+
 ```r
 # the default global color and pch for graphic parameters are "black" and 1
 # which can be checked with par("col") and par("pch")
@@ -68,4 +69,15 @@ my_plot <- function() {
   plot(mtcars$hp, mtcars$wt) # the plot takes par parameters inside this scope
 }
 my_plot()
+```
+
+**Examples** working directory
+
+```r
+# change working directory in a function using local_dir function so we eo not 
+# need to using getwd and setwd to change directory back and forth
+run_selfSrv <- function(selfSrv_dir) {
+    withr::local_dir(selfSrv_dir)
+    system("Rscript pea1.R")
+}
 ```
