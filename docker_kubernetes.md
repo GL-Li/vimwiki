@@ -10,153 +10,166 @@
 
 - Youtube video: [Docker for R users Tutorial](https://www.youtube.com/watch?v=oehhZ98o6Zk)
     - materials saved at `~/OneDrive/learning-resources/docker-user2022-r-for-docker/`
-     
+    
 - ref1 -- Udemy: Docker & Kubernetes: The Practical Guide (DK), https://www.udemy.com/course/docker-kubernetes-the-practical-guide/
 
 - ref2 -- Udemy: Docer-swarm-hands-on-devops (DS): https://www.udemy.com/course/learn-docker-advanced/learn/lecture/8353842?start=0#overview
 
-## Concept ====================================================================
+## Concept =================
 
 ### concept: docker for development and deployment
 
 **for development**: docker provide a consistent environment so the development can be done on any computer in which docker engine can be installed.
-    - single container 
-        - `$ docker run ..` to start a single container and use the container
-    - multiple containers, each for a specific service. They work together to provide a environment for development.
-        - `$ docker-compose up` to start multiple comtainers using a `docker-compose.yml` file. These containers are in the same network but each only has one copy.
+- single container 
+     - `$ docker run ..` to start a single container and use the container
+- multiple containers, each for a specific service. They work together to provide a environment for development.
+     - `$ docker-compose up` to start multiple comtainers using a `docker-compose.yml` file. These containers are in the same network but each only has one copy.
 
 **for deployment**: a project development in containers can be packaged into containers for easy deployment
     - test a single container for deployment if it does not depends on other containers
         - `$ docker service create ...` can also start a sigle container but must be in swarm mode
-    - deploy a project consisting of multiple containers using `docker-stack.yml` file
+        - deploy a project consisting of multiple containers using `docker-stack.yml` file
         - `docker stack deploy voting-app-stack --compose-file docker-stack.yml` to start the stack
 
 ### concept: volumes vs bind mounts
 
 **summary**
-    - The purpose of volume is to store files outside of a container. Although files are stored outside of the container, they are used as if they are in the container directory.
-    - Use named volume to share data across containers
-    - Use bind mounts to share data between a container and the host computer
+
+- The purpose of volume is to store files outside of a container. Although files are stored outside of the container, they are used as if they are in the container directory.
+  - Use named volume to share data across containers
+  - Use bind mounts to share data between a container and the host computer
 
 **why need them?**
     - For persistent data storage. Without volume, docker-generated data are stored in the container and destroyed with the removal of the container.
-    - With volume and bind mounts, the data is stored on the host computer. Volumes and bind mounts are different mechanisms to store the docker-generated files.
+        - With volume and bind mounts, the data is stored on the host computer. Volumes and bind mounts are different mechanisms to store the docker-generated files.
 
 **volume** is created and managed by docker engine on the host computer. Named volume is very useful to share data across containers.
-    - annonymous volumes:
-        - used before Docker version 1.9 when named volume was not available.
-        - when started with `docker run --rm -v /container/dir ...`, the ananymous volume is removed when container is stopped.
-        - created by docker engine and assigned with a randomly generated name,
-        - can be checked with `docker volume` command,
-        - can be create in Dockerfile or with command `docker run -v /docker/dir`.
-    - named volumes:
-        - good to share among containers. In the example below, contain1's `/input_data` and container2's `/output_data` are the same.
-            - `$ docker run -v shared_volume:/input_data --name container1  image1`
-            - `$ docker run -v shared_volume:/output_data --name container2 image2`
-        - portable to other host computers comparing to bind mounts.
-        - can be created with `docker run -v abcdefg:/container/dir` command, where volume name abcdefg is a string, not a path.
-        - `docker volume create` can create a named volume with configurations, for example, to use network storage.
+
+- annonymous volumes:
+  - used before Docker version 1.9 when named volume was not available.
+  - when started with `docker run --rm -v /container/dir ...`, the ananymous volume is removed when container is stopped.
+  - created by docker engine and assigned with a randomly generated name,
+  - can be checked with `docker volume` command,
+  - can be create in Dockerfile or with command `docker run -v /docker/dir`.
+- named volumes:
+  - good to share among containers. In the example below, contain1's `/input_data` and container2's `/output_data` are the same.
+       - `$ docker run -v shared_volume:/input_data --name container1  image1`
+       - `$ docker run -v shared_volume:/output_data --name container2 image2`
+  - portable to other host computers comparing to bind mounts.
+       - can be created with `docker run -v abcdefg:/container/dir` command, where volume name abcdefg is a string, not a path.
+       - `docker volume create` can create a named volume with configurations, for example, to use network storage.
 
 **bind mounts** is managed by user
-    - Good to share with other applications on the host
-    - can be edited by users.
-    - `docker run -v /host/dir/path:/container/dir/path`, all paths are absolute,  starting from root.
+
+- Good to share with other applications on the host
+- can be edited by users.
+- `docker run -v /host/dir/path:/container/dir/path`, all paths are absolute,  starting from root.
 
 ### concept: tmpfs vs writable layer
 
 **what is tmpfs mounts?**
-    - mount host memory to a container directory with `docker run --tmpfs /container/dir1 --tmpfs /container/dir2 ...`. 
-    - Deleted when the container is stopped. 
-    - Keep in mind that tmpfs may exaust host memory.
+
+- mount host memory to a container directory with `docker run --tmpfs /container/dir1 --tmpfs /container/dir2 ...`. 
+- Deleted when the container is stopped. 
+- Keep in mind that tmpfs may exhaust host's memory.
 
 **why need tmpfs?**
-    - For temporary storage for this container
-    - Very fast in writing and reading.
+- For temporary storage for this container
+- Very fast in writing and reading as it is the memory instead of disk.
 
 **what is writable layer**?
-    - a thin layer on top of a container. All files to container directories without being mounted to host will be written here. These files co-exist with the container until the container is deleted.
-    - it is part of hard drive where the container is stored, so read and write is slow compared to tmpfs
+
+- a thin layer on top of a container. All files to container directories without being mounted to host will be written here. These files co-exist with the container until the container is deleted.
+- it is part of hard drive where the container is stored, so read and write is slow compared to tmpfs
 
 
 ### concept: protect container subdirectory from bind mounts
 
 **what happened**
-    When we bind mount with `docker run -v /host/dir:/container/dir ...`, the first step is that the `/host/dir` overwrites `/container/dir`. Any subdirectories in the latter but not in the former are deleted.
+
+When we bind mount with `docker run -v /host/dir:/container/dir ...`, the first step is that the `/host/dir` overwrites `/container/dir`. Any subdirectories in the latter but not in the former are deleted.
 
 **protect container subdirectories with annonymous volume**
-    - if the container has subdir_1 under `/container/dir/` but not under `/host/dir/`, we can add a second mount in the docker run
-        - `docker run -v /host/dir:/container/dir -v /container/dir/subdir_1 --rm ...`
-        - The rule is that container's subdirectories has priority over its parent directory over volume mounting. In this case subdir_1 is first mounted to an annonymous volume and will not be overwritten by the bind mounts.
-        - remember to use `--rm` to delete the annonymous volume after stopping the container
-    - alternatively, we can add a line in Dockerfile
-        - `VOLUME /container/dir/subdir_1`
-        - still need `--rm` in docker run.
-    - The best way is to avoid this situation by restructure the directories and files.
 
-## Workflow and SOP ===========================================================
+- if the container has subdir_1 under `/container/dir/` but not under `/host/dir/`, we can add a second mount in the docker run
+  - `docker run -v /host/dir:/container/dir -v /container/dir/subdir_1 --rm ...`
+  - The rule is that container's subdirectories has priority over its parent directory over volume mounting. In this case subdir_1 is first mounted to an annonymous volume and will not be overwritten by the bind mounts.
+  - remember to use `--rm` to delete the annonymous volume after stopping the container
+- alternatively, we can add a line in Dockerfile
+  - `VOLUME /container/dir/subdir_1`
+  - still need `--rm` in docker run.
+- The best way is to avoid this situation by restructuring the directories and files.
 
+## Workflow and SOP =========
 
 ### SOP: use host's gui to display graphic interface in docker container
 
-    - `$ xhost + local:` to allow the docker using host's xserver. Run it if system restarted. Keep the `:` at the end of `local`.
-    - `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host my/image` to start the container.
-        - for example, `docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host r-base R`, make a plot in R to display the figure in a pop up window.
+- `$ xhost + local:` to allow the docker using host's xserver. Run it if system restarted. Keep the `:` at the end of `local`.
+- `$ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host my/image` to start the container.
+    - for example, `docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.x11-unix:/tmp/.x11-unix --network host r-base R`, make a plot in R to display the figure in a pop up window.
 
 ### SOP: add user to  docker user group so no need to use `sudo` every time
 https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
 
-    - `sudo groups` to list all user groups, if there is no docker group
-    - `sudo groupadd docker` to create docker user group. If it says docker group already exists, just ignore the step.
-    - `sudo gpasswd -a $USER docker` to add current user to docker group
-    - `newgrp docker` to activate the changes
-    - ready to use docker command without sudo
+- `sudo groups` to list all user groups, if there is no docker group
+- `sudo groupadd docker` to create docker user group. If it says docker group already exists, just ignore the step.
+- `sudo gpasswd -a $USER docker` to add current user to docker group
+- `newgrp docker` to activate the changes
+- ready to use docker command without sudo
 
 ### SOP: work with Dockerhub
 
-    - create an account at dockerhub.com, lglforfun, standard 2nd class password
-    - `docker login` from terminal. Will stay logged in.
-    - `docker logout` to log out
-    - names image as lglforfun/myimage:0.1.2 to store image to dockerhub account.
-        - `docker push lglforfun/myimage:0.1.2` to push an image to Dockerhub.
+- create an account at dockerhub.com, lglforfun, standard 2nd class password
+- `docker login` from terminal. Will stay logged in.
+- `docker logout` to log out
+- names image as lglforfun/myimage:0.1.2 to store image to dockerhub account.
+    - `docker push lglforfun/myimage:0.1.2` to push an image to Dockerhub.
 
-## MinEx: Minimal Examples ===========================================================
+## MinEx: Minimal Examples =====
 
 ### MinEx: Run R container in Docker swarm mode
 
 **repo**: https://bitbucket.org/gl-li/docker-swarm-minimal-example/src/main/
 
 **Dockerfile**:
-    ```
-    FROM r-base
 
-    USER root
-    WORKDIR /tmp
-    COPY test.R .
+```
+FROM r-base
 
-    RUN mkdir data
-    RUN chmod -R 777 /tmp/data
+USER root
+WORKDIR /tmp
+COPY test.R .
 
-    # tail -f /dev/null is to keep the container running. Otherwise swarm will
-    # keep starting the node after R script completed.
-    ENTRYPOINT [ "sh", "-c", "Rscript test.R && tail -f /dev/null" ]
-    ```
+RUN mkdir data
+RUN chmod -R 777 /tmp/data
+
+# tail -f /dev/null is to keep the container running. Otherwise swarm will
+# keep starting the node after R script completed.
+ENTRYPOINT [ "sh", "-c", "Rscript test.R && tail -f /dev/null" ]
+```
+
 **test.R**:
-    ```
-    print("start")
-    write.csv(mtcars, file = "/tmp/data/test.csv")
-    print("file saved")
-    ```
+
+```
+print("start")
+write.csv(mtcars, file = "/tmp/data/test.csv")
+print("file saved")
+```
+
 **build.sh**: remember to push to dockerhub as docker service will use that one.
-    ```sh
-    docker build . -t lglforfun/swarm-r
-    ```
+    
+```sh
+docker build . -t lglforfun/swarm-r
+
+```
 **swarm.sh**: run this after `$docker swarm init` if swarm has not been initiated. 
-    ```sh
-    docker service create \
-        --name bbb \
-        --mount type=bind,source="$HOME"/aaaaa/swarm,target=/tmp/data \
-        lglforfun/swarm-r
-    ```
+
+```sh
+docker service create \
+    --name bbb \
+    --mount type=bind,source="$HOME"/aaaaa/swarm,target=/tmp/data \
+    lglforfun/swarm-r
+```
 
 ### MinEx: volume, mount local directory to container directory
 This example mounts a local directory `$HOME/tmp` to a container, reads a text file `ttt.txt` from local directory and saves a text file `bbb.txt` to `$HOME/tmp`
@@ -171,13 +184,13 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
     - Dockerfile
         ```
         FROM python
-
+        
         WORKDIR /app
-
+        
         COPY . /app
-
+        
         RUN mkdir /data
-
+        
         CMD ["python", "test.py"]
         ```
 
@@ -186,11 +199,11 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
         # a local directory will be mounted to container's /data. ttt.txt is initially in local directory.
         g = open("/data/ttt.txt")
         print(g.read())
-
+        
         # save bbb.txt to local directory
         with open("/data/bbb.txt", "w") as f:
           f.write("this has been done")
-
+        
         print("file saved")
         ```
 
@@ -199,7 +212,13 @@ This example mounts a local directory `$HOME/tmp` to a container, reads a text f
     docker run -v $HOME/tmp:/data --rm test_volume
     ```
 
-## QA =================================================================
+## QA =====================
+
+### QA: how to start a docker container as a specific user?
+
+From a docker container, run `$id rstudio` to see the uid and gid of user `rstudio`. If there is only one user other than the root, both the user id and group id are 1000. To start the container terminal as user, use it uid and gid like
+
+- `$ docker run --rm -it --user 1000:1000 lglforfun/rstudio_dev bash`
 
 ### QA: How to install and config the latest Neovim in a Docker image from the latest tag.gz file?
 
@@ -221,7 +240,7 @@ In Dockerfile, set `ENTRYPOINT [ "bin/bash" ]`, which overwrites the entry point
 - `$ docker exec -it xxxx bash` for Ubuntu based container
 - `$ docker exec -it xxxx sh` for alpine-based container
 
-## raw notes ==================================================================
+## raw notes ================
 
 ### Docker: build images run push pull
 
@@ -293,10 +312,10 @@ https://www.howtogeek.com/devops/how-to-share-docker-images-with-others/
                 ```sh
                 # rename a local image to match the repo
                 docker tag hello-world:latest difodocker/mytest:1.1.1
-
+                
                 # log into Docker Hub account
                 sudo docker login -u difodocker -p xxxxx docker.io
-
+                
                 # push to docker hub, repo mytest will be created on Docker Hub automatically if not exists.
                 docker push difodocker/mytest:1.1.1
                 ```
@@ -318,7 +337,7 @@ What is Docker:
     - A platform for OS-level virtualization
         - based on isolated containers
         - package diferent componenets of a sofware /app
-        - enable seamless shipent and deployment
+        - enable seamless shipment and deployment
         - free and enterprise versions available
 
 Workflow
@@ -351,7 +370,7 @@ Workflow
 - `docker build . --progress=plain -t difodocker/test:0.01` to build image from current directory.
     - `$ man docker build` for more info
         - `-t/--tag` to rename an image.
-        - `--progress=plian` to suppress exessive build message
+        - `--progress=plain` to suppress excessive build message
 
 - `docker build --file Dockerfile_2 -t gl/test1:0.0.1` to build from a specific dockerfile.
 
@@ -389,7 +408,7 @@ Workflow
     docker run -d rocker/tidyverse:4.2.1   # -d run in background
     docker ps    # list running containers
     docker stop container_id   # stop a container
-
+    
     # list all containers including stopped
     docker ps -a
     ```
@@ -399,13 +418,14 @@ Workflow
 ### docker exec: execute a command on an running container
 
 To tell the command which container to use, assign the container a name with `--name=xxxx`.
-    ```
-    sudo docker run -d -p 8787:8787 -e PASSWORD=abcd --name=aaaa -v /home/gl/aaaaa:/home/gl/project docker_for_r/rstudio:v1.0
-    # run bash of container aaaa
-    sudo docker exec -it aaaa bash
-    # stop a container by name
-    sudo docker stop aaaa
-    ````
+    
+```
+sudo docker run -d -p 8787:8787 -e PASSWORD=abcd --name=aaaa -v /home/gl/aaaaa:/home/gl/project docker_for_r/rstudio:v1.0
+# run bash of container aaaa
+sudo docker exec -it aaaa bash
+# stop a container by name
+sudo docker stop aaaa
+````
 
 ## 2023-03-14 Tue
 
@@ -446,16 +466,16 @@ The goal is to create a workflow that is easy to follow and share. Details in `~
 - create a `Dockerfile`, in which the versons of R package is controled by snapshot of Microsoft Cran. Example:
     ```
     FROM rocker/rstudio:4.2.0
-
+    
     LABEL purpose="Example of developing in RStudio IDE"
-
+    
     ENV MRAN_BUILD_DATE=2022-06-18
-
+    
     RUN install2.r \
         -r https://cran.microsoft.com/snapshot/${MRAN_BUILD_DATE} \
         --error \
         data.table
-
+    
     EXPOSE 8787
     ```
 
@@ -467,7 +487,7 @@ The goal is to create a workflow that is easy to follow and share. Details in `~
 - create an execcutable docker run file to create a container and run like `./02-run-docker.sh`. Each user needs to modify `YOUR_LOCAL_PROJECT_FOLDER` to match his computer.
     ```
      YOUR_LOCAL_PROJECT_FOLDER="/home/gl/aaaaa"
-
+    
      docker run \
         --rm \
         -it \
@@ -496,16 +516,16 @@ The Microsoft CRAN time machine snapshot is shutting down. Need to find a replac
 - install package from command line
     ```
     FROM rocker/rstudio:4.2.2
-
+    
     LABEL purpose="Example of developing in RStudio IDE"
-
+    
     # use remotes packages
     RUN Rscript -e "install.packages('remotes')"
     RUN Rscript -e "remotes::install_version('skedastic', version = '2.0.1')"
-
+    
     # Example of a conventional `install.packages()` approach for a package version
     RUN Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_3.4.0.tar.gz', repos = NULL, type = 'source')"
-
+    
     EXPOSE 8787
     ```
 
@@ -519,19 +539,19 @@ Any RUB CMD ADD COPY and ENTRYPOINT in Dockerfile will be executed in this direc
 - Dockerfile
     ```
     FROM rocker/r-ver:4.2.0
-
+    
     LABEL purpose="Example of {renv}: Install packages when Docker image is built."
-
+    
     ENV RENV_VERSION 0.15.5
     RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
     RUN R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
-
+    
     # create work directory under root using /
     WORKDIR /renv
-
+    
     # copy renv.lock from current directory into docker image's WORKDIR
     COPY renv.lock renv.lock
-
+    
     # run Rscript from the terminal at WORKDIR
     RUN R -e "renv::restore()"
     ```
@@ -555,11 +575,11 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - `plumb-model.R` to genereate web API
         ```R
         message("Running plumb-model.R")
-
+        
         library(plumber)
-
+        
         lm_model <- readRDS("lm_model.rds")
-
+        
         pr("predict.R") |>
             pr_run(port=8000, host="0.0.0.0")
         ```
@@ -571,16 +591,16 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
         #* @param hp horsepower
         #* @post /predict
         function(req, cyl = 4, disp = 100, hp = 120) {
-
+        
           message(sprintf("Running prediction function with {cyl: %s, disp: %s, hp: %s}",
           cyl, disp, hp))
-
+        
           newdata <- data.frame(
                                 cyl = as.numeric(cyl),
                                 disp = as.numeric(disp),
                                 hp = as.numeric(hp)
                                 )
-
+        
           predict(lm_model, newdata)
         }
         ```
@@ -588,16 +608,16 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 - Dockfile based on `rocker/plumber`
     ```
     FROM  rstudio/plumber
-
+    
     LABEL purpose="Example of model deployment in Docker"
-
+    
     WORKDIR /plumber/
     COPY model/lm_model.rds lm_model.rds
     COPY model/plumb-model.R plumb-model.R
     COPY model/predict.R predict.R
-
+    
     EXPOSE 8000
-
+    
     ENTRYPOINT ["Rscript", "-e", "source('plumb-model.R')"]
     ```
 
@@ -620,12 +640,12 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
 - Sample Dockerfile
     ```
     FROM  rocker/shiny:4.2.0
-
+    
     LABEL purpose="Example of shiny deployment in Docker"
-
+    
     WORKDIR /home/app
     COPY my_app .
-
+    
     # This command will run when Docker run -p 3838:3838 my/image:v1.0.
     # We still need option -p to open the port on the host.
     CMD ["R", "-e", "options(shiny.port = 3838, shiny.host = '0.0.0.0'); shiny::runApp('/home/app')"]
@@ -791,7 +811,7 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
     - replace `localhost` with `host.docker.internal` for example in
         - `mongodb://host.docker.internal:27017/xxxx`
         - `http://host.docker.internal:8787`
- 
+
 **container to container communication** by IPAddress
     - start the container `$ docker run -d --name mongodb mongo` using official mongo image
     - find its IPAddress under NetworkSettings by running `$ docker inspect mongodb`, which looks like `172.17.0.3` and is recoganized by the docker engine.
@@ -850,18 +870,19 @@ Example: `~/OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-a
         ```
     - build image `$ docker build . -t test/s5_backend` with name goals-node
     - create container `$ docker run --rm -d --name goals-node -p 80:80 test/s5_backend`, which communicate to host by port 80
-    
-    
+
+
+​    
 **Container 3: react SPA**: 
-    - Dockerfile
-        ```dockerfile
-        FROM node
-        WORKDIR /app
-        
-        # install dependencies
-        COPY package.json
-        RUN npm install
-        
+​    - Dockerfile
+​        ```dockerfile
+​        FROM node
+​        WORKDIR /app
+​        
+​        # install dependencies
+​        COPY package.json
+​        RUN npm install
+​        
         # moving in all files of the project to working directory
         COPY . . 
         
@@ -927,7 +948,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
             - back-end
         volumes:
             - db-data:/var/lib/postgresql/data
-
+    
       vote:
         image: voting-app
         ports:
@@ -935,7 +956,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
         networks:
             - back-end
             - front-end
-
+    
       result:
         image: result-app
         ports:
@@ -943,23 +964,23 @@ Official tutorial: https://docs.docker.com/engine/swarm/
         networks:
             - back-end
             - front-end
-
+    
       worker:
         image: worker-app
         networks:
             - back-end
-
+    
     networks:
       front-end:
         driver: bridge
       back-end:
         driver: bridge
-
+    
     volumes:
       redis-data:
       db-data:
     ```
-    
+
 **docker-compose.yml** working example. postgres needs login. Go to localhost 8009 and 8001 to use the app.
     ```yaml
     version: '3'
@@ -972,15 +993,15 @@ Official tutorial: https://docs.docker.com/engine/swarm/
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-
+    
       vote:
         image: dockersamples/examplevotingapp_vote
         ports:
           - 8009:80
-
+    
       worker:
         image: dockersamples/examplevotingapp_worker
-
+    
       result:
         image: dockersamples/examplevotingapp_result
         ports:
@@ -1083,7 +1104,7 @@ Official tutorial: https://docs.docker.com/engine/swarm/
               replicas: 1
               placement:
                 constraints: [node.role == manager]
-
+    
           vote:
             image: dockersamples/examplevotingapp_vote
             ports:
@@ -1092,14 +1113,14 @@ Official tutorial: https://docs.docker.com/engine/swarm/
               replicas: 2
               update_config:
                 parallelism: 2 # update container one at a time
-
+    
           worker:
             image: dockersamples/examplevotingapp_worker
             deploy:
               restart_policy:
                 condition: on-failure
                 delay: 10s
-
+    
           result:
             image: dockersamples/examplevotingapp_result
             ports:
