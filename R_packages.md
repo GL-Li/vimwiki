@@ -1,3 +1,24 @@
+## base
+
+**options()**
+
+Set or change global options:
+
+```r
+# change or add option aaa to value "AAA" but return the original options
+orig_ops <- options(aaa = "AAA")
+
+# retrive option aaa
+x <- getOption("aaa")  # x is "AAA"
+
+# retore to original options
+options(orig_ops)
+
+# now the aaa is NULL as it does not exist
+getOption("aaa")
+```
+
+
 ## cli
 
 https://github.com/r-lib/cli/
@@ -39,6 +60,7 @@ clean()
 ```
 
 ## withr
+https://cran.r-project.org/web/packages/withr/vignettes/changing-and-restoring-state.html
 
 This package is used to temporarily change global state within a scope. The global state is restored when out of the scope.It has two set of functions
 
