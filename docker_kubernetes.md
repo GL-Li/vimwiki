@@ -418,14 +418,13 @@ Workflow
 ### docker exec: execute a command on an running container
 
 To tell the command which container to use, assign the container a name with `--name=xxxx`.
-    
-```
-sudo docker run -d -p 8787:8787 -e PASSWORD=abcd --name=aaaa -v /home/gl/aaaaa:/home/gl/project docker_for_r/rstudio:v1.0
-# run bash of container aaaa
-sudo docker exec -it aaaa bash
-# stop a container by name
-sudo docker stop aaaa
-````
+    ```
+    sudo docker run -d -p 8787:8787 -e PASSWORD=abcd --name=aaaa -v /home/gl/aaaaa:/home/gl/project docker_for_r/rstudio:v1.0
+    # run bash of container aaaa
+    sudo docker exec -it aaaa bash
+    # stop a container by name
+    sudo docker stop aaaa
+    ````
 
 ## 2023-03-14 Tue
 
@@ -532,7 +531,7 @@ The Microsoft CRAN time machine snapshot is shutting down. Need to find a replac
 ## 2023-03-17 Fri
 
 ### docker: WORKDIR the default directory where bash runs
-Any RUB CMD ADD COPY and ENTRYPOINT in Dockerfile will be executed in this directory. The default WORKDIR is root /.
+Any RUN CMD ADD COPY and ENTRYPOINT in Dockerfile will be executed in this directory. The default WORKDIR is root /.
 
 - example files: `OneDrive/learning-resources/docker-user2022-r-for-docker/04-docker-and-r/02-installing-r-packages/02c-using-renv-option-1`
 
@@ -1136,10 +1135,10 @@ Official tutorial: https://docs.docker.com/engine/swarm/
 **docker registry itself has a image** and is easy to install and use
     - `$ docker run -d -p 5000:5000 --restart always --name regist registry:2` to start a registry container
         - the registry is at `localhost:5000/` 
-    - `$ docker tag r-base:4.2.3 localhost:5000/r-base:4.2.3` to re-tag a image under the registry addrtess
-    - `$ docker push localhost:5000/r-base:4.2.3` to push the image to the local registry
+        - `$ docker tag r-base:4.2.3 localhost:5000/r-base:4.2.3` to re-tag a image under the registry addrtess
+        - `$ docker push localhost:5000/r-base:4.2.3` to push the image to the local registry
         - by default the images are stored in container's `/var/lib/registry/docker/registry/v2/repositories/`. 
-    - `$ docker pull localhost:5000/r-base:4.2.3` to pull image from local registry
+        - `$ docker pull localhost:5000/r-base:4.2.3` to pull image from local registry
 
 **use docker volume or binding mounts for persistent storage of local registry**
     - `$ docker volume create local-registry` to create a volume
