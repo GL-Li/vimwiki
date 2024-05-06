@@ -14,6 +14,31 @@
 
 ## Workflow & SOP =============================================================
 
+### SOP: vim for IDE minimal setting
+- minimal .vimrc
+    - install vim-plug from https://github.com/junegunn/vim-plug, by running
+        - curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    - add the following to .vimrc
+        ```
+        call plug#begin()
+
+            Plug 'prabirshrestha/vim-lsp'
+            Plug 'mattn/vim-lsp-settings'
+
+        call plug#end()
+
+        function! s:on_lsp_buffer_enabled() abort
+            setlocal omnifunc=lsp#complete
+        endfunction
+
+        augroup lsp_install
+            au!
+            " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+            autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+        augroup END
+        ```
+
 ### SOP: manage plugins with vim-plug plugnin manager
 
 - Install vim-plug follow instuctions, which is different from installing other vim plugins: https://github.com/junegunn/vim-plug
@@ -63,8 +88,6 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ### QA: How to map Esc key to CapsLok key?
 
-
-
 ### QA: How to format a messy markdown table in vim?
 
 For example, we have a table looks like
@@ -84,7 +107,7 @@ We can use terminal utility `column` inside Vim to align the table:
     - `-t` to determine number of columns
     - `-s '|'`: column seperator in input is `|`
     - `-o '|'`: column seperator in output is `|`, can be changed to other seperator.
-- Note that utilities `column` needs to be installed in the system. 
+- Note that utilities `column` needs to be installed in the system.
 
 ### QA: how to delete leading white space in multiple line in visual mode
 
@@ -495,7 +518,7 @@ Trouble in comment lines. The operation may fail in commented lines. If this hap
 - `:bufdo %s/aaa/bbb/g | w` openrating on all buffers and save
 - `:bufdo %s/aaa/bbb/g` will work if `:set hiddeen` to skip the saving.
 - `:bufdo normal u` undo changes to all buffers.
-- `:E` to open a list of files as a buffer and select a file to open into buffer. 
+- `:E` to open a list of files as a buffer and select a file to open into buffer.
 - `:bd` to close current buffer.
 
 ### vim working with multiple windows
@@ -1077,4 +1100,3 @@ https://github.com/tpope/vim-markdown/issues/21
 - add a new column, \tic
 - delete a column, \tdc
 - delete row, \tdd
-
