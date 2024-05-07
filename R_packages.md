@@ -18,6 +18,51 @@ options(orig_ops)
 getOption("aaa")
 ```
 
+**on.exit()**
+
+Record expression to be run when a function exits (success or failure). It can be used to restore options and working directory.
+
+```r
+# restore options
+print_2_digits <- function(x) {
+  # keep a copy of original options and then change digits
+  op <- options(digits = 2)
+  # retore options when exiting function, even function failed. So place
+  # on.exit() right after the option changed and before possible failure
+  on.exit(options(op))
+  print(1 / x)
+}
+print(3.14159265)           # all digits
+print_2_digits(3.14159265)  # 3.1
+print(3.14159265)           # all digits
+print_2_digits("abcdefg")   # error
+print(3.14159265)           # all digits
+
+# restore working directory
+read_file <- function(dir_path, file_name) {
+    wd_oroginal <- getwd()
+    setwd(dir_path)
+    on.exit(setwd(wd_original)
+    
+    read.csv(file_name)
+}
+```
+
+**.onLoad()**
+
+In package development, `.onLoad` function is used to run code when `library(aaa)` a package. The function is usually placed in `R/zzz.R` (yes, zzz.R) like
+
+```r
+.onLoad <- function(libname, pkgname) {
+    # load required packages
+    if (!require(ggplot2)) {
+        install.packages("ggplot2")
+        library(ggplot2)
+    }
+    
+    # some other actions
+}
+```
 
 ## cli
 
