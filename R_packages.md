@@ -148,3 +148,8 @@ run_selfSrv <- function(selfSrv_dir) {
     system("Rscript pea1.R")
 }
 ```
+
+
+## processx
+
+The package provide enhanced functionality (`processx::run()`) compared  base R's `system()` and `system2()` function. Use this package if the two base functions fail to do. Otherwise stick to the base R functions.
