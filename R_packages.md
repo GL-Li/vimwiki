@@ -64,6 +64,42 @@ In package development, `.onLoad` function is used to run code when `library(aaa
 }
 ```
 
+**tryCatch**
+
+`tryCatch` is used to continue the code execution in case of an error (or warning). It is slow so do not use it in very large for loop.
+
+The standard use case: if the expression is successful, returns the output of the expression. If there is error or warning, returns `NULL`  or specified values.
+
+```r
+beera <- function(expr){
+  tryCatch(expr,
+         error = function(e){
+           message("An error occurred:\n", e)
+           return("hahaha")  # without this, returns NULL in case of error
+         },
+         
+         # the waring section is optional. Without it, tryCatch just return the output
+         # of the expr, for example, as.numeric(c("1", "one")) returns c(c, NA)
+         warning = function(w){
+           # if a warning, print out this message and return nothing
+           message("A warning occured:\n", w)
+           return(99999)  # without this, returns NULL in case of warning
+         },
+         
+         # The finally section can be used for cleaning up database connections and
+         # logging information to a file. Never use it for return value as it will
+         # overwrite any previous return.
+         finally = {
+           message("Finally done!")
+         })
+}
+
+beera(1 + 1)  # 2
+beera(1 / 0) # Inf
+beera(as.numeric("1", "one"))  # NULL, with warning message
+```
+
+
 ## cli
 
 https://github.com/r-lib/cli/
