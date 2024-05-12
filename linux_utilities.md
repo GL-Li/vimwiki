@@ -252,3 +252,22 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
         - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
         - `gpg> trust` and select `5` the ultimate trust and save
     - clone `.password-store` to the new computer. Must have exactly the same directory name.
+
+
+## cryptsetup
+To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xamE
+
+- encript a USB drive
+    - `$ lsblk` to check the attached USB drive partition, for example `sdc1`
+    - `$ sudo cryptsetup luksFormat /dev/sdc1` to encrypt the whole disc
+        - remember the passphrase.
+    - `$ sudo cryptsetup open /dev/sdc1 anyname` to decrypt the drive and create a drive  at `/dev/sdc1/anyname`
+        - run `$ lsblk` to verify that `anyname` is under `sdc1`
+    - `$ mkfs.btrfs /dev/mapper/anyname` to create a ext4 file system on the `anyname` drive. Must use **/dev/mapper/anyname**.
+- use the encrypted USB drive
+    - `$ sudo cryptsetup open /dev/sdc1 usb` to decrypt the drive and create a drive  at `/dev/sdc1/usb`. Yes, you can rename it to `usb` from `anyname`
+    - `$ sudo mount /dev/mapper/usb /mnt/usb` to mount the USB drive to `/mnt/usb`. It works like a normal drive
+    - `$ sudo umount /mnt/usb` to unmount the drive when all work done
+    - `$ sudo cryptsetup close usb` to re-crypt the drive.
+
+
