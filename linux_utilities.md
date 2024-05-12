@@ -209,3 +209,46 @@ translate or delete **characters**.
 
 - `echo "Abc Def" | tr -d [a-z]` to delete all lower case characters
 - `echo "Abb Effff" | tr -s bf` to squeeze duplicated b and f to a single character
+
+
+## pass
+password manager, https://www.passwordstore.org/
+
+Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
+
+- create GPG key pair if not already have one
+    - `$ gpg --gen-key`
+        - remember the master passphrase and never share with anyone else
+        - a directory `$HOME/.gnupg/openpgp-revocs.d` created
+        - `$gpg -K` to view the public key
+        - `$ gpg --edit-key 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D` to edit the key. Replace the public key from the output of `gpg -K`.
+        - `gpg> expire` and select never expire. Master passphrase needed.
+        - `gpg> save` and exit
+- installa and initialize password store
+    - `$sudo apt install pass`
+    - `$ pass init 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D`
+        - the command above created subdirectory `.password-store`
+    - `$ pass git init` to git version control of passwords
+- generate password, for example, for github account
+    - `$ pass generate githut/GL-Li`
+        - a randomly generated password is created and stored in a subdirectory `.password-store/github/GL-Li`.
+        - to view the password, `$ pass show github/GL-Li`, master passphrase required.
+        - a git commit is aumatically added to the history
+            - `pass git log` to view commit history
+            - `pass git xxx` to run git command on the password repo. No need to switch to the repo. You can `$ cd .password-store`.
+            - make a private repo on github or bitbucket for the repo
+- use a password
+    - `pass show -c github/GL-Li` to copy the password to clipboard and ready to paste. 
+    
+- use the password store on another computer
+    - export gpg keys into files
+        - `$ gpg --output public.gpg --armor --export lglforfun@gmail.com`
+        - `$ gpg --output private.gpg --armor --export-secret-keys lglforfun@gmail.com`, require master passphrase
+    - import gpg keys to another computer
+        - copy file `public.gpg` and `private.gpg` to the new computer
+        - `$ gpg --import private.gpg` to import private key
+        - `$ gpg --import public.gpg` to import public key
+    - update trust level on the new computer
+        - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
+        - `gpg> trust` and select `5` the ultimate trust and save
+    - clone `.password-store` to the new computer. Must have exactly the same directory name.
