@@ -225,3 +225,24 @@ processx::run("ls", "-ltr")
 # [1] FALSE
 
 ```
+
+## covr
+Check percentage of code covered by unit tests.
+
+- How to ignore code in unit tests?
+    - https://covr.r-lib.org/reference/exclusions.html
+    - ignore a function, or multiple lines of code
+        ```r
+       # nocov start
+       func <- function() {
+           # skip
+       }
+       # nocov end
+        ```
+    - ignore one line of code
+        ```r
+        func <- function() {
+            x <- x + 1  # noconv
+        }
+        ```
+    - other methods are not as straightforward as the two above.
