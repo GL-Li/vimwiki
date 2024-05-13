@@ -265,9 +265,11 @@ To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xam
         - run `$ lsblk` to verify that `anyname` is under `sdc1`
     - `$ mkfs.btrfs /dev/mapper/anyname` to create a ext4 file system on the `anyname` drive. Must use **/dev/mapper/anyname**.
 - use the encrypted USB drive
-    - `$ sudo cryptsetup open /dev/sdc1 usb` to decrypt the drive and create a drive  at `/dev/sdc1/usb`. Yes, you can rename it to `usb` from `anyname`
-    - `$ sudo mount /dev/mapper/usb /mnt/usb` to mount the USB drive to `/mnt/usb`. It works like a normal drive
-    - `$ sudo umount /mnt/usb` to unmount the drive when all work done
-    - `$ sudo cryptsetup close usb` to re-crypt the drive.
+    - when the USB drive is inserted, you will be prompted to enter the passphrase and the drive will be aumatically mounted to `/media/gl/fc3e5c7a-34a6-41fb-8c74-4eeb385b7805`, a randomly named directory.
+    - if you do not like it, you can unmount it and the cryptsetup close it. And then follow step below
+        - `$ sudo cryptsetup open /dev/sdc1 usb` to decrypt the drive and create a drive  at `/dev/sdc1/usb`. Yes, you can rename it to `usb` from `anyname`
+        - `$ sudo mount /dev/mapper/usb /mnt/usb` to mount the USB drive to `/mnt/usb`. It works like a normal drive
+        - `$ sudo umount /mnt/usb` to unmount the drive when all work done
+        - `$ sudo cryptsetup close usb` to re-crypt the drive.
 
 
