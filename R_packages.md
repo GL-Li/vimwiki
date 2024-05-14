@@ -1,3 +1,9 @@
+## low-dependency packages
+Packages depends only on R or base-R packages.
+
+- data.table
+- stringi
+
 ## base
 
 **options()**
@@ -189,3 +195,33 @@ run_selfSrv <- function(selfSrv_dir) {
 ## processx
 
 The package provide enhanced functionality (`processx::run()`) compared  base R's `system()` and `system2()` function. Use this package if the two base functions fail to do. Otherwise stick to the base R functions.
+
+```r
+processx::run("ls", "-ltr")
+
+# $status
+# [1] 0
+# 
+# $stdout
+# [1] "total 184\ndrwxr-xr-x 3 gl gl  4096 May  1 21:14 vignettes\ndrwxr-xr
+# -x 4 gl gl  4096 May  1 21:14 tests\n-rw-r--r-- 1 gl gl   414 May  1 21:1
+# 4 rextendr.Rproj\n-rw-r--r-- 1 gl gl  5373 May  1 21:14 README.Rmd\n-rw-r
+# --r-- 1 gl gl  5441 May  1 21:14 README.md\ndrwxr-xr-x 2 gl gl  4096 May 
+#  1 21:14 R\n-rw-r--r-- 1 gl gl   431 May  1 21:14 _pkgdown.yml\n-rw-r--r-
+# - 1 gl gl  2987 May  1 21:14 NEWS.md\n-rw-r--r-- 1 gl gl  1343 May  1 21:
+# 14 NAMESPACE\ndrwxr-xr-x 3 gl gl  4096 May  1 21:14 man\n-rw-r--r-- 1 gl 
+# gl  1075 May  1 21:14 LICENSE.md\n-rw-r--r-- 1 gl gl    46 May  1 21:14 L
+# ICENSE\ndrwxr-xr-x 4 gl gl  4096 May  1 21:14 inst\n-rw-r--r-- 1 gl gl  2
+# 159 May  1 21:14 DESCRIPTION\n-rw-r--r-- 1 gl gl   850 May  1 21:14 cran-
+# comments.md\n-rw-r--r-- 1 gl gl  5300 May  1 21:14 CONTRIBUTING.md\n-rw-r
+# --r-- 1 gl gl  5539 May  1 21:14 CODE-OF-CONDUCT.md\n-rw-r--r-- 1 gl gl  
+#  232 May  1 21:14 codecov.yml\n-rw-r--r-- 1 gl gl  2419 May  1 21:18 prin
+# ciples.md\n-rw-r--r-- 1 gl gl 92464 May  2 06:36 tags\n"
+# 
+# $stderr
+# [1] ""
+# 
+# $timeout
+# [1] FALSE
+
+```
