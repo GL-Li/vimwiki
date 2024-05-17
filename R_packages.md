@@ -6,6 +6,17 @@ Packages depends only on R or base-R packages.
 
 ## base
 
+
+**tempfile()**
+
+Each R session has a unique temporary directory, which can be created by `tempdir()`. To create multiple unique subdirectories under this temporary directory, we can use `tempfile()`
+
+```r
+aaa_dir <- tempfile("aaa")
+dir.create(aaa_dir)
+```
+
+
 **options()**
 
 Set or change global options:
