@@ -3,6 +3,11 @@ Packages depends only on R or base-R packages.
 
 - data.table
 - stringi
+- cli
+- rlang
+- withr
+- glue
+- rprojroot and here
 
 ## base
 
