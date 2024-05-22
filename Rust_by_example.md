@@ -143,8 +143,8 @@ Rust primitives include
     - bool, `true` or `false`
     - unit type `()`
 - compound types:
-    - arrays like `[1, 2, 3]`
-    - typles like `(1, true)`
+    - arrays like `[1, 2, 3]`, must be the same type
+    - typles like `(1, true)`, can be different types
 
 ### 2.1 Literals and operators
 
@@ -173,13 +173,13 @@ Tuples can have mixed types as elements.
     use std::fmt;
     #[derive(Debug)]
     struct Matrix(f32, f32, f32, f32);
-
+    
     impl Matrix {
         fn transpose(&self) -> Matrix {
             Matrix(self.0, self.2, self.1, self.3)
         }
     }
-
+    
     impl fmt::Display for Matrix {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "[")?;
@@ -188,7 +188,7 @@ Tuples can have mixed types as elements.
             write!(f, "]")
         }
     }
-
+    
     fn main() {
         let mtx = Matrix(1.1, 1.2, 2.1, 2.2);
         println!(
@@ -200,7 +200,7 @@ Tuples can have mixed types as elements.
     ```
 
 ### 2.3 Arrays and slices
-An **arrays** is a collection of objects of the same time, whose length is known at compiling time. A **slice** is a reference to a section of an array, whose length is unknown at compiling.
+An **arrays** is a collection of objects of the same type, whose length is known at compiling time. A **slice** is a reference to a section of an array, whose length is unknown at compiling.
 
 - create an array:
     - `let x: [i32; 5] = [1, 2, 3, 4, 5];`
@@ -255,13 +255,13 @@ struct, enum, constant and static.
         x: i32,
         y: i32,
     }
-
+    
     #[derive(Debug)]
     struct Rectangle {
         bottom_left: Point,
         top_right: Point,
     }
-
+    
     fn main() {
         let p1 = Point { x: 0, y: 0 };
         let p2 = Point { x: 1, y: 2 };
@@ -270,7 +270,7 @@ struct, enum, constant and static.
             top_right: p2,
         };
         println!("{:?}", rec);
-
+    
         // update the top_right point
         let rec2 = Rectangle {
             top_right: Point { x: 3, y: 3 },
@@ -284,7 +284,7 @@ struct, enum, constant and static.
         // error, rec.bottom_left moved into rec2 above. To solve the problem,
         // give Copy trait to Point with #[derive(Debug, Clone, Copy)]
         println!("{:?}", rec.bottom_left);
-
+    
         // destructure
         let Rectangle {
             bottom_left: aaa,
@@ -512,7 +512,8 @@ fn main() {
             println!("My number is {:?}", num);
             
             // into() is working if From is implemented but need
-            // to explecitly specify types
+            // to explecitly specify type for num_2 as 99i32 may be convert to 
+            // more than one types.
             let num_2: Number = 99i32.into();  // i32 not required as type of num_2 defined
             println!("Number from into is {:?}", num_2);
         }
@@ -693,7 +694,7 @@ covered in the rust book
         ```rust
         fn main() {
             let names = vec!["aaa", "bbb", "ccc"];
-
+        
             for name in names.iter() {
                 match name {
                     &"aaa" => println!("aaa ---"),  // must be &str
@@ -708,14 +709,14 @@ covered in the rust book
         ```rust
         fn main() {
             let names = vec!["aaa", "bbb", "ccc"];
-
+        
             for name in names.into_iter() {
                 match name {
                     "aaa" => println!("aaa ---"),  // str not &str
                     _ => println!("not aaa ---"),
                 }
             }
-
+        
             // dbg!(names);  // names no available anymore.
         }
         ```
@@ -724,14 +725,14 @@ covered in the rust book
         ```rust
         fn main() {
             let mut names = vec!["aaa", "bbb", "ccc"];
-
+        
             for name in names.iter_mut() {
                 *name = match name {
                     &mut "aaa" => "AAA",
                     _ => "~~~",
                 }
             }
-
+        
             dbg!(names);
         }
         ```
@@ -800,7 +801,7 @@ fn main() {
             Color::HSV(h, s, v) => println!("hue {}, saturation {}, value {}", h, s, v),
         }
     }
-    ```
+```
 
 - destructuring **pointers/ref**: get the data a reference points to. Similar to dereferencing with `*`.
     ```rust
@@ -819,7 +820,7 @@ fn main() {
             x: (u32, u32),
             y: u32,
         }
-
+    
         let aaa = Aaa { x: (1, 2), y: 3 };
         match aaa {
             Aaa { x: (1, b), y: c } => println!("second of x is {b}, y is {c}"),
@@ -1000,7 +1001,7 @@ Closures can capture variables in enclosing environment by reference `&T`, by mu
         let aaa = 3;
         let cls1 = |i| i + aaa; 
         println!("closure is {}, and aaa is {}", cls1(3), aaa);
-
+    
         let bbb = "hello".to_string();
         let cls2 = || &bbb; // explicit reference to values in heap
         println!("closure is {:?}, and bbb is {}", cls2(), bbb);
@@ -1017,7 +1018,7 @@ Closures can capture variables in enclosing environment by reference `&T`, by mu
             println!("New count is {}", count);
         };
         increment();
-
+    
         let mut aaa = "hello".to_string();
         let mut change = || aaa.push_str(" world");
         change();
@@ -1029,7 +1030,7 @@ Closures can capture variables in enclosing environment by reference `&T`, by mu
     ```rust
     fn main() {
         let haystack = vec![1, 2, 3];
-
+    
         // haystack is moved into closure f and f can be used repeatedly
         let f = move |needle| haystack.contains(needle);
         println!("{}", f(&1));
@@ -1054,19 +1055,19 @@ Closures can capture variables in enclosing environment by reference `&T`, by mu
     {
         f();
     }
-
+    
     fn apply_to_3<F>(f: F) -> i32
     where
         F: Fn(i32) -> i32, // take a parameter 
     {
         f(3)
     }
-
+    
     fn main() {
         let greeting = "hello";
         // string slice is &str reference, to_owned make it an owned value
         let mut farewell = "goodby".to_owned();
-
+    
         let diary = || {
             // use greeting by reference, which requires Fn
             println!("I said {}", greeting);
@@ -1076,10 +1077,10 @@ Closures can capture variables in enclosing environment by reference `&T`, by mu
             // drop the value of farewell, requires FnOnce
             std::mem::drop(farewell);
         };
-
+    
         apply(diary); // closure diary requires FnOnce()
         // apply(diary); // error, diary can only be called once
-
+    
         let aaa = 1;
         // aaa by reference only. x is a closure parameter
         let double = |x| 2 * x + aaa;
@@ -1154,7 +1155,7 @@ fn main() {
     ```rust
     pub trait Iterator {
         type Item;
-
+    
         fn any<F>(&mut self, f: F) -> bool where
             F: FnMut(Self::Item) -> bool,
     }
@@ -1169,6 +1170,7 @@ fn main() {
     }
     ```
     
+
 **9.2.6.2. Searching throug iterators**
 
 - definition in standard library. It takes a closure that returns `bool`. The function returns a `Option`, which is `Some(first_element)` if found and `None` if not found.
@@ -1176,7 +1178,7 @@ fn main() {
     ```rust
     pub trait Iterator {
         type Item;
-
+    
         fn find<P>(&mut self, predicate: P) -> Option<Self::Item> where
             P: FnMut(&Self::Item) -> bool;
     }
@@ -1225,7 +1227,7 @@ Example of divering functions:
     - `panic!()`
     - `exit()`
     - `unimplemeted!()`, which is a wrap around `panic!()`
-    
+
 Examples of diverging expressions
 
     - `continue`
@@ -1394,7 +1396,7 @@ A library can be created from a single `.rs` file. Here is a simple example:
     pub fn print_aaa() {
         println!("aaa");
     }
-
+    
     pub mod mod1 {
         pub fn print_mod1() {
             println!("module 1");
@@ -1518,16 +1520,16 @@ Configuration conditional checks.
     fn are_you_on_linux() {
         println!("You are running linux!");
     }
-
+    
     // And this function only gets compiled if the target OS is *not* linux
     #[cfg(not(target_os = "linux"))]
     fn are_you_on_linux() {
         println!("You are *not* running linux!");
     }
-
+    
     fn main() {
         are_you_on_linux();
-
+    
         println!("Are you sure?");
         if cfg!(target_os = "linux") {
             println!("Yes. It's definitely linux!");
@@ -1718,7 +1720,7 @@ fn main() {
 - example
     ```rust
     struct Container(i32, i32);
-
+    
     // trait defined explicitly by generic type A and B
     trait Contains1<A, B> {
         // explicity <A, B>
@@ -1740,19 +1742,19 @@ fn main() {
     {
         container.last() - container.first()
     }
-
+    
     // trait with associated types
     trait Contains2 {
         type A;  // declair associated types A and B in trait definition
         type B;  // They are still generic here
-
+    
         fn first(&self) -> i32;
         fn last(&self) -> i32;
     }
     impl Contains2 for Container {
         type A = i32;  // specify associated type when implement method for a type
         type B = i32;  // be explicit
-
+    
         fn first(&self) -> i32 {
             self.0
         }
@@ -1763,14 +1765,14 @@ fn main() {
     fn difference2<C: Contains2>(container: &C) -> i32 {  // use trait bound for C, 
         container.last() - container.first()              // no more A and B
     }                                                     // they are inferred from C
-
+    
     fn main() {
         let number_1 = 3;
         let number_2 = 10;
-
+    
         let container1 = Container(number_1, number_2);
         println!("The difference1 is: {}", difference1(&container1));
-
+    
         let container2 = Container(number_1, number_2);
         println!("The difference2 is: {}", difference2(&container2));
     }
@@ -2017,7 +2019,7 @@ A list of traits can be `#[derive(...)]`ed.
         {
             // Required method, x.eq(y) is x == y
             fn eq(&self, other: &Rhs) -> bool;
-
+        
             // Provided method, x.ne(y) is x != y
             fn ne(&self, other: &Rhs) -> bool { ... }
         }
@@ -2033,7 +2035,7 @@ A list of traits can be `#[derive(...)]`ed.
     {
         // Required method
         fn partial_cmp(&self, other: &Rhs) -> Option<Ordering>;
-
+    
         // Provided methods
         fn lt(&self, other: &Rhs) -> bool { ... }  // for a < b
         fn le(&self, other: &Rhs) -> bool { ... }  // for a <= b
@@ -2047,7 +2049,7 @@ A list of traits can be `#[derive(...)]`ed.
     pub trait Ord: Eq + PartialOrd {
         // Required method
         fn cmp(&self, other: &Self) -> Ordering;
-
+    
         // Provided methods
         fn max(self, other: Self) -> Self
            where Self: Sized { ... }
@@ -2062,7 +2064,7 @@ A list of traits can be `#[derive(...)]`ed.
     ```rust
     #[derive(PartialEq, PartialOrd)]
     struct Aaa(f64);
-
+    
     fn main() {
         let a1 = Aaa(3.14);
         let a2 = Aaa(9.82);
@@ -2081,29 +2083,29 @@ When a function returns different types that implements a common trait Xxxx, we 
     ```rust
     struct Sheep {}
     struct Cow {}
-
+    
     trait Animal {
         fn noise(&self) -> &'static str;
     }
-
+    
     impl Animal for Sheep {
         fn noise(&self) -> &'static str {
             "baaaah!"
         }
     }
-
+    
     impl Animal for Cow {
         fn noise(&self) -> &'static str {
             "mooooo!"
         }
     }
-
+    
     // a function whose return signature is -> impl Animal can only possible return
     // one type, which must be pre-determine in function body at compile time.
     fn one_animal() -> impl Animal {
         Sheep {} // only return type Sheep
     }
-
+    
     // The return type Cow or Sheep is determine in run time. In compile time the
     // function still return one type Box. Yes, Box is a type that is stored in
     // stack and points to values in heap.
@@ -2114,11 +2116,11 @@ When a function returns different types that implements a common trait Xxxx, we 
             Box::new(Cow {})
         }
     }
-
+    
     fn main() {
         let animal = random_animal(0.1);
         println!("{}", animal.noise());
-
+    
         let aaa = one_animal();
         println!("{}", aaa.noise());
     }
@@ -2133,7 +2135,7 @@ Many operators can be overloaded via traits. For example, if a type implemented 
         ```rust
         pub trait Add<Rhs = Self> {
             type Output;
-
+        
             // Required method
             fn add(self, rhs: Rhs) -> Self::Output;
         }
@@ -2141,16 +2143,16 @@ Many operators can be overloaded via traits. For example, if a type implemented 
     - example
         ```rust
         use std::ops::Add;
-
+        
         // create a set of zero-sized types (ZST) for demonstration
         struct Foo;
         struct Bar;
-
+        
         #[derive(Debug)]
         struct FooBar;
         #[derive(Debug)]
         struct BarFoo;
-
+        
         // Add trait most used to add two variables of the same type. But it can be
         // to joint two different types, for example String + &str.
         impl Add<Bar> for Foo {
@@ -2159,7 +2161,7 @@ Many operators can be overloaded via traits. For example, if a type implemented 
                 FooBar
             }
         }
-
+        
         // a + b can be different from b + a
         impl Add<Foo> for Bar {
             type Output = BarFoo;
@@ -2167,16 +2169,16 @@ Many operators can be overloaded via traits. For example, if a type implemented 
                 BarFoo
             }
         }
-
+        
         fn main() {
             let x = Foo;
             let y = Bar;
             println!("{:?}", x + y); // operator + moves both x and y
-
+        
             let x = Foo;
             let y = Bar;
             println!("{:?}", x.add(y)); // another way of using add
-
+        
             let x = Foo;
             let y = Bar;
             println!("{:?}", Add::add(y, x)); // one more way of using add
@@ -2199,13 +2201,13 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
     struct Droppable {
         name: &'static str,
     }
-
+    
     impl std::ops::Drop for Droppable {
         fn drop(&mut self) {
             println!("{} is dropped!", self.name);
         }
     }
-
+    
     fn main() {
         let x = Droppable { name: "Tom" };
         {
@@ -2229,12 +2231,12 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
         for i in x {
             println!("{i}");
         }
-
+    
         let y = 1..10;
         for i in y.take(3) {
             println!("{i}");
         }
-
+    
         let y = 1..10;
         for i in y.skip(2).take(3) {
             println!("{i}");
@@ -2242,6 +2244,7 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
     }
     ```
     
+
 **Fibonacci sequence**
 
     ```rust
@@ -2250,32 +2253,32 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
         cur: u32,
         next: u32,
     }
-
+    
     impl Iterator for Fibonacci {
         type Item = u32;a // must use name Item
-
+    
         // .next() returns an Option
         fn next(&mut self) -> Option<Self::Item> {
             let current = self.cur;
             self.cur = self.next;
             self.next = current + self.next;
-
+    
             // Fibonacci never ends, so None is never returned.
             Some(current)
         }
     }
-
+    
     fn fib() -> Fibonacci {
         Fibonacci { cur: 0, next: 1 }
     }
-
+    
     fn main() {
         let mut x = fib();
         println!("{:?}", x.next());  // Some(0)
         println!("{:?}", x.next());  // Some(1)
         println!("{:?}", x.next());  // Some(1)
         println!("{:?}", x.take(3)); // Take { iter: Fibonacci { cur: 2, next: 3 }, n: 3 }
-
+    
         let x = fib();
         for i in x.take(6) {
             println!("{}", i);
@@ -2295,7 +2298,7 @@ Rust automatically drop a variable when it goes out of scope by calling `Drop::D
         let closure = move |x: i32| x + y;
         closure
     }
-
+    
     fn main() {
         let aaa = 99;
         // add_9 is a closure that returns x + 9
@@ -2426,7 +2429,7 @@ Macros generate source code that gets compiled with the rest of program.
             }
         };
     }
-
+    
     fn main() {
         create_function!(func1);
         create_function!(func2);
@@ -2442,14 +2445,14 @@ Macros generate source code that gets compiled with the rest of program.
             println!("{:?} = {:?}", stringify!($x), $x);
         };
     }
-
+    
     fn main() {
         // output "{ let x = 1u32; x * x + 2 * x - 1 }" = 2
         print_result!({
             let x = 1u32;
             x * x + 2 * x - 1
         });
-
+    
         // output "9 + 2" = 11
         print_result!(9 + 2);
     }
@@ -2482,13 +2485,13 @@ Macros can be overloaded to accept different combinations of arguments.
             );
         };
     }
-
+    
     fn main() {
         aaa!(true; --- false);
         aaa!(3 + 5 == 8; orrr false);
     }
     ```
-    
+
 #### 17.1.3. Repeat
 
 Use `+` and `*` like in regular expression but repeat an argument.
@@ -2499,19 +2502,19 @@ Use `+` and `*` like in regular expression but repeat an argument.
         ($x:expr) => {
             $x
         };
-
+    
         // repeat "$($y:expr)," one or more times.
         ($x:expr, $($y:expr),+) => {
             // call bbb! recursively
             std::cmp::min($x, bbb!($($y),+))
         }
     }
-
+    
     fn main() {
         println!("{}", bbb!(3, 2, 5));
     }
     ```
-    
+
 ### 17.2. DRY (Don't Repeat Yourself)
 
 skip for now
