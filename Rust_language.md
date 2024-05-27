@@ -4,7 +4,7 @@
 - Workflow and SOP
 - Minimal examples
 - QA
-- Snippets 
+- Snippets
 - Raw notes
 
 ## Major reference ===
@@ -106,7 +106,7 @@ fn main() {
 
 // if allow Copy with #[derive(Debug, Copy, Clone)], there will be
 // no more "move out of ..." error
-#[derive(Debug)] 
+#[derive(Debug)]
 struct Square {
     r: f64,
 }
@@ -116,7 +116,7 @@ impl Square {
         Square {
             r: self.r + x,
         }
-    } 
+    }
 }
 ```
 
@@ -139,7 +139,7 @@ impl Square {
             // a new String with data "String aaabbbccc"
         ```
 
-**&str is a borrowed reference to a string literal or a slice of String**. 
+**&str is a borrowed reference to a string literal or a slice of String**.
 - use it whenever possible as it is faster and simple than `String`.
 - It does not own the data and is immutable.
     ```rust
@@ -178,7 +178,6 @@ let mut aaa = String.new();
 io::stdin().read_line(&mut aaa).expect("Fail to read line");
 println!("aaa is {aaa}");
 ```
-
 
 ## Snippets ===
 
@@ -249,9 +248,9 @@ fn main() {
         name = "hello_cargo"
         version = "0.1.0"
         edition = "2021"
-        
+
         # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-        
+
         [dependencies]
         ```
 
@@ -359,14 +358,14 @@ fn main() {
     ```rust
     fn main() {
         let x = 5;
-    
+
         let x = x + 1; //now 6
-    
+
         {
             let x = x * 2; // here x is 12
             println!("The value of x in the inner scope is: {x}");
         }
-    
+
         println!("The value of x is: {x}"); // x is still 6 !!!!!
     }
     ```
@@ -384,7 +383,7 @@ fn main() {
     - we can add underscore `_` to integer literals. For example, `12_34_567` is the same as `1234567`.
     - The default integer type is `i32`.
     - Integer division returns an integer, truncates toward zero. For example, 5/3 is 1.
-- floating-point types like `f32` and `f64`. 
+- floating-point types like `f32` and `f64`.
     - Rust's default is `f64`. All floating-point types are signed.
     - Integer literals cannot be assigned to floating-point variables
         ```rust
@@ -395,7 +394,7 @@ fn main() {
     ```rust
     let x: i32 = 5 / 3;  //return 1
     let x = -5 / 3; //return -1, Rust can guess data type for x, but slow
-    let x = 5.0 / 3; //error, floating-point cannot be devied by integer 
+    let x = 5.0 / 3; //error, floating-point cannot be devied by integer
     let x: f32 = 5 / 3; //error, types mismatch, 5 / 3 is integer
     let x: f32 = 5.0 / 3.0; //return 1.66666...
     ```
@@ -410,7 +409,6 @@ fn main() {
     let c: char = "z"; // error in double quote
     let c: char = 'abc'; //error, more than one character
    ```
-   
 
 **Compound types** contain multiple values
 - tuple type can group different types. A tuple has a fixed length once created. A empty tuple is called `unit` and is written in `()`.
@@ -418,12 +416,12 @@ fn main() {
     let aaa: (i32, f64, char) = (500, 3.14, 't');
     let (x, y, z) = aaa; // destructure the tuple into elements
     println!("aaa has {x}, {y}, {z}");
-    
+
     // or use aaa.0, aaa.1, ..., to access element by index
     let ele_1 = aaa.0
     println!("aaa first element is {ele_1}");
     println!("aaa first element is {aaa.0}"); // error, {...} is a placeholder for a varaible, not a value
-    
+
     // use tuple to swap two values
     let a = 11;
     let b = 22;
@@ -463,7 +461,7 @@ let z = my_functions();
 ```
 
 **Function with return values**: rules to follow
-- types of argument must be specified 
+- types of argument must be specified
 - type of return must be specified
 - last statement is the return, or return with `return` keyword
 - example
@@ -472,7 +470,7 @@ let z = my_functions();
     fn add_2(x: i32, y: i32) -> i32 {
         return x + y   // with or without return is ok
     }
-    
+
     // error: return unit (), not i32 as declaired
     fn add_2(x: i32, y: i32) -> i32 {
         x + y;   // not an expression because of ending ;
@@ -602,7 +600,7 @@ fn main() {
 
 ### 4.1 What is ownership
 
-**Safety is the absence of undefined behavior**: any unexpected action by the code potentially causses security problems. 
+**Safety is the absence of undefined behavior**: any unexpected action by the code potentially causses security problems.
 
 - A foundational goal of Rust is to ensure codes never have undefined behavior.
 
@@ -672,7 +670,7 @@ fn main() {
 
 ### 4.2 referrence and borrowing
 
-**When ownership moved?** 
+**When ownership moved?**
 - Generally speaking, move happens to types that does not implement copy trait.
 - Custom Struct will be moved if copy trait is not implemented.
 - For the built-in types, those lives in heap will be moved, not those in stack
@@ -681,10 +679,10 @@ fn main() {
     let x = 5;
     let y = x; // value of x, 5, is copied to y. Two copies of 5.  Both x and y exist
     println!("x is {x} and y is {y}")  // no problem
-    
+
     // for variables in heap, ownership moved
     let a = String::from("xyz");
-    let b = a;  // ownership of "xyz" moved to b. Only one "xyz" in heap. 
+    let b = a;  // ownership of "xyz" moved to b. Only one "xyz" in heap.
                 // variable a is not valid anymore
     printlin!("a is {a} and b is {b}")  // error as a does not exists anymore
     ```
@@ -700,15 +698,15 @@ fn main() {
 }
 
 fn greet(g1: &String, g2: &String) { // note the ampersands
-    println!("{} {}!", g1, g2); // as g1 and g2 does not own "Hello" and 
-                                // "World", when they dropped after the 
+    println!("{} {}!", g1, g2); // as g1 and g2 does not own "Hello" and
+                                // "World", when they dropped after the
                                 // funcdtion call in main, the values persist
 }
 ```
 
-**Dereferencing a pointer to get its value** of a mutable heap variable. 
+**Dereferencing a pointer to get its value** of a mutable heap variable.
 
-- A variable `x` has two parts: a pointer and a value: `&x` is the pointer and `*x` is the value. 
+- A variable `x` has two parts: a pointer and a value: `&x` is the pointer and `*x` is the value.
 
   ```rust
   fn main() {
@@ -718,45 +716,43 @@ fn greet(g1: &String, g2: &String) { // note the ampersands
       let r3 = &&x; // r3 is a reference to the pointer of x
       let r4 = &r1; // r4 is a reference to r1
       println!("{:p}", r1);  // r1 and r2 are at the same memory address
-      println!("{:p}", r2);  
+      println!("{:p}", r2);
       println!("{:p}", r3);  // r3 has its own address
       println!("{:p}", r4);  // r4 has its own address
-      
+
       println!("{:p}", x);   // x has its address before move
       let y = x;
       println!("{:p}", y);   // y has the same address as x before x's move
   }
   ```
 
-  
-
 - explicit dereferencing with an asterisk `*`, not used very often but need to understand how it works
    ```rust
   let mut x: Box<i32> = Box::new(5);  // use Box to put 5 into heap
-  let a = *x;  
+  let a = *x;
     // x is a pointer-value pair. The * removes the pointer, which is called
     //   dereferencing, so *x is the value only
     // let a = *x; assigns the value to a. As a has no pointer, it lives in stack.
     //   This assignment is possible as x is a i32 value. Not valid if x is a
     //   str type.
   *x += 1;  // modify the value of x to 6
-  
-  let r1: &Box<i32> = &x;  // shared borrowing 
+
+  let r1: &Box<i32> = &x;  // shared borrowing
     // &Box<i32> means reference to a value of type Box<i32>.
     // &x is the value of x through reference of the pointer of x.
     // let r1 = &x; assign x's value to r1 through reference.
     // The operator `=` assigns value, not pointer. `&x` means assign
     //   value through pointer.
     // r1's value is 6 but does not own the value.
-  
-  let b: i32 = **r1;  
+
+  let b: i32 = **r1;
     // *r1 --> *&x --> x so **r1 --> *x
     // b is 6 and lives in stack
-                      
-  let r2: &i32 = &*x; 
-    // r2 is a reference to a i32 object, which has value. 
+
+  let r2: &i32 = &*x;
+    // r2 is a reference to a i32 object, which has value.
     // &* create an immutable reference. A heap value cannot have two or
-    //   more mutable references but can have multiple references, 
+    //   more mutable references but can have multiple references,
     //   including 0 or 1 mutable reference.
   ```
 
@@ -766,14 +762,14 @@ let x: Box<i32> = Box::new(-1);
 let abs1 = i32::abs(*x);
     // explicit dereference, otherwise type error
     // function i32::abs() only takes i32 integers
-    
-let abs2 = x.abs(); 
+
+let abs2 = x.abs();
 let abs3 = &x.abs();
     // inexplicit deferencing, the .abs() will corce the type to
     //   match the method
 
 let abs4 = *x.abs();
-    // error, *x is a value without any reference so it cannot be 
+    // error, *x is a value without any reference so it cannot be
     //  dereferenced
 ```
 
@@ -787,7 +783,7 @@ let abs4 = *x.abs();
         let num: &i32 = &vec[2];
         printlin!("num is {num}")
             // no problem to use num here
-        
+
         vec.push(4);
         println!("print num again: {num}");
             // error when access num again, vec has been altered by the
@@ -802,16 +798,16 @@ let abs4 = *x.abs();
     fn main() {
         let mut vec: Vec<i32> = vec![1, 2, 3];
             // initiate vec with RWO permision
-        
+
         let num: &i32 = &vec[2];
             // initiate num with RO as immutable. It borrows data from vec
             // so vec becomes R only
-            
+
         println!("Third element of vec is {}", *num);
             // This is the line where num is last used, returning borrowed
             // data from vec and then dropped. After the return, vec re-gain
             // RWO of the data.
-            
+
         println!("This is the last time use vec, whose first element is {}",
                  vec[0]);
             // vec dropped as it will out of scope.
@@ -824,16 +820,16 @@ let abs4 = *x.abs();
     let mut x1: i32 = vec[2];
     x1 += 100;
         // x1 is a regular mutable i32 varaible
-        
+
     let x2: &i32 = &vec[2];
         // &i32 is reference, which is immutable as vec is immutable
-    
+
     // when vec is mutable
     let mut vec: Vec<i32> = vec![1, 2, 3];
     let x3: &mut i32 = &mut vec[2];
     *x3 += 100;
-        // &mut indicate mutable reference 
-        // *x3 has write permission to data. 
+        // &mut indicate mutable reference
+        // *x3 has write permission to data.
         // both x3 and vec[2] changed to 103.
         // vec is not accessible until x3 is dropped
     ```
@@ -845,7 +841,6 @@ let abs4 = *x.abs();
 - in plain English: I borrow it and will change it. You please do not touch it until I return it.
 
 **Data must outlive all of its references** especially when a function returns a reference, make sure the data the reference point to is still alive after function return.
-
 
 ### 4.3 Fixing ownership errors
 
@@ -878,7 +873,7 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
     let len = s.len();
     let s1 = &s[3..len];
     let s2 = &s[3..]
-    
+
     let aaa = &s[..];  // type &str
     let bbb = &s;      // type &String but also &str
     ```
@@ -904,20 +899,20 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
       let mut a_num = 0;   // lives in stack
       inner(&mut a_num);
     }
-    
+
     fn inner(x: &mut i32) {  // x is a ponter poiting to the value of a_num
       let another_num = 1;  // lives in stack
       let a_stack_ref = &another_num;  // ponter to value of another_num
-    
+
       let a_box = Box::new(2);  // a pointer poiting to a heap data
       let a_box_stack_ref = &a_box;  // a pointer poiting to the pointer of a_box
       let a_box_heap_ref = &*a_box;  // a pointer poiting to the heap value, it has
                                      // no ownership and is a immutable borrowing
-    
+
       *x += 5;
     }
     ```
-    
+
 ## 5. Use Structs to structure related data
 
 ### 5.1 Defining and instantialing Structs
@@ -973,7 +968,6 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
                   // a String in heap, therefore user1 is no longer available.
     };
     ```
-    
 
 **Special structs**
 
@@ -981,37 +975,36 @@ fn stringify_name_with_title(name: &Vec<String>) -> String {
     ```rust
     struct Color(i32, i32, i32);
     struct Point(i32, i32, i32);
-    
+
     let black = Color(0, 0, 0);   // black and origin are different types
     let origin = Point(0, 0, 0);
     ```
 
 - **uint-like** structs without any fields: it is useful to implement a trait on a type but don't have any data to strore in the type.
-  
+
     ```rust
     struct AlwaysEqual;
     let aaa = AlwaysEqual;
     ```
-    
 
 **Borrowing fields of a struct**
 - borrow checker will track ownership at both the struct and field level.
     ```rust
     struct Point {x: i32, y: i32};
-    
+
     fn main() {
         let mut p = Point {x: 0, y: 0};
         let x = &mut p.x;
         let y = &p.y;
         println!("({}, {})", x, y);
-        
+
         // error, mutable borrow above
         let x1 = &p.x;
         println!("({}, {})", x, y);
     }
     ```
-    
-**field has its own type** 
+
+**field has its own type**
 - not in the book)
     ```rust
     #[derive(Debug)]
@@ -1066,38 +1059,38 @@ dbg!(&rect)  // dbg! moves ownership while println! only use reference.
         width: u32,
         height: u32,
     }
-    
+
     impl Rectangle {
         fn area(&self) -> u32 {      // reference to borrow value
             self.width * self.height
         }
     }
-    
+
     // ok to put multiple method in one impl
     impl Rectangle {
         fn grow(&mut self, x: u32) {  // mutable reference to change value
             self.width += x;  // u32 so do not dereference
             self.height += x;
         }
-        
+
         fn delete(self) {  // move ownership to delete
             // do nothing but self is deleted
         }
     }
-    
+
     fn main() {
         let mut rect1 = Rectangle {
             width: 30,
             height: 50,
         };
-    
+
         rect1.grow(10);
         println!(
             "The rectangle is now {:?}, which area is {}.",
             rect1,
             rect1.area()
         );
-    
+
         rect1.delete();
     }
     ```
@@ -1112,10 +1105,9 @@ dbg!(&rect)  // dbg! moves ownership while println! only use reference.
             }
         }
     }
-    
+
     let sq = Rectangle::square(3);   // call function square
     ```
-    
 
 **struct method will automatically referencing and derefencing to match the self parameters**
 
@@ -1158,7 +1150,7 @@ impl Rectangle {
     let ip_v4 = IpAddr::V4(192, 168, 0, 3);
     let ip_v6 = IpAddr::V6(String::from("2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF"));
     ```
-    
+
 - define methods for enum just like for struct
     ```rust
     impl IpAddr {
@@ -1167,7 +1159,6 @@ impl Rectangle {
       }
     }
     ```
-    
 
 **option enum - a special builtin enum**
 
@@ -1187,14 +1178,14 @@ impl Rectangle {
     let some_string = Some(String::from("hello"));  // type Option<String>
     let absent_number: Option<i32> = None;  // define type for None
     ```
-    
+
 - Option enum is its own type
     ```rust
     let x = 5;   // i32
     let y = Some(8); // Option<i32>
     let sum = x + y; // error, different types
     ```
-    
+
 - builtin method for Option enum: https://doc.rust-lang.org/std/option/enum.Option.html
     - check if an option is Some or None and return a boolean. If a Some, we can add additional conditions.
         ```rust
@@ -1203,19 +1194,19 @@ impl Rectangle {
         assert_eq!(x.is_none(), false):
         assert_eq!(x.is_some_and(|x| x > 1), true) // |x| x > 1 is a closure
         ```
-   - extract value containted in an option and handle the case of None 
+   - extract value containted in an option and handle the case of None
         ```rust
         assert_eq!(x.expect("x should be 2"), 2);
             // if x is None, panic with the message "x should be 2"
-        
+
         assert_eq!(Some("stuff").unwrap(), "stuff"); //returns the contained Some value
         let z: Option<&str> = None;
         assert_eq!(z.unwrap_or("sth"), "sth")  // used to handle None
-        
+
         let t = 5;
         assert_eq!(None.unwrap_or_else(|| 2 * t), 10);
         ```
-        
+
 ### 6.2 The match control flow construct
 
 **an enum is often used with match** to explore each variants
@@ -1228,7 +1219,7 @@ impl Rectangle {
       Dime,
       Quarter,
     }
-    
+
     // match all variants
     fn value_in_cents(coin: Coin) -> u8 {
       match coin {
@@ -1238,7 +1229,7 @@ impl Rectangle {
         Coin::Quarter => 25,
       }
     }
-    
+
     // if we only care about peny and quater
     fn value_in_peny_quarter(coin: Coin) -> u8 {
       match coin {
@@ -1248,7 +1239,7 @@ impl Rectangle {
       }
     }
     ```
-    
+
 - match patterns that bind to values to extract values out of enum variants
     ```rust
     fn main() {
@@ -1256,14 +1247,14 @@ impl Rectangle {
         let q1_cents = value_in_name(q1);
         println!("value in cents is {}", q1_cents);
     }
-    
+
     enum Coin {
         Peny,
         Nickel,
         Dime,
         Quarter(String),  // value of the String can be extracted, example below
     }
-    
+
     fn value_in_name(coin: Coin) -> String {
         match coin {
             Coin::Peny => "one".to_string(),
@@ -1273,7 +1264,7 @@ impl Rectangle {
         }
     }
     ```
-    
+
 - matching with `Option<T>`
     ```rust
     fn main() {
@@ -1281,7 +1272,7 @@ impl Rectangle {
         let y = plus_one(x);
         println!("y is {:?}", y);
     }
-    
+
     fn plus_one(x: Option<i32>) -> Option<i32> {
         match x {
             None => None,
@@ -1289,7 +1280,6 @@ impl Rectangle {
         }
     }
     ```
-    
 
 **How matches interact with ownership**
 
@@ -1310,53 +1300,53 @@ impl Rectangle {
     }
 ```
 
-- match on a reference to avoid moving 
+- match on a reference to avoid moving
     ```rust
     fn main() {
-        let opt: Option<String> = 
+        let opt: Option<String> =
             Some(String::from("Hello world"));
-    
+
         // opt became &opt to avoiding moving
-        match &opt {  
+        match &opt {
             Some(s) => println!("Some: {}", s),
             None => println!("None!")
         };
-    
+
         println!("{:?}", opt);
     }
     ```
-    
+
 ### 6.3 Concise control flow with `if let`
 
 - a less verbose way to handle values that match one pattern while ignoring the rest:
     ```rust
     //the following two code blocks behaves the same
-    
+
     // block 1
     let config_max = Some(3u8);
     match config_max {
         Some(max) => println!("The maximum is configured to be {}", max),
         _ => (),  // have to add this line to conver other possibilies though not interested in
     }
-    
+
     // block 2
     let config_max = Some(3u8);
     if let Some(max) = config_max {   // ignore other possibilities
         println!("The maximum is configured to be {}", max);
     }
     ```
-    
+
 - `if let ... else ...` is not concise compared to `match`. Simply use match if need to check multiple possibilities.
     ```rust
     // these two blocks are equivalent
-    
+
     // block 1
     let mut count = 0;
     match coin {
         Coin::Quarter(state) => println!("State quarter from {:?}!", state),
         _ => count += 1,
     }
-    
+
     // block 2
     let mut count = 0;
     if let Coin::Quarter(state) = coin {
@@ -1366,7 +1356,6 @@ impl Rectangle {
     }
     ```
 
-
 ## 7. Managing growing project with packages, crates, and modules
 
 ### 7.1 Packages and Crates
@@ -1374,7 +1363,7 @@ impl Rectangle {
 **A create is the smallest amount of code that the Rust compiler considers at a time**
 
 - binary crate: compiled to an executable such as command-line program. Must have a function called `main()`.
-- library crate: do not have main and do not compile to executable. They define functions to be shared with other projects. 
+- library crate: do not have main and do not compile to executable. They define functions to be shared with other projects.
 - a package is a bundle of one ore more crates that provides a set of functionality. A package contains a `cargo.toml` file that describes how to build thoese crates. A package can contain at most one library crate and multiple binary crates.
 
 ### 7.2 Defining modules to control scope and privacy
@@ -1401,15 +1390,14 @@ impl Rectangle {
     - `src/main.rs`
         ```rust
         use crate::garden::vegetables::Asparagus;
-        
+
         pub mod garden;
-        
+
         fn main() {
             let plant = Asparagus {};
             println!("I'm growing {:?}!", plant):
         }
         ```
-        
 
 **Grouping related code in modules**: example restaurant library
 - create a library crate project with:
@@ -1424,15 +1412,15 @@ impl Rectangle {
         mod front_of_house {
             mod hosting {
                 fn add_to_waitlist() {}
-        
+
                 fn seat_at_table() {}
             }
-        
+
             mod serving {
                 fn take_order() {}
-        
+
                 fn serve_order() {}
-        
+
                 fn take_payment() {}
             }
         }
@@ -1449,7 +1437,7 @@ impl Rectangle {
                  ├── serve_order
                  └── take_payment
         ```
-        
+
 ### 7.3 Paths for referring to an item in the module tree
 
 **absolute and relative path to a function** not working if the module of the function is private, or the function is private
@@ -1461,20 +1449,19 @@ impl Rectangle {
     // the same scope
     mod front_of_house {
         // hosting is private in a scope not accessible to function eat_at_resturant
-        mod hosting {  
+        mod hosting {
             fn add_to_waitlist() {}
         }
     }
-    
+
     pub fn eat_at_restaurant() {
         // Absolute path not working for private hosting module
         crate::front_of_house::hosting::add_to_waitlist();
-    
+
         // Relative path not working for private hosting module
         front_of_house::hosting::add_to_waitlist();
     }
     ```
-    
 
 **Exposing paths with the pub keyword** to expose modules and functions that are private to functions calling them.
 - example
@@ -1485,28 +1472,27 @@ impl Rectangle {
             pub fn add_to_waitlist() {}
         }
     }
-    
+
     pub fn eat_at_restaurant() {
         // Absolute path
         crate::front_of_house::hosting::add_to_waitlist();
-    
+
         // Relative path
         front_of_house::hosting::add_to_waitlist();
     }
     ```
-    
 
 **Starting relative paths with super** to access modules and functions in parent module
 - one `super::` to parent module
     ```rust
     fn deliver_order() {}
-    
+
     mod back_of_house {
         fn fix_incorrect_order() {
             cook_order();
             super::deliver_order();
         }
-    
+
         fn cook_order() {}
     }
     ```
@@ -1519,24 +1505,23 @@ impl Rectangle {
             println!("This is the grandparent function");
         }
     }
-    
+
     mod parent_module {
         pub mod child_module {
-    
+
             pub fn access_grandparent_function() {
                 // Accessing the grandparent function using super::super::
                 super::super::grandparent_module::grandparent_function();
             }
         }
     }
-    
+
     fn main() {
         parent_module::child_module::access_grandparent_function();
     }
     ```
-    
 
-**Making structs and enums public**: 
+**Making structs and enums public**:
 
 - struct need to make public field-by-field case
     ```rust
@@ -1545,7 +1530,7 @@ impl Rectangle {
             pub toast: String,
             seasonal_fruit: String, // keep private from access individually
         }
-    
+
         impl Breakfast {
             pub fn summer(toast: &str) -> Breakfast {
                 Breakfast {
@@ -1555,14 +1540,14 @@ impl Rectangle {
             }
         }
     }
-    
+
     pub fn eat_at_restaurant() {
         // Order a breakfast in the summer with Rye toast
         let mut meal = back_of_house::Breakfast::summer("Rye");
         // Change our mind about what bread we'd like
         meal.toast = String::from("Wheat");
         println!("I'd like {} toast please", meal.toast);
-    
+
         // The next line won't compile if we uncomment it; we're not allowed
         // to see or modify the seasonal fruit that comes with the meal
         // meal.seasonal_fruit = String::from("blueberries");
@@ -1572,18 +1557,17 @@ impl Rectangle {
 - enum made public as a whole
     ```rust
     mod back_of_house {
-        pub enum Appetizer {  // all variants are public 
+        pub enum Appetizer {  // all variants are public
             Soup,
             Salad,
         }
     }
-    
+
     pub fn eat_at_restaurant() {
         let order1 = back_of_house::Appetizer::Soup;
         let order2 = back_of_house::Appetizer::Salad;
     }
     ```
-    
 
 ### 7.4 Bring paths into scope with  the use keyword
 
@@ -1608,13 +1592,12 @@ impl Rectangle {
 - For structs and enums, `use` the full path, probably rarely two structs or enums having the same name.
     ```rust
     use std::collections::HashMap;  // full path to the struct
-    
+
     fn main() {
         let mut map = HashMap::new();
         map.insert(1, 2);
     }
     ```
-    
 
 **Providing new names with the `as` keyword**
 
@@ -1622,16 +1605,15 @@ impl Rectangle {
     ```rust
     use std::fmt::Result;
     use std::io::Result as IoResult;  // rename to avoid conflict
-    
+
     fn function1() -> Result {
         // --snip--
     }
-    
+
     fn function2() -> IoResult<()> {
         // --snip--
     }
     ```
-    
 
 **Re-exporting names with pub use**
 
@@ -1643,24 +1625,24 @@ impl Rectangle {
                 pub fn add_to_waitlist() {}
             }
         }
-    
+
         // pub use re-export hosting mod to under mode restaurant
         pub use crate::restaurant::front_of_house::hosting;
-        
+
         // re-export mod room from other mod to current on
         pub use crate::hotel::room;
-    
+
         pub fn eat_at_restaurant() {
             hosting::add_to_waitlist();
         }
     }
-    
+
     mod hotel {
         pub mod room {
             pub fn desk();
         }
     }
-    
+
     pub fn eat_at_restaurant() {
         // skip front_of_house in the parh as hosting is exported under restaurant
         restaurant::hosting::add_to_waitlist();
@@ -1670,7 +1652,6 @@ impl Rectangle {
         hotel::room::desk();
     }
     ```
-    
 
 **Using external packages**: to use an external package, take package rand for example:
 
@@ -1680,7 +1661,7 @@ impl Rectangle {
     ...
     ...
     ...
-    
+
     [dependencies]
     rand = "0.8.5"
     ...
@@ -1695,7 +1676,7 @@ impl Rectangle {
         let secret_number = rand::thread_rng().gen_range(1..=100);
     }
     ```
-    
+
 - run `$ cargo run` to install rand and its dependencies if not already installed, and run the code.
 
 **Using nested paths to clean up large use lists**
@@ -1707,14 +1688,14 @@ impl Rectangle {
     use std::io;
     // after converting into nested path
     use std::{cmp::Ordering, io};
-    
+
     // before
     use std::io;
     use std::io::Write;
     //after
     use std::io::{self, Writing};
     ```
-    
+
 - to bring all public modules and functions into scope, use the glob operator:
     ```rust
     use std::collectiions::*;
@@ -1728,10 +1709,10 @@ impl Rectangle {
         // list all modules
         mod restaurant;
         mod hotel;
-        
+
         // use the modules
         use crate::restaurant::kitchen;
-        
+
         pub fn cooking () {
             kitchen::knife();
         }
@@ -1752,9 +1733,6 @@ impl Rectangle {
         ```rust
         pub fn knife() {}
         ```
-        
-
-
 
 ## 8. Common collections
 
@@ -1767,7 +1745,7 @@ impl Rectangle {
     ```rust
     // method 1: create an empty vector
     let v1: Vec<i32> = Vec::new();
-    
+
     // method 2: create a vector with initial values, type inferred
     let v2 = vec![1, 2, 3];
     ```
@@ -1783,7 +1761,7 @@ impl Rectangle {
     let v = vec![1, 2, 3];
     println!("{}", v[1]);  // print number 2
     println!("{}", v[99]); // panic, out of boundary
-    
+
     // use get to return an option
     println!("{:?}", v.get(1));  // print Some(2)
     println!("{:?}", v.get(9));  // print None
@@ -1825,7 +1803,7 @@ impl Rectangle {
         Float(f64),
         Text(String),
     }
-    
+
     // this vector has all element of type SpreadsheetCell, but different variants
     let row = vec![
         SpreadsheetCell::Int(3),
@@ -1833,7 +1811,6 @@ impl Rectangle {
         SpreadsheetCell::Float(10.12),
     ];
     ```
-    
 
 **Quiz**
 
@@ -1845,7 +1822,7 @@ impl Rectangle {
       for i in &mut v {
         v2.push(i);  // as v2 is Vec<&mut i32>, i has to be &mut i32,
       }
-      *v2[0] = 5;   // v2[0] point to v1[0] which point to a value. 
+      *v2[0] = 5;   // v2[0] point to v1[0] which point to a value.
                     // the assignment changes the value but v2[0] and v1[0]
                     // have the same value
       let a = *v2[0];
@@ -1853,7 +1830,7 @@ impl Rectangle {
       println!("{a} {b}");  // print 5 5
     }
     ```
-    
+
 ### 8.2 storing UTF-8 encoded text with Strings
 
 **string basics**
@@ -1862,14 +1839,14 @@ impl Rectangle {
     ```rust
     // 1. new empty string
     let s1 = String::new();
-    
+
     // 2. with initial value
     let s2 = String::from("any value");
-    
+
     // 3. convert from a &str
     let s3 = "any value".to_string();
     ```
-    
+
 - updating a string:
     ```rust
     // 1. appending with push_str
@@ -1878,24 +1855,23 @@ impl Rectangle {
     let s3 = " I come";
     s1.push_str(s3);  // s3 is &str and is not moved
     println!("s3 is not deleted. It is still {s3}");  // no problem
-    
+
     // 2. push to add a single character
     let mut s4 = "lo".to_string();
     s4.push('l');  // s4 update to "lol"
-    
+
     // 3. concatenate with + operator
     let s5 = String::from("aaa");
     let s6 = String::from("bbb");
     let s7 = s5 + &s6;  // s5 moved to s7, in the form String + &str + &str + ...
     let s8 = String::from("aaa") + "bbb" + "ccc"; // get aaabbbccc
-    
+
     // 4. concatenate with format! macro, which does not take ownership
     let c1 = "aaa".to_string();
     let c2 = "bbb".to_string();
     let c3 = "ccc".to_string();
     let c = format!("{c1}-{c2}-{c3}");  // get aaa-bbb-ccc and c1, ... still live
     ```
-    
 
 **Indexing into strings**: String does not support indexing with s[2]
 
@@ -1903,10 +1879,10 @@ impl Rectangle {
     ```rust
     // 1 byte a ascii character
     let hello = String::from("Hola");
-    
+
     // 2 bytes a character
     let hello = String::from("Здравствуйте");
-    
+
     // 4 bytes a character
     let hello = String::from("你好");
     ```
@@ -1920,15 +1896,14 @@ impl Rectangle {
     // safe with ascii  characters
     let s = "abcdefg";
     let s1 = &s[0..3];  // s1 is "abc"
-    
+
     // be careful when a character has more than one byte
     let c = "Здравствуйте";
     let c1 = &c[0..4];  // c1 is the first two chacaters "Зд"
     let c2 = &c[0..5];  // panic, cut into the third character,
     ```
-    
 
-**Methods for iterating over strings** 
+**Methods for iterating over strings**
 
 - using `chars()` method:
     ```rust
@@ -1936,14 +1911,14 @@ impl Rectangle {
         println!("c");  // print each character З, д, a, b, ...
     }
     ```
-    
+
 - using `bytes()` method: may never need it in my life
     ```rust
     for c in "Здabcравствуйте".byte() {
         println!("c");  // print UTF8 code 208, 151, 208, 180, ...
     }
     ```
-    
+
 ### 8.3 Storing keys with associated values in hash map
 
 **hash map basics**
@@ -1952,9 +1927,9 @@ impl Rectangle {
     ```rust
     // HashMap is not included in prelude
     use std::collections::HashMap;
-    
+
     let mut scores = HashMap::new();
-    
+
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Yellow"), 50);
     dbg!(&scores);  // use reference, otherwise moved by dbg!
@@ -1967,13 +1942,12 @@ impl Rectangle {
     let score = scores.get(&team_name).copied().unwrap_or(0)
         // get() returns a Option<&i32>, not good for unwrap_or(0) as 0 is i32
         // use copied() to convert it to Option<i32>
-        
+
     // 2. iterate over a hash map
     for (k, v) in &scores {
         println!("{k}: {v});
     }
     ```
-    
 
 **hash maps and ownership**
 
@@ -1984,43 +1958,42 @@ impl Rectangle {
     let mut scores = HashMap::new();
     scores.insert(k, v);  // String k is moved to scores, i32 v is copied to scores
     ```
-    
 
 **updating a hash map**
 
 - overwriting a value of an existing key use `.insert()`
     ```rust
     use std::collections::HashMap;
-    
+
     let mut scores = HashMap::new();
-    
+
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Blue"), 25); // replace line above
-    
+
     println!("{:?}", scores);
     ```
-    
+
 - adding a key-value pair only if the key does not exist with `.entry().or_insert()`
     ```rust
     use std::collections::HashMap;
-    
+
     let mut scores = HashMap::new();
     scores.insert(String::from("Blue"), 10);
-    
+
     scores.entry(String::from("Yellow")).or_insert(50);  // new, added
     scores.entry(String::from("Blue")).or_insert(50);    // existing, no change
-    
+
     println!("{:?}", scores);
     ```
-    
+
 - updating a value based on the old value
     ```rust
     use std::collections::HashMap;
-    
+
     let text = "hello world wonderful world";
-    
+
     let mut map = HashMap::new();
-    
+
     for word in text.split_whitespace() {
         // or_insert() returns a mutable reference of the value of word to
         // count, so that the value can be updated by dereferecing.
@@ -2028,12 +2001,9 @@ impl Rectangle {
         let count = map.entry(word).or_insert(0);
         *count += 1;
     }
-    
+
     println!("{:?}", map);
     ```
-    
-
-
 
 ## 9. Error Handling
 
@@ -2060,7 +2030,6 @@ impl Rectangle {
     - `$ RUST_BACKTRACE=1 cargo run` to show main backtrace
     - `$ RUST_BACKTRACE=full cargo run` to show all backtrace
 
-
 ### 9.2 recoverable errors with Result
 
 **Result enum**
@@ -2072,29 +2041,29 @@ impl Rectangle {
         Err(E), // contains the error value
     }
     ```
-    
+
 - examples
     ```rust
     let good_result: Result<i32, i32> = Ok(10);
     let bad_result: Result<i32, i32> = Err(10);
     ```
-    
+
 - `std::fs::File::open()` returns a Result type
     ```rust
     use std::fs::File;
-    
+
     fn main() {
         let greeting_file_result = File::open("hello.txt");
-    
+
         let greeting_file = match greeting_file_result {
             Ok(file) => file,
             Err(error) => panic!("Problem opening the file: {:?}", error),
         };
     }
     ```
-    
+
 - examples of `File.open()` failures:
-    - NotFound when file does not exist: 
+    - NotFound when file does not exist:
       ```
       [src/main.rs:7] &greeting_file_result = Err(
             Os {
@@ -2114,7 +2083,6 @@ impl Rectangle {
             },
         )
         ```
-    
 
 **matching on different errors**
 
@@ -2122,10 +2090,10 @@ impl Rectangle {
     ```rust
     use std::fs::File;
     use std::io::ErrorKind;
-    
+
     fn main() {
         let greeting_file_result = File::open("hello.txt");
-    
+
         let greeting_file = match greeting_file_result {
             Ok(file) => file,
             // .kind() method to get ErrorKind of error in Err(error)
@@ -2141,7 +2109,7 @@ impl Rectangle {
         };
     }
     ```
-    
+
 - enum ErroKind has 40 variants and is growing
     ```rust
     pub enum ErrorKind {
@@ -2153,7 +2121,6 @@ impl Rectangle {
         Other,
     }
     ```
-    
 
 **shortcuts for panic on Error: unwrap and expect**
 
@@ -2162,22 +2129,21 @@ impl Rectangle {
 - `.unwrap()` of a `Restult` enum returns its content if successful or panic if failure
     ```rust
     use std::fs::File;
-    
+
     fn main() {
         let greeting_file = File::open("hello.txt").unwrap();
     }
     ```
-    
+
 - `.expect()` method does the same but gives a customized  error message
     ```rust
     use std::fs::File;
-    
+
     fn main() {
         let greeting_file = File::open("hello.txt")
             .expect("hello.txt should be included in this project");
     }
     ```
-    
 
 **propagating errors** to function calling something that might fail
 
@@ -2185,18 +2151,18 @@ impl Rectangle {
     ```rust
     use std::fs::File;
     use std::io::{self, Read};
-    
+
     // use Result enum to wrap different type for return
     fn read_username_from_file() -> Result<String, io::Error> {
         let username_file_result = File::open("hello.txt");
-    
+
         let mut username_file = match username_file_result {
             Ok(file) => file,
             Err(e) => return Err(e),
         };
-    
+
         let mut username = String::new();
-    
+
         match username_file.read_to_string(&mut username) {
             Ok(_) => Ok(username),
             Err(e) => Err(e),
@@ -2208,20 +2174,20 @@ impl Rectangle {
     ```rust
     use std::fs::File;
     use std::io::{self, Read};
-    
+
     fn read_username_from_file() -> Result<String, io::Error> {
         let mut username = String::new();
-    
+
         // ? means that move on if successful, Err(e) if failed
         // read_username_from_file must return Result or Option or
         // other types implementing FromResidual
         // The two question marks must return the smae error type io::Error.
         File::open("hello.txt")?.read_to_string(&mut username)?;
-    
+
         Ok(username)
     }
     ```
-    
+
 - use `?` in functions returning Option
     ```rust
     fn last_char_of_first_line(text: &str) -> Option<char> {
@@ -2233,18 +2199,17 @@ impl Rectangle {
     ```rust
     use std::error::Error;
     use std::fs::File;
-    
+
     // ignore success type by unit (), return any error with Box<dyn Error>
     fn main() -> Result<(), Box<dyn Error>> {
         let greeting_file = File::open("hello.txt")?;
-    
+
         Ok(())   // a way to use unit ()
     }
     ```
-    
+
 ### 9.3 to panic! or not to panic!
 Revisit when having more experiences.
-
 
 ## 10 Generic types, traits, and lifetimes
 
@@ -2265,32 +2230,32 @@ Revisit when having more experiences.
         x: T,
         y: T,
     }
-    
+
     fn main() {
         let integer = Point { x: 5, y: 10 };  // T is i32
         let float = Point { x: 1.0, y: 4.0 }; // T is f64
     }
-    
+
     // each field can have their own type
     struct Point<T, U> {
         x: T,
         y: U,
     }
-    
+
     fn main() {
         let both_integer = Point { x: 5, y: 10 };
         let both_float = Point { x: 1.0, y: 4.0 };
         let integer_and_float = Point { x: 5, y: 4.0 };
     }
     ```
-    
+
 - in enum definitions. We already have the examples in Option and Result enums
     ```rust
     enum Option<T> {
         Some(T),
         None,
     }
-    
+
     enum Result<T, E> {
         Ok(T),
         Err(E),
@@ -2304,14 +2269,14 @@ Revisit when having more experiences.
             x: T,
             y: T,
         }
-        
+
         // use impl<T> to define a generic method
         impl<T> Point<T> {
             fn get_x(&self) -> &T {
                 &self.x   // it is &(self.x), not (&self).x
             }
         }
-        
+
         // we can also define a method for a specific type of generic struct
         // no generics such as impl<T>  or Point<T>
         impl Point<f32> {
@@ -2319,22 +2284,22 @@ Revisit when having more experiences.
                 (self.x.powi(2) + self.y.powi(2)).sqrt()
             }
         }
-        
+
         fn main() {
             let p = Point { x: 5, y: 10 };
-        
+
             println!("p.x = {}", p.get_x());
             println!("distance to origin is {}", p.distance_from_origin());
         }
         ```
-    
+
     - mixed types:
         ```rust
         struct Point<X1, Y1> {
             x: X1,
             y: Y1,
         }
-        
+
         impl<X1, Y1> Point<X1, Y1> {
             // self in method is Point<X1, Y1> above
             // add new signature <X2, Y2> to mixup to make it generic
@@ -2345,13 +2310,13 @@ Revisit when having more experiences.
                 }
             }
         }
-        
+
         fn main() {
             let p1 = Point { x: 5, y: 10.4 };
             let p2 = Point { x: "Hello", y: 'c' };
-        
+
             let p3 = p1.mixup(p2);
-        
+
             println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
         }
         ```
@@ -2362,17 +2327,17 @@ Revisit when having more experiences.
 
 - defining a trait: the definition only provides signature and is very brief as the specific implementation depends on type. A method in a trait can also have simple default body, which is overwritten when re-defined for specific types
     ```rust
-    // a trait can have multiple methods, all must be implemented 
+    // a trait can have multiple methods, all must be implemented
     pub trait Summary {
         // take reference to a variable of certain types and return a String.
         // This is all the definition required
-        fn summarize(&self) -> String; 
-        
+        fn summarize(&self) -> String;
+
         // define another method that mutate the variable of types with this trait
         fn hide_author(&mut self);
     }
     ```
-    
+
 - implement a trait on a type. All trait items must be implemented if no default definition. A working example:
     ```rust
     // src/main.rs
@@ -2386,7 +2351,7 @@ Revisit when having more experiences.
         };
         tweet.hide_author();
         println!("1 new tweet: {}", tweet.summarize());
-    
+
         // example of NewsArticle
         let mut article = NewsArticle {
             headline: String::from("Breaking New: xxxx"),
@@ -2397,43 +2362,42 @@ Revisit when having more experiences.
         article.hide_author();
         println!("News: {}", article.summarize());
     }
-    
-    
+
     pub trait Summary {
         fn summarize(&self) -> String;
         fn hide_author(&mut self);
     }
-    
+
     pub struct NewsArticle {
         pub headline: String,
         pub location: String,
         pub author: String,
         pub content: String,
     }
-    
+
     impl Summary for NewsArticle {
         // remember to implement all items in trait Summary
         fn summarize(&self) -> String {
             format!("{}, by {} ({})", self.headline, self.author, self.location)
         }
-    
+
         fn hide_author(&mut self) {
             self.author = String::from("anonimous");
         }
     }
-    
+
     pub struct Tweet {
         pub username: String,
         pub content: String,
         pub reply: bool,
         pub retweet: bool,
     }
-    
+
     impl Summary for Tweet {
         fn summarize(&self) -> String {
             format!("{}: {}", self.username, self.content)
         }
-    
+
         fn hide_author(&mut self) {
             self.username = String::from("Anonimous");
         }
@@ -2456,7 +2420,7 @@ Revisit when having more experiences.
 - what is it: trait is used to specify types of a parameter
     ```rust
     // instead of specifying type for item, here the signature means item can be any
-    // type that has trait Summary implemented. So far we now have three ways to 
+    // type that has trait Summary implemented. So far we now have three ways to
     // specify the type of a parameter in functions:
     // - concrete type such as x: i32
     // - generic type such as x:T
@@ -2472,13 +2436,13 @@ Revisit when having more experiences.
     pub fn notify<T: Summary>(item: &T) {
         println!("Breaking news! {}", item.summarize());
     }
-    
+
     // trait bound is more concise when multiple parameters have the same trait
     pub fn notify<T: Summary>(item1: &T, item2: &T) {//pass}
-    // better than 
+    // better than
     pub fn notify(item1: &impl Summary, item2: &impl Summary) {//pass}
     ```
-    
+
 - specifying multiple trait bounds with `+` syntax
     ```rust
     // either way is ok but the later is preferred
@@ -2486,20 +2450,19 @@ Revisit when having more experiences.
     // or
     pub fn notify<T: Summary + Display>(item: &T) {
     ```
-    
+
 - more readable trait bounds with `where` clauses
     ```rust
     // hard to read if a signature has too many traits, foe example
     fn some_function<T: Display + Clone, U: Clone + Debug>(t: &T, u: &U) -> i32 {
-    
+
     // it can be rewritten as below. It is easy to read and edit
     fn some_function<T, U>(t: &T, u: &U) -> i32
         where
-            T: Display + Clone,  
+            T: Display + Clone,
             U: Clone + Debug,
     {
     ```
-    
 
 **returning types that implement traits**
 
@@ -2545,27 +2508,26 @@ Revisit when having more experiences.
         }
     }
     ```
-    
 
 **using trait bounds to conditionally implement methods** that have given traits. It is a way to avoid compiling errors when defining methods on generic types.
 
 - `PartialOrd` trait to compare
-  
+
     ```rust
     use std::fmt::Display;
-    
+
     struct Pair<T> {
         x: T,
         y: T,
     }
-    
+
     // no restriction on method new()
     impl<T> Pair<T> {
         fn new(x: T, y: T) -> Self {
             Self { x, y }
         }
     }
-    
+
     // cmp_display() only works for type implementing Display and PartialOrd.
     // Otherwise >= or println! will report a cmpliler error
     impl<T: Display + PartialOrd> Pair<T> {
@@ -2578,7 +2540,7 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 - if a trait is implemented to a type, all methods of the trait are applied to the type. By using trait bound, we can make sure that these methods work.
     ```rust
     // ToString is a trait in standard library. It has method to_sring().
@@ -2587,18 +2549,17 @@ Revisit when having more experiences.
     impl<T: Display> ToString for T {
         // -- snip--
     }
-    
+
     // inter has Display so can be converted to string
     let s = 3.to_string()   // same as String::from("3")
     ```
-    
 
 **Quizz**
 
 - quiz 1: the code below does not compile:
     ```rust
     use std::fmt::Display;
-    
+
     // the return is some type with Display trait, but not neccesarily a String
     // so .push_str method may not work for it.
     fn displayable<T: Display>(t: T) -> impl Display { t }
@@ -2609,8 +2570,7 @@ Revisit when having more experiences.
       println!("{s2}");
     }
     ```
-    
-    
+
 ### 10.3 Validating references with lifetimes
 
 **lifetimes basics**
@@ -2629,7 +2589,7 @@ Revisit when having more experiences.
             y
         }
     }
-    
+
     // when calling the function and using its return, make sure the parameters
     // live long enough. Here is a failed example:
     fn main() {
@@ -2643,7 +2603,6 @@ Revisit when having more experiences.
         println!("The longest string is {}", result);
     }
     ```
-    
 
 **other topics on lifetime**
 
@@ -2654,7 +2613,7 @@ Revisit when having more experiences.
     struct ImportantExcerpt<'a> {
         part: &'a str,
     }
-    
+
     fn main() {
         let novel = String::from("Call me Ishmael. Some years ago...");
         let first_sentence = novel.split('.').next().expect("Could not find a '.'");
@@ -2666,12 +2625,12 @@ Revisit when having more experiences.
     ```
 
 - lifetime elision rules: usually every reference in function signature needs a lifetime specifier. Some common patterns, however, are so common that the Rust team decided to code the pattern into compiler and lift the lifetime specifier. There are three rules the compiler follows if the lifetime specifiers are not provided:
-    - rule 1: the compiler assigns a different lifetime specifier for each input reference type. For example, 
+    - rule 1: the compiler assigns a different lifetime specifier for each input reference type. For example,
         - `fn foo(x: &i32, y: &i32)` is treated like `fn foo<'a, 'b>(x: &'a i32, y: &'b i32)`
     - rule 2: If there is only one input lifetime parameter, that lifetime is assigined to all output lifetime parameters:
         - `fn foo(x: &i32) -> &i32 {` becomes `fn foo<'a>(x: &'a i32) -> &'a i32 {`.
     - rule 3: If `&self` or `&mut self` is one of the input parameters, its lifetime is assigned to all output lifetime parameters.
-    
+
 - lifetime annotations in method definitions
     ```rust
     // declair lifetime after impl and ImportantExceerpt
@@ -2681,7 +2640,7 @@ Revisit when having more experiences.
             3
         }
     }
-    
+
     impl<'a> ImportantExcerpt<'a> {
         // rule 3
         fn announce_and_return_part(&self, announcement: &str) -> &str {
@@ -2690,7 +2649,7 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 - the static lifetime `'static` denotes a reference that lives for  the entire duration of the program. All string literals have `'static` lifetime.Do not abuse it as the compiler may suggest it.
 
 **generic type parameters, trait bounds, and lifetimes together**
@@ -2698,7 +2657,7 @@ Revisit when having more experiences.
 - an example having them all:
     ```rust
     use std::fmt::Display;
-    
+
     // lifetime and generic typ in the same bracket <'a, T>
     fn longest_with_an_announcement<'a, T>(
         x: &'a str,
@@ -2715,12 +2674,12 @@ Revisit when having more experiences.
             y
         }
     }
-    
+
     fn main() {
         longest_with_an_anouncement("abcd", "xyz", "ann: any type with Display");
     }
     ```
-    
+
 ## 11. Writing automated tests
 
 ### 11.1 How to write tests
@@ -2732,13 +2691,13 @@ Revisit when having more experiences.
     pub fn add(left: usize, right: usize) -> usize {
         left + right
     }
-    
+
     // #[cfg(test)] attribute declairs the mod not to be used in build binary
     // with a !, #![cfg(test)] declair whole file as a test file.
-    #[cfg(test)]  
+    #[cfg(test)]
     mod tests {
         use super::*;
-    
+
         #[test]     // indicate this is a test function even without #[cfg(test)]
         fn it_works() {
             let result = add(2, 2);
@@ -2746,7 +2705,7 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 - run test with `$ cargo test`
 
 **checking results with `assert!` and it families**
@@ -2755,12 +2714,11 @@ Revisit when having more experiences.
 - `assert_ne!(x, y)` to check x and y are not equal.
 - adding custom message to failure message: arguments specified after required arguments in `assert!` families are passed to `format!()`. Examples
     ```rust
-    // when the following assertion fails, all the argument afte y are passed to 
-    // format! as format!("{} does not equal to {}", x, y) and printed out in 
+    // when the following assertion fails, all the argument afte y are passed to
+    // format! as format!("{} does not equal to {}", x, y) and printed out in
     // failure message.
     assert_eq!(x, y, "{} does not equal to {}", x, y)
     ```
-    
 
 **checking for panics with should_panic** when panic is expected
 
@@ -2769,21 +2727,21 @@ Revisit when having more experiences.
     pub struct Guess {
         value: i32,
     }
-    
+
     impl Guess {
         pub fn new(value: i32) -> Guess {
             if value < 1 || value > 100 {
                 panic!("Guess value must be between 1 and 100, got {}.", value);
             }
-    
+
             Guess { value }
         }
     }
-    
+
     #[cfg(test)]
     mod tests {
         use super::*;
-    
+
         #[test]
         #[should_panic]  // indicate panic is expected. test failed if not panic
         fn greater_than_100() {
@@ -2791,12 +2749,11 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 - adding custom message to `#[should_panic]` when fail at not panic
     ```rust
     #[should_panic(expected = "whatever message you want to add")]
     ```
-    
 
 **using Result<T, E> in tests**, no `assert!` family used and no `should_panic` either.
 
@@ -2814,7 +2771,7 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 ### 11.2 Controlling how test are run
 
 **cargo test options**
@@ -2824,7 +2781,7 @@ Revisit when having more experiences.
     # not a typo, double -- in the command
     $ cargo test -- --test-threds=1
     ```
-    
+
 - showing function output: by default, cargo test does not display any `println!` output if the test succeeds. It prints when a test fails.To display the print even when the test succeed, add flag `--show-output`:
     ```sh
     $ cargo test -- --show-output
@@ -2836,64 +2793,64 @@ Revisit when having more experiences.
     ```sh
     $ cargo test test_func_1
     ```
-    
+
 - filtering to run multiple test functions using keyword. So we can group tests by including keywords in test function names.
     - test example:
         ```rust
         #[cfg(test)]
         mod tests {
             use super::*;
-        
+
             #[test]
             fn add_two_and_two() {
                 assert_eq!(4, add_two(2));
             }
-        
+
             #[test]
             fn add_three_and_two() {
                 assert_eq!(5, add_two(3));
             }
-        
+
             #[test]
             fn one_hundred() {
                 assert_eq!(102, add_two(100));
             }
         }
         ```
-        
+
     - run different tests:
         ```sh
         # all three test
-        $ cargo test  
-        
+        $ cargo test
+
         # run add_two_and_two only
-        $ cargo test add_two_and_two  
-        
+        $ cargo test add_two_and_two
+
         # run tests having "and" in test function names
         $ cargo test and
-        
+
         # run tests having letter "h" in names
         $ cargo test h
         ```
-    
+
 - ignoring some tests unless specifically requested by add `#[ignore]` attribute:
     - test code example:
         ```rust
         #[cfg(test)]
         mod tests {
             use super::*;
-        
+
             #[test]
             fn add_two_and_two() {
                 assert_eq!(4, add_two(2));
             }
-        
+
             #[test]
             #[ignore]  // ignored in $ cargo test
             fn add_three_and_two() {
                 assert_eq!(5, add_two(3));
             }
-        
+
             #[test]
             fn one_hundred() {
                 assert_eq!(102, add_two(100));
@@ -2904,18 +2861,18 @@ Revisit when having more experiences.
         ```sh
         # ignore tests with ignore attritube
         $ cargo test
-        
+
         # ONLY run tests with ignore attribute
         $ cargo test -- --ignored
         ```
-        
+
 ### 11.3 Test organization
 
-**unit tests** 
+**unit tests**
 
 - unit tests are tests wihtin the package, small and focused.
 
-- the tests module and configuration attribute `#[cfg(test)]`: 
+- the tests module and configuration attribute `#[cfg(test)]`:
     - `#[cfg(test)]` tells compiler that this module only runs in `$ cargo test` and is ignored in `$ cargo build`.
     - This module stays in the file where the functions to be tested are defined.
 
@@ -2932,18 +2889,18 @@ Revisit when having more experiences.
         │── integration_test_1.rs
         └── integration_test_2.rs
     ```
-    
+
 - an example test file:
     ```rust
     // need to load the package
     use package_xxx;
-    
+
     #[test]
     fn test_func_1() {
-        // -- snippet calling package function -- 
+        // -- snippet calling package function --
     }
     ```
-    
+
 - run integration test:
     - `$ cargo test` runs all tests including integration test
     - `$ cargo test --test test_func_1` runs only integration tests in `test_func_1`.
@@ -2966,16 +2923,15 @@ Revisit when having more experiences.
         ```rust
         use package_xxx
         mod subdir_1  // contains a file must named mod.rs
-        
+
         #[test]
         fn test_func_1() {
             subdir_1::anyfunc();  // calls a function in subdir_1/helper_func.rs
             // other code
         }
         ```
-    
-- integration tests only works for library crates, not for binary crates.
 
+- integration tests only works for library crates, not for binary crates.
 
 ## 12. An I/O project: building a commmand line program
 
@@ -2984,14 +2940,14 @@ Revisit when having more experiences.
 - reading command line arguments with `std::env::args()`
     ```rust
     use std::env;
-    
+
     fn main() {
         // env::args returns a String and .collect() returns an iterator
         let args: Vec<String> = env::args().collect();
         dbg!(args);
     }
     ```
-    
+
 - run the program:
     - `$ cargo run -- aaa bbb ccc` prints out as follows. The double `--` indicate the parameters after it are for the program, not for `cargo run`.
         ```
@@ -3008,17 +2964,16 @@ Revisit when having more experiences.
 - read a file into String with `std::fs::read_to_string(file_path)`:
     ```rust
     use std::fs;
-    
+
     fn main() {
         // poem.txt is at the project root. Whole file read into a Results<String>
         let contents = fs::read_to_string("poem.txt")
             .expect("Should have been able to read the file");
-    
+
         println!("With text:\n{contents}");
     }
     ```
-    
-    
+
 ### 12.3 Refactoring to improve modularity and error handling
 
 **separation of converns for binary projects** following these steps
@@ -3044,7 +2999,7 @@ Revisit when having more experiences.
         file_path: String,
     }
     ```
-    
+
 - creating a constructor for Config struct:
     ```rust
     impl Config {
@@ -3052,12 +3007,11 @@ Revisit when having more experiences.
             // ok to use clone for small Strings
             let query = args[1].clone();
             let file_path = args[2].clone();
-    
+
             Config { query, file_path }
         }
     }
     ```
-    
 
 **fixing the error handling** when query or filepath not provided in terminal
 
@@ -3068,16 +3022,16 @@ Revisit when having more experiences.
     impl Config {
         fn new(args: &[String]) -> Config {
             if arg.len() < 3 {
-                panic!("not enough arguments"); 
+                panic!("not enough arguments");
             }
             let query = args[1].clone();
             let file_path = args[2].clone();
-    
+
             Config { query, file_path }
         }
     }
     ```
-    
+
 - `painc!()` is better used for programming problem, not for usage problem, as users do not need to see all the error message such as `thread 'main' panicked at 'not enough arguments', src/main.rs:26:13`. Another reason is that it is better to process failure in `main()` function.
 
 - returning a `Result` instead of calling `panic!`:
@@ -3089,22 +3043,22 @@ Revisit when having more experiences.
                 if args.len() < 3 {
                     return Err("not enough arguments");
                 }
-        
+
                 let query = args[1].clone();
                 let file_path = args[2].clone();
-        
+
                 Ok(Config { query, file_path })
             }
         }
         ```
-    
+
 - calling `Config::build()` and hadling errors in `main()`:
     ```rust
     use std::process;
-    
+
     fn main() {
         let args: Vec<String> = env::args().collect();
-    
+
         // use a closure to handle error message and exit program
         let config = Config::build(&args).unwrap_or_else(|err| {
             // users only see the printed error message
@@ -3112,10 +3066,9 @@ Revisit when having more experiences.
             // an exit code for additional processing
             process::exit(1);
         });
-    
+
         // --snip--
     ```
-    
 
 **extracting logic from main**
 
@@ -3123,10 +3076,10 @@ Revisit when having more experiences.
     ```rust
     // read terminal arguments
     let args: Vec<String> = std::env::args().collect()
-    
+
     // exit with a status
     std::process::exit(1)
-    
+
     // work with multi-line text
     for line in article {
         if line.contains("xyz") {
@@ -3134,7 +3087,7 @@ Revisit when having more experiences.
         }
     }
     ```
-    
+
 ### 12.4 Developing the library's functionality with test-driven development
 
 **test-driven development** following these steps
@@ -3143,7 +3096,6 @@ Revisit when having more experiences.
 - write or modify just enough code to make the new test pass.
 - refactor the code youjust added or changed and make sure the test continue to pass.
 - repeat above process
-
 
 ### 12.5 Working with evnironment variables
 
@@ -3156,7 +3108,7 @@ Revisit when having more experiences.
         // is_ok returns true or false
         let aaa_bbb = env::var("AAA_BBB").is_ok();
         ```
-        
+
 ### 12.6 Writing error messages to standard error instead of standard output
 
 - When running a programm, we often send the output to a log file for a record, for example `$ cargo run > log.txt`, and keep the terminal clean. It is, however, desirable to print the error message on stout so we know what's wrong.
@@ -3165,19 +3117,19 @@ Revisit when having more experiences.
     ```rust
     fn main() {
         let args: Vec<String> = env::args().collect();
-    
+
         let config = Config::build(&args).unwrap_or_else(|err| {
             eprintln!("Problem parsing arguments: {err}");
             process::exit(1);
         });
-    
+
         if let Err(e) = minigrep::run(config) {
             eprintln!("Application error: {e}");
             process::exit(1);
         }
     }
     ```
-    
+
 ### chapter summary: working code
 
 `src/main.rs`
@@ -3306,7 +3258,6 @@ Trust me.";
 }
 ```
 
-
 ## 13 Functional Language Features: Iterators and Closures
 
 > Programming in a functional style often includes using functions as values by passing them in arguments, returning them from other functions, assigning them to variables for later execution, and so forth.
@@ -3327,7 +3278,7 @@ Trust me.";
         println!("{y1}, {y2}");  // hello world, empty string
     }
     ```
-    
+
 - can be assigned to a varaible:
     ```rust
     // annotation is optional if the compiler can infer the types
@@ -3339,8 +3290,7 @@ Trust me.";
         let res = f(2);
         println!("{res}");  // 3
     }
-    
-    
+
     // if you want annotation, here is how
     fn main() {
         let x: u8 = 1;
@@ -3350,7 +3300,6 @@ Trust me.";
         println!("{res}");  // 3
     }
     ```
-    
 
 **reference and ownership of environment variables in closure**
 
@@ -3370,7 +3319,7 @@ Trust me.";
         f();  // immutable borrow, ok
     }
     ```
-    
+
 - mutable reference:
     ```rust
     // ok
@@ -3384,7 +3333,7 @@ Trust me.";
               // so it does not affect subsequent borrowing
         println!{"{x}");  // immutable borrow only at this moment
     }
-    
+
     // not ok as mutable and immutable borrow live the same time
     fn main() {
         // need to add mut before both x and f
@@ -3397,15 +3346,15 @@ Trust me.";
         f();  // mutable borrow
     }
     ```
-    
+
 - take ownership with keyword `move`. It is useful when passing the closure to a new thread as the new thread needs to own the data. Threads will be discussed in chpt 16.A brief example:
     ```rust
     use std::thread;
-      
+
     fn main() {
         let list = vec![1, 2, 3];
         println!("{:?}", list);
-      
+
         // this new thread may finish after the main thread finished so if does not
         // own the list, the list will be a dangling reference.
         thread::spawn(move || println!("from thread: {:?}", list))
@@ -3413,7 +3362,6 @@ Trust me.";
             .unwrap();
     }
    ```
-   
 
 **moving capture values out of closures and the Fn traits**
 
@@ -3431,7 +3379,7 @@ Trust me.";
             }
         }
     }
-    
+
     // in the case below, the captured value t is sent out of the closure
     fn main() {
         let s = None;
@@ -3440,7 +3388,7 @@ Trust me.";
         println!("{x}");
     }
     ```
-    
+
 - `FnMut` applies to closure that don't move captured values out of their body but that might mutate the captured values. Take `sort_by_key` for example:
     ```rust
     // definition of sort_by_key on Vec.
@@ -3451,7 +3399,7 @@ Trust me.";
     {
         stable_sort(self, |a, b| f(a).lt(&f(b)));
     }
-    
+
     // use case. In this case f = |s| s.width return the width of an element.
     // It is used in another closure |a, b| f(a).lt(&f(b)) to compare two elements.
     #[derive(Debug)]
@@ -3459,20 +3407,20 @@ Trust me.";
         width: u32,
         height: u32,
     }
-    
+
     fn main() {
         let mut list = [
             Rectangle { width: 10, height: 1 },
             Rectangle { width: 3, height: 5 },
             Rectangle { width: 7, height: 12 },
         ];
-    
+
         // s represent an element in list, can be any symbol.
         list.sort_by_key(|s| s.width);  // this closure mutates list
         println!("{:#?}", list);
     }
     ```
-    
+
 - `Fn` applies to closures that don't move values out and don't mutate values or captures nothing from their environment.
 
 **closures must name captured lifetimes**
@@ -3486,7 +3434,7 @@ Trust me.";
             s_ref.to_string()
         }
     }
-    
+
     // If the function passed the compiler, this use case shows the problem.
     fn main() {
         let s_own = String::from("Hello world");
@@ -3504,7 +3452,7 @@ Trust me.";
             s_ref.to_string()
         }
     }
-    
+
     fn main() {
         let s_own = String::from("Hello world");
         let cloner = make_a_cloner(&s_own);
@@ -3512,14 +3460,13 @@ Trust me.";
         cloner();     // Undefined behaviors are unsafe and should be avoided.
     }
     ```
-    
+
 - simplify the function with lifetime elision: as there is only one parameters, this function can be defined as:
     ```rust
     fn make_a_cloner(s_ref: &str) -> impl Fn() -> String + '_ {
         move || s_ref.to_string()
     }
     ```
-    
 
 **Quiz**
 
@@ -3533,11 +3480,11 @@ Trust me.";
         let add_suffix = |s: &mut String| s.push_str(" world");
         println!("{s}");  // only immutable refernce to s at this moment
         add_suffix(&mut s);  // only mutable reference to s at this moment
-        
+
         // so the programming compiles. The printout is Hello.
     }
     ```
-    
+
 ## 13.2 Processing a series of items with iterators
 
 **the `Iterator` trait and the `next` method**
@@ -3546,12 +3493,12 @@ Trust me.";
     ```rust
     pub trait Iterator {
         type Item;  // associated type for the method, more in chpt 19
-        fn next(&mut self) -> Option<Self::Item>; // require definition by users 
+        fn next(&mut self) -> Option<Self::Item>; // require definition by users
         // -- other methods with default implementation --
     }
     ```
-    
-- Example - different ways to convert a vector into an iterator 
+
+- Example - different ways to convert a vector into an iterator
     ```rust
     #[test]
     fn iterator_demonstration() {
@@ -3563,7 +3510,7 @@ Trust me.";
         assert_eq!(v1_iter.next(), Some(&3));
         assert_eq!(v1_iter.next(), None);
     }
-    
+
     #[test]
     fn into_iterator_demonstration() {
         // use into_iter() method
@@ -3575,7 +3522,6 @@ Trust me.";
         assert_eq!(v2_iter.next(), None);
     }
     ```
-    
 
 **iterator methods provided by the standard library**
 
@@ -3587,37 +3533,36 @@ Trust me.";
         let it = v1.iter();
         let total: i32 = it.sum();  // explicit type required for sum
         assert_eq!(total, 6);
-    
+
         assert_eq!(it.max(), Some(&3));  // max returns an option, different from sum.
     }
     ```
-    
-- methods that produce other iterators are called **iterator adaptors**: 
+
+- methods that produce other iterators are called **iterator adaptors**:
     ```rust
     #[test]
     fn iterator_map() {
         let v1 = vec![1, 2, 3];
         let it = v1.iter();
         let v2: vec<_> = it.map(|x| x + 1).collect(); // type needed
-    
+
         assert_eq!(v2, vec![2, 3, 4]);
     }
-    
+
     #[test]
     fn iterator_filter() {
         let v1 = vec![1, 2, 3];
         let it = v1.iter();
-    
+
         // very complicated reference and ownership, dig in later
         let v2: Vec<_> = it.filter(|&&x| x > 1).cloned().collect();
         assert_eq!(v2, vec![2, 3]);
     }
     ```
-    
+
 ### 13.3 Improving our I/O project
 
 Details see the code in ~/projects/mingrp.
-
 
 ### 13.4 Comparing performance: loops vs. iterartors
 
@@ -3636,13 +3581,13 @@ Details see the code in ~/projects/mingrp.
         let v2 = vec!["a", "b"];
         // v2 can be replaced with v2.iter()
         let pair: Vec<_> = v1.iter().zip(v2).collect();
-    
+
         for (a, b) in &pair {
             println!("{} and {}", a, b);
         }
     }
     ```
-    
+
 - **map** to map an element of an iterator to another value
     ```rust
     fn main() {
@@ -3664,14 +3609,14 @@ Details see the code in ~/projects/mingrp.
     ```toml
     [profile.dev]
     opt-level = 0
-    
+
     [profile.release]
     opt-level = 3
     ```
-    
+
 ### 14.2 Publishing a crate to Crates.io
 
-**Documentation comments with ///** 
+**Documentation comments with ///**
 
 - just above a function. The comments accept markdown format
 - example:
@@ -3705,11 +3650,10 @@ Details see the code in ~/projects/mingrp.
     //!
     //! `my_crate` is a collection of utilities to make performing certain
     //! calculations more convenient.
-    
+
     /// Adds one to the number given.
     // --snip--
     ```
-    
 
 **exporting a convenient public API with pub use**
 
@@ -3719,7 +3663,7 @@ Details see the code in ~/projects/mingrp.
     //! # Art
     //!
     //! A library for modeling artistic concepts.
-    
+
     pub mod kinds {
         /// The primary colors according to the RYB color model.
         pub enum PrimaryColor {
@@ -3727,7 +3671,7 @@ Details see the code in ~/projects/mingrp.
             Yellow,
             Blue,
         }
-    
+
         /// The secondary colors according to the RYB color model.
         pub enum SecondaryColor {
             Orange,
@@ -3735,10 +3679,10 @@ Details see the code in ~/projects/mingrp.
             Purple,
         }
     }
-    
+
     pub mod utils {
         use crate::kinds::*;
-    
+
         /// Combines two primary colors in equal amounts to create
         /// a secondary color.
         pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> SecondaryColor {
@@ -3746,26 +3690,26 @@ Details see the code in ~/projects/mingrp.
         }
     }
     ```
-    
+
 - With `pub use`, we can access it simply with `use art::PrimaryColor`
     ```rust
     //! # Art
     //!
     //! A library for modeling artistic concepts.
-    
+
     pub use self::kinds::PrimaryColor;
     pub use self::kinds::SecondaryColor;
     pub use self::utils::mix;
-    
+
     pub mod kinds {
         // --snip--
     }
-    
+
     pub mod utils {
         // --snip--
     }
     ```
-    
+
 ### 14.3. Cargo workspaces
 
 **Cargo workspaces**
@@ -3786,7 +3730,7 @@ Details see the code in ~/projects/mingrp.
     ├── Cargo.lock
     └── Cargo.toml
     ```
-    
+
 ### 14.4. Installing binaries from Crate.io with cargo install
 
 **only for installing binary crates and use it locally**
@@ -3799,15 +3743,13 @@ Details see the code in ~/projects/mingrp.
 
 Run `$ cargo --list` to view all sub-commands like `install` and `new` which can be run as `$ cargo install ...` and `$ cargo new ...`.
 
-
-
 ## 15. Smart Pointers
 
 **A pointer** contains an address in memory, which refers to or point at some other data. In Rust, the most common pointer is the reference, which is indicated by `&` and borrows value it point to.
 
-**Smart pointers** 
+**Smart pointers**
 
-- are data structures that act like a pointer but also have additional metadata and capbilities. 
+- are data structures that act like a pointer but also have additional metadata and capbilities.
 - Smart poiters often own the data they point to. Smart pointer examples:
     - String
     - Vec<T>
@@ -3826,7 +3768,6 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         println!("b = {}", b);  // or *b to access heap data of b
     }
     ```
-    
 
 **Quiz**
 
@@ -3849,59 +3790,56 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     fn main() {
         let x = 5;
         let y = &x;
-    
+
         assert_eq!(5, x);
         assert_eq!(5, *y);  // dereference a regular reference
     }
     ```
-
-
 
 - example of a Box<T>
     ```rust
     fn main() {
         let x = 5;
         let y = Box::new(x);
-    
+
         assert_eq!(5, x);
         assert_eq!(5, *y);  // Box has traint Deref so can be dererenced with *
     }
     ```
-    
 
 **define our own smart pointer**
 
 - example: MyBox<T> with `Deref` trait
     ```rust
     use std::ops::Deref;
-    
+
     fn main() {
         let x = 5;
         let y = MyBox::new(x);
-    
+
         assert_eq!(5, x);
         assert_eq!(5, *y);  // implemented Deref trait
     }
-    
+
     // define MyBox with Deref trait
-    
+
     struct MyBox<T>(T);
-    
+
     impl<T> MyBox<T> {
         fn new(x: T) -> MyBox<T> {
             MyBox(x)
         }
     }
-    
+
     impl<T> Deref for MyBox<T> {
         type Target = T;  // required
-    
+
         fn deref(&self) -> &Self::Target { // only required method
             &self.0  // return a reference so to use * operator
         }
     }
     ```
-    
+
 - **Deref coercion** converts a reference to a type that implements the `Deref` trait into a reference to another type.
     - Deref coercion process example
         ```rust
@@ -3909,7 +3847,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         fn hello(name: &str) {
             println!("Hello, {name}!");
         }
-        
+
         fn main() {
             let m = MyBox::new(String::from("Rust"));
             hello(&m);
@@ -3936,15 +3874,15 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     struct CustomSmartPointer {
         data: String,
     }
-    
+
     impl Drop for CustomSmartPointer {
         // as simple as this code to implement drop method
         fn drop(&mut self) {
             println!("Dropping CustomSmartPointer with data `{}`!", self.data);
         }
     }
-    
-    // variables are dropped in reverse order. Out of the main scope, d is 
+
+    // variables are dropped in reverse order. Out of the main scope, d is
     // dropped before c is dropped, which is reasonable as d may depend on c.
     fn main() {
         let c = CustomSmartPointer {
@@ -3956,7 +3894,6 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         println!("CustomSmartPointers created.");
     }
     ```
-    
 
 **Dropping a value early with std::mem::drop**
 
@@ -3965,7 +3902,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
     struct CustomSmartPointer {
         data: String,
     }
-    
+
     impl Drop for CustomSmartPointer {
         fn drop(&mut self) {
             println!("Dropping CustomSmartPointer with data `{}`!", self.data);
@@ -3983,19 +3920,18 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         println!("CustomSmartPointer dropped before the end of main.");
     }
     ```
-    
 
 ### 15.4 Rc<T>, the reference counted smart pointer
 
 **Using Rc<T> to share data**
 
 - What is `Rc<T>`
-    - Used in case a single value having multiple owners. 
-    - `Rc<T>` can create multiple pointer in stack that point to the same data in heap. 
+    - Used in case a single value having multiple owners.
+    - `Rc<T>` can create multiple pointer in stack that point to the same data in heap.
         - Read only, immutable
         - The heap data is dropped only after all pointers are dropped.
         - Only used in single thread scenarios.
-  
+
 - Example
     ```rust
     #[derive(Debug)]
@@ -4020,7 +3956,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         dbg!(c);
     }
     ```
-    
+
 **Cloning an Rc<T> imcreases the reference count**
 
 - `Rc::strong_count` to count references
@@ -4046,7 +3982,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         println!("Count after c out of scope = {}", Rc::strong_count(&a));  // 2
     }
     ```
-    
+
 - tricky question 2: what the result of the following code
     ```rust
     use std::rc::Rc;
@@ -4066,7 +4002,7 @@ Run `$ cargo --list` to view all sub-commands like `install` and `new` which can
         println!("C");  // C
     }
     ```
-    
+
 ### 15.5 RefCell<T> and the interior mutability pattern
 
 **Enforcing borrowing rules at runtime with RefCell<T>**
@@ -4094,7 +4030,7 @@ skip for now as we skipped two above.
 - What is Cow
     - a smart pointer
     - an enum that has two variants:
-        - Borrowed variant if no mutation occurred 
+        - Borrowed variant if no mutation occurred
         - Owned variant if mutation occurred
 
 - example from official documentation
@@ -4132,14 +4068,12 @@ skip for now as we skipped two above.
     }
     ```
 
-
 ## 16. Fearless concurrency
 
 - **Concurrent programming**: different parts of a program execute independently.
 - **Parallel programming**: different parts of a program execute at the same time.
 - **Process**: where an executed programm's code is run.
 - **Threads**: a feature that runs the independent parts of a programm.
-
 
 ### 16.1. Using threads to run code simultaneously
 
@@ -4149,7 +4083,7 @@ skip for now as we skipped two above.
     ```rust
     use std::thread;
     use std::time::Duration;
-    
+
     fn main() {
         // block 1: this block of code runs in a new thread, which is
         // different from the main thread.
@@ -4159,19 +4093,18 @@ skip for now as we skipped two above.
                 thread::sleep(Duration::from_millis(1));
             }
         });
-    
+
         // block 2: runs simutaneously in the main thread
         for i in 1..5 {
             println!("hi number {} from the main thread!", i);
             thread::sleep(Duration::from_millis(1));
         }
-    
+
         // block 1 one will stop once the main thread completes. This line of
         // code is to wait for the handle thread to finish.
         handle.join().unwrap();
     }
     ```
-    
 
 **Using move closure with threads** to move the variables from main thread to new thread
 
@@ -4255,19 +4188,19 @@ skip for now as we skipped two above.
     ```rust
     use std::sync::mpsc;
     use std::thread;
-    
+
     fn main() {
         // create a channel with a transmitter tx and a receiver rx
         let (tx, rx) = mpsc::channel();
-    
+
         thread::spawn(move || {
             let val = String::from("hi");
-            // send data from the transmitter. .send() returns a 
+            // send data from the transmitter. .send() returns a
             // Result<(), SendError<T>) after sending the data.
             // val is moved by send.
             tx.send(val).unwrap();
         });
-    
+
         // receive data sent by the transmitter
         let received = rx.recv().unwrap();
         println!("Got: {}", received);
@@ -4279,10 +4212,10 @@ skip for now as we skipped two above.
     use std::sync::mpsc;
     use std::thread;
     use std::time::Duration;
-    
+
     fn main() {
         let (tx, rx) = mpsc::channel();
-    
+
         thread::spawn(move || {
             let vals = vec![
                 String::from("hi"),
@@ -4290,7 +4223,7 @@ skip for now as we skipped two above.
                 String::from("the"),
                 String::from("thread"),
             ];
-    
+
             // send element one by one to rx
             for val in vals {
                 tx.send(val).unwrap();
@@ -4299,19 +4232,18 @@ skip for now as we skipped two above.
             // close the channel 10 sec after sending the last data
             thread::sleep(Duration::from_secs(10));
         });
-    
+
         // runs whenever rx received a piece of data until the thread from
         // which tx sending data is closed, that is, 10 sec after the last
         // data was sent.
         for received in rx {
             println!("Got: {}", received);
         }
-        
+
         // This runs only 10 secs after the last data is sent.
         println!("The End");
     }
     ```
-    
 
 **creating multiple producers by cloning the transmitter**
 
@@ -4322,13 +4254,13 @@ skip for now as we skipped two above.
     use std::sync::mpsc;
     use std::thread;
     use std::time::Duration;
-    
+
     fn main() {
         // create a chanel and clone transmitter. The two transimtters
         // share a receiver
         let (tx, rx) = mpsc::channel();
         let tx1 = tx.clone();
-        
+
         // cloned transmitter used in this thread
         thread::spawn(move || {
             let vals = vec![
@@ -4337,13 +4269,13 @@ skip for now as we skipped two above.
                 String::from("the"),
                 String::from("thread"),
             ];
-    
+
             for val in vals {
                 tx1.send(val).unwrap();
                 thread::sleep(Duration::from_secs(1));
             }
         });
-    
+
         // original transmitter used in this thread
         thread::spawn(move || {
             let vals = vec![
@@ -4352,13 +4284,13 @@ skip for now as we skipped two above.
                 String::from("for"),
                 String::from("you"),
             ];
-    
+
             for val in vals {
                 tx.send(val).unwrap();
                 thread::sleep(Duration::from_secs(1));
             }
         });
-    
+
         // receivers receive data from both transmitters, in the order of
         // of the time data being sent.
         for received in rx {
@@ -4366,7 +4298,6 @@ skip for now as we skipped two above.
         }
     }
     ```
-    
 
 **Quiz**
 
@@ -4387,7 +4318,7 @@ skip for now as we skipped two above.
         println!("{s} {n}");
     }
     ```
-    
+
     Answer: not compile. a tx can only send one type of data.
 
 ### 16.3 Shared-state concurrency
@@ -4481,11 +4412,9 @@ In addition to handling concurrency by sending message, multiple threads can hav
     }
     ```
 
-
 ### 16.4 Extensible concurrency with the Sync and Send traits
 
 skip for now
-
 
 ## Object-oriented programming features of Rust
 
@@ -4500,10 +4429,7 @@ skip for now
 
 - Rust does not have inheritance. Instead it uses traits to achieve the same feature.
 
-
 ### 17.2 Using trait objects that allow for values of different types
-
-
 
 ## 19. Advanced features
 
@@ -4556,7 +4482,7 @@ Macros are Rust code that generate Rust code. There are three types of macros:
         println!("ccc: {:?} and ddd: {:?}", ccc, ddd);
     }
     ```
-    
+
 - macro `pringln!` has two match arms. Here is the official definition, which calls other macros.
     ```rust
     #[macro_export]
@@ -4572,7 +4498,7 @@ Macros are Rust code that generate Rust code. There are three types of macros:
         }};
     }
     ```
-    
+
 **Use macros defined in a module** with `#[macro_use]`
 
 ```rust
@@ -4590,7 +4516,6 @@ fn main() {
 }
 ```
 
-
 **Procedural macros for generating code from attributes**
 
 Three types procedural macros:
@@ -4603,5 +4528,13 @@ Three types procedural macros:
 
 The goal is to write a marco xxxx so a user can apply the macro to a user-defined type with `#[derive(xxxx)`.
 
-There is a standard procedure to create this macro. Skip for now.
+Steps to create such a macro:
 
+- create a library crate for this macro:
+    - `$ cargo new hello_macro --lib`.
+- inside above project, create another library crate to define the procedural macro. As of now (2024), procedural macros need to stay in their own crate.
+    - `$ cargo new hello_macro_derive --lib`
+- relationship between the two projects:
+    - They are tightly related and will update together.
+    - They are published separately.
+    - Both are added as dependencies to be used in a project.
