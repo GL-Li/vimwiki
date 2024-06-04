@@ -1,6 +1,7 @@
 
 ## Outline
 - Major reference
+- Summary: universal .vimrc
 - Workflow and SOP
 - Minimal examples
 - QA
@@ -11,6 +12,13 @@
 - [Book: Learn Vim the Smart Way](https://learnvim.irian.to/)
 - [Vim Reference Guide](https://learnbyexample.github.io/vim_reference/cover.html)
 - [Vim Galore](https://github.com/mhinz/vim-galore#completion)
+
+## Summary: universal .vimrc
+The idea is to create a .vimrc for a general purpose text editor. The goal is NOT an IDE, which is the purpose of LunarVim. Major refer youtube videos:
+
+- How to Do 90% of What Plugins Do (With Just Vim) https://www.youtube.com/watch?v=XA2WjJbmmoM
+- Mastering the Vim Language https://www.youtube.com/watch?v=wlR5gYd6um0
+
 
 ## Workflow & SOP =============================================================
 
@@ -1100,3 +1108,44 @@ https://github.com/tpope/vim-markdown/issues/21
 - add a new column, \tic
 - delete a column, \tdc
 - delete row, \tdd
+
+### ctags
+https://kulkarniamit.github.io/whatwhyhow/howto/use-vim-ctags.html
+
+**how to use tags in vim**
+
+- `Ctrl ]` to jump to the definition
+- `Ctrl w}` to open a preview window of the definition in current window
+    - `ctrl wz` to close the preview window
+
+**how to generate tags file**
+
+- go to the root directory of a project and run code like:
+    - `$ ctags --recursive=yes --exclude=.git --exclude=tests`
+
+**config with .ctags file**
+
+```
+--langdef=R
+--langmap=r:.R.r
+--recurse=yes
+--exclude=.git
+--exclude=BUILD
+--exclude=.svn
+--exclude=*.js
+--exclude=vendor/*
+--exclude=node_modules/*
+--exclude=db/*
+--exclude=log/*
+--exclude=\*.min.\*
+--exclude=\*.swp
+--exclude=\*.bak
+--exclude=\*.pyc
+--exclude=\*.class
+--exclude=\*.sln
+--exclude=\*.csproj
+--exclude=\*.csproj.user
+--exclude=\*.cache
+--exclude=\*.dll
+--exclude=\*.pdb
+```
