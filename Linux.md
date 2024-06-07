@@ -59,6 +59,16 @@
 
 ## QA ==========
 
+
+### QA: how to display the differrence between two files from terminal?
+
+Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
+
+- sdiff shows the difference
+    - `-s` difference only
+    - `-w 200` 200 characters each line
+- `color diff` show in color
+
 ### QA: how to find specific directories and files and process them one by one?
 
 Use `find ... | while read ...`: The example below includs find directory and files.
