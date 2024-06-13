@@ -6,7 +6,6 @@ Tutorial:
 Manual:
 - https://www.gnu.org/software/sed/manual/sed.html
 
-
 ### concepts
 - pattern space: buffers each line (without the trailing new line "\n") that is read from the input stream. The pattern space is usually deleted between cycles (lines).
 - hold space: keep data between cycles.
@@ -16,33 +15,33 @@ select lines followed by one or more commands and their options:
 - `[ADDR]{X[OPTIONS];Y[OPTIONS];Z[OPTIONS]}`
 
 - `[ADDR]`: optional, used to select lines
-    - by line number: 
+    - by line number:
         - `sed -i 2d iris.csc` to delete the second line
         - `sed -i '$d' iris.csv` to delete the last line
         - `sed -n 2,5p iris.csv` to print lines 2-5
         - `seq 10 | sed -n '8,$p'` to print all lines from line 8.
-        - `seq 10 | sed -n 2~3p` to print every 3 lines from the second line. `-n` for selected lines only
-    - by matching condition 
+        - `seq 10 | sed -n 2~3p` to print every 3 lines from the second line. `-n` for selected lines only. Tilt `~` as in `2~3`.
+    - by matching condition inside `/.../`. `-n` is required to suppress automatic printing of pattern space so that only selected lines are printed.
         - `seq 30 | sed -n '/2$/p'`: print lines ending with "2"
         - `sed -n '/5.1/p' iris.csv`: print lines containing "5.1"
         - `seq 9 | sed -n '/6$/,/^1/p'`: print lines from the first match to the second match
-            - if the second match does not exist, print from the first match to the end 
+            - if the second match does not exist, print from the first match to the end
             - if the first match does not exist, no selection
             - repeated match: for example `seq 30 | sed -n '/8$/,/^1/p'` matches
                 - 8, 9, 10: first round match
                 - 18, 19: second round match
-                - 18, 29, 30: third round match where the second match does not exist so print until end.
+                - 28, 29, 30: third round match where the second match does not exist so print until end.
     - by offset from a line
-            - `seq 10 | sed -n 5,+2p`  print line 5, 6, 7 
+            - `seq 10 | sed -n 5,+2p`  print line 5, 6, 7
             - `seq 30 | sed -n '/2$/,+2p'` print three matches
-                - 2, 3, 4 
+                - 2, 3, 4
                 - 12, 13, 14
                 - 22, 23, 24
     - exclude lines with `!` after the line range
-        - `seq 10 | sed -i 2,8!p`   print 1, 9, 10
+        - `seq 10 | sed -n '2,8!p'`   print 1, 9, 10, use single quote to escape `!`. Without the quote, `!p` treats `p` as a terminal command.
         - `sed -n '/^5/!p' iris.csv` print lines that do not start with "5"
         - `sed -i '/^5/!d' iris.csv` delete lines that do not start with "5"
-  
+
 - List of commonly used command
     - `=`
     - `a`
@@ -59,12 +58,11 @@ select lines followed by one or more commands and their options:
     - `y///`
     - `z`
 
-
 ### The `s` command (substitute)
 
 Format:
 
-- `s/REGEX/REPLACEMENT/[FLAGS]`  
+- `s/REGEX/REPLACEMENT/[FLAGS]`
 - `s@REGEX@REPLACEMENT@[FLAGS]`  the seperator `/` can be replaced with other characters for example `@`.
 
 **replace strings in a file**
@@ -89,7 +87,7 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
 
 **flags**
 
-- no flags: replace the first matched pattern in each line 
+- no flags: replace the first matched pattern in each line
     - `sed 's/aaa/bbb/`
 - `g`: replace all matched patterns
     - `sed 's/aaa/bbb/g`
@@ -97,7 +95,7 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
     - `sed 's/aaa/bbb/2`   match the second match in each line
 - `ng`: replace all matches from the nth one
 - `i`: case-insensitive matching
-    - `echo "Abc abc" | sed 's/a/xxx/gi'` print xxxbc xxxbc, both "a" and "A" matched and replaced 
+    - `echo "Abc abc" | sed 's/a/xxx/gi'` print xxxbc xxxbc, both "a" and "A" matched and replaced
 
 **back reference** using capture group
 
@@ -119,8 +117,7 @@ echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurran
     - `echo "foo bar foo baz" | sed -E 's/(foo)/\uaaa/g'`
         - print Aaa bar Aaa baz. In the replacement section, `\u` convert 'aaa' to 'Aaa'
     - `echo "foo bar foo baz" | sed -E 's/(foo)/\u\1/g'`
-        - print Foo bar Foo baz. In the replacement, `\1` back references to matched pattern. 
-
+        - print Foo bar Foo baz. In the replacement, `\1` back references to matched pattern.
 
 ## awk
 
@@ -144,7 +141,6 @@ https://www.youtube.com/watch?v=oPEnvuj9QrI
     - `echo "Ihahaamhahahappy" | aws -F 'haha' '{print $1,$2,  $3, "!!!"}'` print I am happy !!!. The default seperator between printed fields is space.
 - output field separator, `OFS`. We can change `OFS` so the output fields is seperated by other strings
     - `echo "Ihahaamhahahappy" | awk -F "haha" 'BEGIN {OFS="---"} {print $1,$2,$3}'` prints I---am---happy.
- 
 
 ### awk built-in variables
 https://github.com/adrianlarion/simple-awk
@@ -157,13 +153,11 @@ https://github.com/adrianlarion/simple-awk
 - `NF`: number of field (word) in a line
 - `RS`: record seperator, `\n` by default.
 
-
 ### awk select lines
 
 - `awk '/this/' aaa.txt`  print lines containing "this" in aaa.txt.
 - `awk '$2 == "is"' aaa.txt` print lines whose second field is "is"
 - `awk '$1 ~ /i/' aaa.txt` print lines whose first field matches pattern 'i'. Use `~` for pattern match and `!~` for not match.
-
 
 ### awk `printf` to format output
 
@@ -171,7 +165,6 @@ https://github.com/adrianlarion/simple-awk
     - `%15s`: total width 15 character, right aligned
     - `%-15s`: left aligned
     - line ending `\n` is required for new lines
-
 
 ### awk `BEGIN` and `END` block
 The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process line by line} END {summarize results}' file.txt`.
@@ -181,8 +174,6 @@ The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process
     - increment line by line in middle block
     - print out final result in `END` block
     - `BEGIN` and `END` blocks are optional
-
-
 
 ### awk math
 
@@ -195,7 +186,6 @@ The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process
 - `substr($3, 1, 5)` to extract character 1 - 5 of a string field `$3`.
     - `echo "aaabbbccc" | awk '{print substr($0, 1, 5)}'`  print aaabb
     - `awk -F ',' '{printf "%15s %-15s %-10s\n", substr($5, 1, 5), $2, $3}' iris.csv` substring of field 5
-
 
 ## tr
 translate or delete **characters**.
@@ -210,7 +200,6 @@ translate or delete **characters**.
 - `echo "Abc Def" | tr -d [a-z]` to delete all lower case characters
 - `echo "Abb Effff" | tr -s bf` to squeeze duplicated b and f to a single character
 
-
 ## pass
 password manager, https://www.passwordstore.org/
 
@@ -224,9 +213,10 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
         - `$ gpg --edit-key 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D` to edit the key. Replace the public key from the output of `gpg -K`.
         - `gpg> expire` and select never expire. Master passphrase needed.
         - `gpg> save` and exit
-- installa and initialize password store
+- install and initialize password store
     - `$sudo apt install pass`
     - `$ pass init 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D`
+        - replace the key with that showed in `$ gpg -K`.
         - the command above created subdirectory `.password-store`
     - `$ pass git init` to git version control of passwords
 - generate password, for example, for github account
@@ -237,10 +227,11 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
             - `pass git log` to view commit history
             - `pass git xxx` to run git command on the password repo. No need to switch to the repo. You can `$ cd .password-store`.
             - make a private repo on github or bitbucket for the repo
+    - `$ pass insert bitbucket/myusername` to insert an existing password.
 - use a password
-    - `pass .` to list all password entries.
-    - `pass show -c github/GL-Li` to copy the password to clipboard and ready to paste. 
-    
+    - `pass ls` to list all password entries.
+    - `pass show -c github/GL-Li` to copy the password to clipboard and ready to paste.
+
 - use the password store on another computer
     - export gpg keys into files
         - `$ gpg --output public.gpg --armor --export lglforfun@gmail.com`
@@ -253,7 +244,6 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
         - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
             - `gpg> trust` and select `5` the ultimate trust and save
     - clone `mimadian` and rename it to `.password-store` to the new computer. Must have exactly the same directory name.
-
 
 ## cryptsetup
 To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xamE
@@ -280,4 +270,3 @@ To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xam
 ## timeshift for Debian and Ubuntu
 
 Create a snapshot with comments `$ sudo timeshift --create --comments "Debian initial installation"`. The comments will show up in the Description section of `$ sudo timeshift --list`.
-
