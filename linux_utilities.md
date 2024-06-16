@@ -259,14 +259,18 @@ To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xam
 
 - encript a USB drive
     - `$ lsblk` to check the attached USB drive partition, for example `sdc1`
+        - unmount it if it is mounted.
     - `$ sudo cryptsetup luksFormat /dev/sdc1` to encrypt the whole disc
         - remember the passphrase.
     - `$ sudo cryptsetup open /dev/sdc1 anyname` to decrypt the drive and create a drive  at `/dev/sdc1/anyname`
         - run `$ lsblk` to verify that `anyname` is under `sdc1`
-    - `$ mkfs.btrfs /dev/mapper/anyname` to create a ext4 file system on the `anyname` drive. Must use **/dev/mapper/anyname**.
+    - `$ sudo mkfs.ext4 /dev/mapper/anyname` to create a ext4 file system on the `anyname` drive. Must use **/dev/mapper/anyname**.
 - use the encrypted USB drive
     - when the USB drive is inserted, you will be prompted to enter the passphrase and the drive will be aumatically mounted to `/media/gl/fc3e5c7a-34a6-41fb-8c74-4eeb385b7805`, a randomly named directory.
-    - if you do not like it, you can unmount it and the cryptsetup close it. And then follow step below
+    - if you do not like it, you can unmount it and the cryptsetup close it.
+        - `$ sudo umount /media/gl/fc3e5c7a-34a6-41fb-8c74-4eeb385b7805`
+        - `$ sudo cryptsetup close luks-2ba470a4-ac91-4036-a33e-d62d2e73a313` where the `luks-xxx` can be found with command `$ lsblk`.
+    -  And then follow step below to crate a new name and remount
         - `$ sudo cryptsetup open /dev/sdc1 usb` to decrypt the drive and create a drive  at `/dev/sdc1/usb`. Yes, you can rename it to `usb` from `anyname`
         - `$ sudo mount /dev/mapper/usb /mnt/usb` to mount the USB drive to `/mnt/usb`. It works like a normal drive
         - `$ sudo umount /mnt/usb` to unmount the drive when all work done
