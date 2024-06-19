@@ -276,4 +276,7 @@ To encrypt USB drives, follow step in https://www.youtube.com/watch?v=ZNaT03-xam
         - `$ sudo umount /mnt/usb` to unmount the drive when all work done
         - `$ sudo cryptsetup close usb` to re-crypt the drive.
 
+## timeshift for Debian and Ubuntu
+
+Create a snapshot with comments `$ sudo timeshift --create --comments "Debian initial installation"`. The comments will show up in the Description section of `$ sudo timeshift --list`.
 
