@@ -238,6 +238,7 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
             - `pass git xxx` to run git command on the password repo. No need to switch to the repo. You can `$ cd .password-store`.
             - make a private repo on github or bitbucket for the repo
 - use a password
+    - `pass .` to list all password entries.
     - `pass show -c github/GL-Li` to copy the password to clipboard and ready to paste. 
     
 - use the password store on another computer
@@ -250,8 +251,8 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
         - `$ gpg --import public.gpg` to import public key
     - update trust level on the new computer
         - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
-        - `gpg> trust` and select `5` the ultimate trust and save
-    - clone `.password-store` to the new computer. Must have exactly the same directory name.
+            - `gpg> trust` and select `5` the ultimate trust and save
+    - clone `mimadian` and rename it to `.password-store` to the new computer. Must have exactly the same directory name.
 
 
 ## cryptsetup
