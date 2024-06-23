@@ -20,6 +20,7 @@
 - [[Rust_language]] --- [[rust_crates]]  --- [[extendr]] --- [[Rust_by_example]] 
 - [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[linux_utilities]]
 - [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
+- [[hardware]]
 
 # Sample project study - learn best practice from good project
 - Docker [[example-voting-app]]
