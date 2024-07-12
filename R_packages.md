@@ -11,6 +11,37 @@ Packages depends only on R or base-R packages.
 
 ## base
 
+**warning()**
+
+R warning messages are usually suppressed for a clean run. In case of custom warning message in functions, we prefer to show the warning when running the function. In this case, we will have to be explicit when calling warning()
+
+```r
+my_function <- function(x) {
+    # other code
+    if (x < 0) {
+        # immediate. = TRUE to print warning message no matter what the warn option is
+        warning("x is negative", immediate. = TRUE)
+    }
+    print(x)
+}
+
+my_function(-1)
+#  Warning in my_function(-1) : x is negative
+#  [1] -1
+```
+
+To view option of warning
+
+```r
+getOption("warn")
+```
+
+- `2`: turn warnings into errors and stop run.
+- `1`: same as set `immediate. = TRUE`, print warning message immediatedly.
+- `0`: store the warning until top level function returns, that is, the warning message is not printed where you want it be, but instead the whole function completes.
+- `-1`: warnings are ignored.
+- `-2`: warnings are ignored.
+
 
 **tempfile()**
 
