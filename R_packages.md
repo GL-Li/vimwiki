@@ -43,6 +43,32 @@ getOption("warn")
 - `-2`: warnings are ignored.
 
 
+**.libPath(), manage packages for a project to create a project-specific environment**
+
+R library typically installed in two locations:
+
+- System R packages are installed at, for example, `xxx/R/4.4.1/lib/R/library`.
+- User packages are installed in a separate location, by default, at home directory like `/home/gl/R/x86_64-pc-linux-gnu-library/4.4`
+- We can specify a directory to install packages and only use packages installed in this directory (of cause include system R packages).
+    ```r
+    # show where are packages installed currently
+    .libPaths(
+       # [1] "/home/gl/R/x86_64-pc-linux-gnu-library/4.4" "/opt/R/4.4.1/lib/R/library" 
+    # show installed packages in above paths
+    installed.packages()
+    # specify a new path for user packages. Effective for current R session. Voided if R is restarted.
+    .libPaths("my-libs")
+    .libPaths()
+        # [1] "/home/gl/tmpRProject/my-libs" "/opt/R/4.4.1/lib/R/library" 
+    # install packages to my-libs/
+    install.packages("data.table")
+    ```
+- To automatically use a libPath for a project, add `.libPaths("my-libs")` to the project's `.Rprofile`. When a R session starts from the project root, the library path is set to `my-libs`/
+    - This is a common practice to set an isolated environment for a project.
+    - Unlike `renv`, we can install packages from local source files.
+
+
+
 **tempfile()**
 
 Each R session has a unique temporary directory, which can be created by `tempdir()`. To create multiple unique subdirectories under this temporary directory, we can use `tempfile()`
