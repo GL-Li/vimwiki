@@ -43,3 +43,11 @@
 
 From Repository Settinging --> Repository details --> Advanced --> main branch to select one.
 
+
+### QA: what are the uses of Bitbucket access key?
+
+Access keys are SSH keys added to a project or repo. Used to grand read-only access to users who have no access to the project or repo. One can use access key to clone a project to local computers.
+
+It is different from the SSH keys added to Personal settings, 
+which grands full access to selected users.
+
