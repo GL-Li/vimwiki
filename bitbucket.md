@@ -34,6 +34,11 @@
     - https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/
     - set workspace variables to be used in all repositories, or 
     - set repository varaibles to be used by this repo. For example the variables name is `MY_VAR` and value is "xxxyyy". The value is hidden and nobody can see it after being created. To use the variable in pipelines, use `$MY_VAR`. 
+    - How to set varaible for a repo:
+        - Repositor settings --> Repository variables --> add name value pairs, value is secured.
+    - How to use the variables:
+        - In Linux terminal, simply `$MY_VAR`.
+        - From R, use `Sys.getenv("MY_VAR")`
 
 
 
