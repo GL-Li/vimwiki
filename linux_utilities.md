@@ -213,6 +213,9 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
         - `$ gpg --edit-key 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D` to edit the key. Replace the public key from the output of `gpg -K`.
         - `gpg> expire` and select never expire. Master passphrase needed.
         - `gpg> save` and exit
+    - export gpg keys into files for future use. Save in secured location.
+        - `$ gpg --output public.gpg --armor --export lglforfun@gmail.com`
+        - `$ gpg --output private.gpg --armor --export-secret-keys lglforfun@gmail.com`, require master passphrase
 - install and initialize password store
     - `$sudo apt install pass`
     - `$ pass init 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D`
@@ -233,9 +236,6 @@ Following steps detailed in https://www.youtube.com/watch?v=FhwsfH2TpFA
     - `pass show -c github/GL-Li` to copy the password to clipboard and ready to paste.
 
 - use the password store on another computer
-    - export gpg keys into files
-        - `$ gpg --output public.gpg --armor --export lglforfun@gmail.com`
-        - `$ gpg --output private.gpg --armor --export-secret-keys lglforfun@gmail.com`, require master passphrase
     - import gpg keys to another computer
         - copy file `public.gpg` and `private.gpg` to the new computer
         - `$ gpg --import private.gpg` to import private key
