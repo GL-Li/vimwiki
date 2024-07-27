@@ -12,6 +12,7 @@
 - [[tech_essentials|Essensial Tools]]
 - [[ai]]: ChatGPT
 - [[api]]
+- [[code_snippets]]
 - [[docker_kubernetes]]
 - [[git]] --- [[bitbucket]]
 - [[julia]]
