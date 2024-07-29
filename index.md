@@ -20,7 +20,7 @@
 - [[regex|Regular Expression]]
 - [[Rust_language]] --- [[rust_crates]]  --- [[extendr]] --- [[Rust_by_example]] 
 - [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[linux_utilities]]
-- [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]]
+- [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]] -- [[vscode]]
 - [[hardware]]
 
 # Sample project study - learn best practice from good project
