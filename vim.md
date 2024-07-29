@@ -87,6 +87,31 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
+## QA: how to build vim with clipboard enabled?
+
+If the vim in the repo does not have clipboard support, we can build with it enabled. Following these steps:
+
+- install dependencies:
+    ```sh
+    sudo apt-get update
+    sudo apt-get install -y build-essential ncurses-dev python3-dev ruby-dev lua5.1 liblua5.1-dev
+    sudo apt-get install -y xclip xsel  # For clipboard support
+    ```
+- clone the vim source code from github
+- config to enable clipboard. `--enable-gui-auto` is for clipboard.
+    ```sh
+    ./configure --with-features=huge --enable-multibyte --enable-python3interp --enable-rubyinterp --enable-luainterp --enable-gui=auto    
+    ```
+- build and install
+    ```sh
+    make
+    sudo make install
+    ```
+- Start a new terminal, verify installation and look for `+clipboard`.
+    ```sh
+    vim --version
+    ```
+
 ## QA: how to do tag jumping in vim?
 - `$ sudo apt install universal-ctags` if not have it
 - `$ ctags -R .` to create a file called `tags` under current directory
