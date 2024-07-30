@@ -16,6 +16,7 @@
 - [[docker_kubernetes]]
 - [[git]] --- [[bitbucket]]
 - [[julia]]
+[[python-in-use]]
 - [[R|R language]] --- [[R_packages]]
 - [[regex|Regular Expression]]
 - [[Rust_language]] --- [[rust_crates]]  --- [[extendr]] --- [[Rust_by_example]] 
