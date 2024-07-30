@@ -9,19 +9,29 @@
 - [[run_rstudio_docker|RStudio docker container with option for port]]
 
 # Tech Notes
-- [[tech_essentials|Essensial Tools]]
+[[tech_essentials|Essensial Tools]]
+
+[[docker-in-use]]
+- [[docker_kubernetes]]
+[[git-in-use]]
+- [[git]] --- [[bitbucket]]
+[[linux-in-use]]
+- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[linux_utilities]]
+[[python-in-use]]
+[[R-in-use]]
+- [[R|R language]] --- [[R_packages]]
+[[regex-in-use]]
+- [[regex|Regular Expression]]
+[[rust-in-use]]
+- [[Rust_language]] --- [[rust_crates]]  --- [[extendr]] --- [[Rust_by_example]] 
+[[vim-in-use]]
+- [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]] -- [[vscode]]
+
+Others
+- [[julia]]
 - [[ai]]: ChatGPT
 - [[api]]
 - [[code_snippets]]
-- [[docker_kubernetes]]
-- [[git]] --- [[bitbucket]]
-- [[julia]]
-[[python-in-use]]
-- [[R|R language]] --- [[R_packages]]
-- [[regex|Regular Expression]]
-- [[Rust_language]] --- [[rust_crates]]  --- [[extendr]] --- [[Rust_by_example]] 
-- [[Linux]] --- [[ubuntu]] --- [[fedora]] --- [[Arch]] --- [[Windows]] --- [[linux_utilities]]
-- [[vim]] --- [[NeoVim]] --- [[LunarVim]] --- [[vim_plugins]] -- [[vscode]]
 - [[hardware]]
 
 # Sample project study - learn best practice from good project
