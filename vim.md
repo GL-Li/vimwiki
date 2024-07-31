@@ -87,7 +87,7 @@ https://github.com/tpope/vim-markdown/issues/21
 
 ## QA =========================================================================
 
-## QA: how to build vim with clipboard enabled?
+### QA: how to build vim with clipboard enabled?
 
 If the vim in the repo does not have clipboard support, we can build with it enabled. Following these steps:
 
