@@ -39,11 +39,21 @@ Ways to get vim
 
 ### vim key mapping
 
-mapping keywords:
+mapping keywords: `noremap`: non-recursive map for all mode:
 
-- `noremap`: non-recursive map for all mode:
-    - `nnoremap`: in normal mode
-    - `inoremap`: in insert mode
-    - `vnoremap`: in visual mode
-    - `cnoremap`: in command mode (when `:` is on)
-    - 
+- `nnoremap`: in normal mode
+- `inoremap`: in insert mode
+- `vnoremap`: in visual mode
+- `cnoremap`: in command mode (when `:` is on)
+- try to use it if possible to avoid infinite loop, for example:
+    - `:map a b` and `:map b a` will cause an infinite loop. Pressing `a` activates `b`, then `a`, then `b`, ...
+    - `:noremap a b` and `:noremap b a` will not. Pressing `a` activates `b` and then stop.
+
+special keys
+
+- <Esc>: Esc key
+- <C>: Ctrl key
+    - <C-j>: Ctrl j
+- <CR>: Enter key
+- <up>: up arrow key, similar for down, left right arrow keys
+    - <C><up>: Ctrl up-arrow
