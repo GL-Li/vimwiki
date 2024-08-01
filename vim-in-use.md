@@ -9,6 +9,8 @@ All the configuration in `.vimrc` for Vim apply to NeoVim after making the follo
     
 The easiest way to get the latest NeoVim is to download its appimage, make it executable, rename to `nvim` and copy to `$HOME/bin` (must in PATH). The latest NeoVim 0.10.1 has retrobox colorscheme and clipboard support.
 
+In Windows WSL Ubuntu, which does have FUSS to support appimage, extract the appimage and then make a soft link to the executable from `~/bin`: `$ ln -s ~/neovim/squarshfs-root/bin/nvim`. Hard link does not work as this `nvim` depends on files in `squarshfs-root/`.
+
 This `init.vim` can be used by VSCode extension `VSCode Neovim` created by asvetliako. Unfortunately, `.vimrc` is not supported by VScode extension `Vim` by vscodevim. This is why we have this note.
 
 
@@ -27,6 +29,8 @@ Ways to get vim
 
 
 ### build vim with clipboard
+
+This may not work!!!!!!!!!!!!!!!!!!!!!.
 
 - install dependencies:
     ```sh
