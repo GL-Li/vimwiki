@@ -1,3 +1,17 @@
+## Important note
+All the configuration in `.vimrc` for Vim apply to NeoVim after making the following adjustment.
+
+- Rename `.vimrc` to `init.vim` and copy to `~/.config/nvim/`.
+- Instsall vim-plug to `~/.config/nvim/autoload/`:
+    ```sh
+    curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    ```
+    
+The easiest way to get the latest NeoVim is to download its appimage, make it executable, rename to `nvim` and copy to `$HOME/bin` (must in PATH). The latest NeoVim 0.10.1 has retrobox colorscheme and clipboard support.
+
+This `init.vim` can be used by VSCode extension `VSCode Neovim` created by asvetliako. Unfortunately, `.vimrc` is not supported by VScode extension `Vim` by vscodevim. This is why we have this note.
+
+
 ## Get vim
 Two must have vim features:
 
