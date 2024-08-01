@@ -71,3 +71,7 @@ special keys
 - <CR>: Enter key
 - <up>: up arrow key, similar for down, left right arrow keys
     - <C><up>: Ctrl up-arrow
+
+map plugin's command
+
+- `nnoremap <leader>, <Plug>(EasyAlign)ip*,<CR>`
