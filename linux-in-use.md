@@ -52,3 +52,22 @@ Installation
 
 
 ### Windows WSL Ubuntu
+
+
+## Files and directories
+
+### file permission
+
+The most common file permissions are 
+
+- 7: read, write, and execute
+- 6: read and write
+- 4: read only
+- 0: no permssion
+
+Some typical permission to owner-group-other
+
+- `chmod 600 file.txt`: good for sensitive files, only owners can read and write. No permission for anyone else.
+- `chmod 644 file.txt`: if you want others to read it.
+- `chmod 700 xxx.sh`: only the owner can run it.
+- `chmod 744 xxx.sh`: only the owner can run it. Others can see the code.
