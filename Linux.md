@@ -177,6 +177,9 @@ Ways to check and manually set
 
 ### QA: how to set up computer so can be connected with ssh
 
+- Install on Debian host:
+    - `$ sudo apt install openssh-server`
+    - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
 - Install on Ubuntu host:
     - `$ sudo apt install openssh-server` on the host computer
     - `$ sudo systemctl enable openssh` if not enabled automatically after installation

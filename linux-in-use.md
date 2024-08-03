@@ -15,6 +15,9 @@ Installation
   - The change will take effect next time user xxx logs in or restart the computer.
 - (may not required in latest installation) delete the first line starting with `deb cdrom:[Debian ...` in file `/etc/apt/sources.list`. This line instructs `sudo apt install` to look for cdrom for packages, which block the installation when we do not have the cdrom.
 - install autocompletion `$ sudo apt install bash-completion`
+- Install openssh-server on Debian host:
+    - `$ sudo apt install openssh-server`
+    - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
 - install docker engine
   - following official instruction from docker to install docker
   - add user xxx to docker group
