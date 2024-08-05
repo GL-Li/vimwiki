@@ -59,7 +59,7 @@ Installation
 
 ## Files and directories
 
-### file permission
+### `chmod`: file permission
 
 The most common file permissions are 
 
@@ -74,3 +74,8 @@ Some typical permission to owner-group-other
 - `chmod 644 file.txt`: if you want others to read it.
 - `chmod 700 xxx.sh`: only the owner can run it.
 - `chmod 744 xxx.sh`: only the owner can run it. Others can see the code.
+
+
+### `gpg`: file encryption
+
+
