@@ -77,5 +77,30 @@ Some typical permission to owner-group-other
 
 
 ### `gpg`: file encryption
+`gpg` is used to encrypt files, including compressed files. Folders can be compressed into files for encryption.
 
-
+- create GPG key pair if not already have one
+    - `$ gpg --gen-key`
+        - remember the master passphrase and never share with anyone else
+        - a directory `$HOME/.gnupg/openpgp-revocs.d` created
+        - `$ gpg -K` to view the public key
+        - `$ gpg --edit-key 01D414DB308B6CDD6D93AAABDE70199F0F16EE9D` to edit the key. Replace the public key from the output of `gpg -K`.
+        - `gpg> expire` and select never expire. Master passphrase needed.
+        - `gpg> save` and exit
+    - export gpg keys into files for future use. Save in secured location.
+        - `$ gpg --output public.gpg --armor --export lglforfun@gmail.com`
+        - `$ gpg --output private.gpg --armor --export-secret-keys lglforfun@gmail.com`, require master passphrase
+- import gpg keys to another computer
+    - copy file `public.gpg` and `private.gpg` to the new computer
+    - `$ gpg --import private.gpg` to import private key
+    - `$ gpg --import public.gpg` to import public key
+    - update trust level on the new computer
+        - `$ gpg --edit-key lglforfun@gmail.com` to start gpg
+            - `gpg> trust` and select `5` the ultimate trust and save
+- encrypt and decrypt files for self use
+    - make sure you have gpg keys in the computer
+    - `$ gpg --encrypt --recipient my_gpg_email@gmail.com aaa.txt` to encrypt a file, the output file is `aaa.txt.gpg`
+    - `$ gpg --output xyz.txt --decrypt aaa.txt.gpg` to decrypt the encrupted file to `xyz.txt`. Output file required, otherwise print the content on screen.
+- encrypt files for other gpg users
+    - acquire gpg email and public key from the recipient
+    - 
