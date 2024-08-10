@@ -103,4 +103,11 @@ Some typical permission to owner-group-other
     - `$ gpg --output xyz.txt --decrypt aaa.txt.gpg` to decrypt the encrupted file to `xyz.txt`. Output file required, otherwise print the content on screen.
 - encrypt files for other gpg users
     - acquire gpg email and public key from the recipient
-    - 
+        - the other generate the public key as above and send over
+    - import the public key to GPG keyring
+        - `$ gpg --import other_public_key.gpg`
+    - encrypt file for this user
+        - `$ gpg --encrypt --recipient other_user_email@gmail.com xyz.txt`
+    - send `xyz.txt.gpg` to the other user, who can then decrypt the file in his computer where the secret key stored.
+- view all keys in keyrings
+    - `gpg --list-keys`
