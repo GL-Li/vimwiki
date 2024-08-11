@@ -187,6 +187,23 @@ The general pattern is `awk 'BEGIN {setup OFS and initialize variables} {process
     - `echo "aaabbbccc" | awk '{print substr($0, 1, 5)}'`  print aaabb
     - `awk -F ',' '{printf "%15s %-15s %-10s\n", substr($5, 1, 5), $2, $3}' iris.csv` substring of field 5
 
+## grep
+
+### options
+
+- `grep -E "[a-z]+::\w+" aaa.txt`: regular expression with `-E`
+- `grep -h xyy aaa.txt`: skip file name in the output
+- `grep -o xyz aaa.txt`: keep only the match in the output
+- `grep -vE "^#" aaa.txt`: exclude lines starting with `#`.
+
+### examples
+
+List unique packages used in a project as specified by `xxxx::`
+
+`grep -hE "[a-zA-Z\.]+::" * | grep -vE "^#" | grep -oE "[a-zA-Z\.]+::" | sort | uniq`
+
+    
+    
 ## tr
 translate or delete **characters**.
 
