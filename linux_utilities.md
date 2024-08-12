@@ -6,6 +6,16 @@ Tutorial:
 Manual:
 - https://www.gnu.org/software/sed/manual/sed.html
 
+
+### use cases
+
+- add double quote to word `abcxyz` in all text files
+    - `sed -n 's/\(abcxyz\)/"\1"/gp' *.txt` to print out the changed lines for review
+    - `sed -i 's/\(abcxyz\)/"\1"/g' *.txt` to change in-place
+
+
+
+
 ### concepts
 - pattern space: buffers each line (without the trailing new line "\n") that is read from the input stream. The pattern space is usually deleted between cycles (lines).
 - hold space: keep data between cycles.
