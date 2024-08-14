@@ -10,7 +10,8 @@
 
 # Tech Notes
 [[tech_essentials|Essensial Tools]]
-
+[[cloud]]
+- [[google_colab]]
 [[docker-in-use]]
 - [[docker_kubernetes]]
 [[git-in-use]]
