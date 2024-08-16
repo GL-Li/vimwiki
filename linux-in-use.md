@@ -111,3 +111,15 @@ Some typical permission to owner-group-other
     - send `xyz.txt.gpg` to the other user, who can then decrypt the file in his computer where the secret key stored.
 - view all keys in keyrings
     - `gpg --list-keys`
+
+    
+## bash code snippets
+
+### check positional parameters
+
+```sh
+if [[ $# eq 0 ]]; then
+    echo "provide a xxxxx"
+    exit 1
+fi
+```
