@@ -12,7 +12,17 @@ Manual:
 - add double quote to word `abcxyz` in all text files
     - `sed -n 's/\(abcxyz\)/"\1"/gp' *.txt` to print out the changed lines for review
     - `sed -i 's/\(abcxyz\)/"\1"/g' *.txt` to change in-place
-
+    - `sed 's/\(abcxyz\)/"\1"/g' *.txt` to print out all output lines even if no change
+- delete lines containing `abcxyz` in `aaa.txt`
+    - `sed '/abcxyz/d' aaa.txt` to show the output after deletion
+    - `sed -i '/abcxyz/d' aaa.txt` to delete in-place
+- keep lines containing `abcxyz` in `aaa.txt`
+    - `sed '/abcxyz/!d' aaa.txt` to show the output for review
+    - `sed -i '/abcxyz/!d' aaa.txt` to delete in-place
+- keep lines containing `abcxyz` in `aaa.txt` and the first line
+    - `sed '1p; /abcxyz/!d' aaa.txt` to show the output for review
+    - `sed -i '1p; /abcxyz/!d' aaa.txt` to delete in-place
+     
 
 
 
@@ -77,7 +87,7 @@ Format:
 
 **replace strings in a file**
 
-```shell
+```sh
 # replace in-place, with or sometimes without single quote arount s///g
 sed -i 's/Setosa/hahah/g' iris.csv
 
@@ -90,7 +100,7 @@ sed -n 's/hahah/xxxx/p' iris.csv
 
 **replace string from stdout**
 
-```shell
+```sh
 echo "aaa bbb aaa" | sed s/aaa/xxx/g  # xxx bbb xxx, replace all
 echo "aaa bbb aaa" | sed s/aaa/xxx/g   # xxx bbb aaa, replace the first occurrance
 ```
