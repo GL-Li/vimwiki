@@ -1,5 +1,18 @@
 # NeoVim
 
+## AstroNvim
+
+- install nerd fonts using getnf and select jetBrainMono, and restart computer for it to take effec
+- install following github instructions, ignore option part at the moment
+- start nvim, may be two or more times for all plugins to automatically installed.
+- install lsp from within nvim
+  - :LspInstall pyright
+  - :LspInstall r-language-server
+  - :LspInstall rust_analyzer
+  - :LspInstall awk_ls
+  - :LspInstall bashls
+  - :LspInstall markdown-oxide
+
 ## Lua basics for NeoVim
 
 ### require function
