@@ -1174,3 +1174,9 @@ https://kulkarniamit.github.io/whatwhyhow/howto/use-vim-ctags.html
 --exclude=\*.dll
 --exclude=\*.pdb
 ```
+
+## Plugins
+
+### vim-easymotion
+
+Use `<leader><leader>fx` to target any "x" and then select the right one.

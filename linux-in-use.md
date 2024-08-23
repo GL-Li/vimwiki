@@ -123,3 +123,26 @@ if [[ $# eq 0 ]]; then
     exit 1
 fi
 ```
+
+## terminal use cases
+
+### split iris.csv for train, validation, and test
+
+Step 1: create files with headers only
+
+- `$ head -1 iris.csv > train.csv`
+- `$ cp train.csv validation.csv`
+- `$ cp train.csv test.csv`
+
+Step 2: shuf the body to randomize the lines
+
+- `$ tail -n 150 iris | shuf > tmp`
+
+Step 3: populate header files
+
+- `$ head -n 90 tmp >> train.csv`
+- `$ head -n 120 tmp | tail -n 30 >> validation.csv`
+- `$ tail -n 30 tmp > test.csv`
+
+
+

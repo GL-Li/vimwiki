@@ -6,10 +6,6 @@ https://code.visualstudio.com/docs
 
 ### Settings
 
-#### How to modify settings?
-
-`Ctrl Shift p` and search and open `User Settings`.
-
 #### How to save when a file is out of focus?
 Settings --> search for `auto save` --> under `File:Autosave`, select `onfocusChange`.
 
@@ -23,9 +19,3 @@ Settings --> search for `auto save` --> under `File:Autosave`, select `onfocusCh
     
 #### keyboard shortcut
 In Keyboard Shortcuts, search for `positron` for related shortcuts.
-
-
-
-## vscodevim plugin setting
-
-enable easymotion
