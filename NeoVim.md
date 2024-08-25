@@ -151,6 +151,9 @@ return {
 
 
 
+## LazyVin
+
+To install a lsp, use Mason by `<leader>cm` to start Mason and look for the lsp for a language, press `i` to install the lsp.
 
 ## AstroNvim
 

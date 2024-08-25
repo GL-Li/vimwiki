@@ -6,16 +6,10 @@
 - QA - quick answers to quick questions
 - Raw notes
 
-
-
-
-
-
-
-
 ## Major reference
+
 - [Udemy: Linux Mastery: Master the Linux Command Line in 11.5 Hours](https://www.udemy.com/course/linux-mastery/learn/lecture/8526918#overview)
-- [ Udemy: Bash Mastery: The Complete Guide to Bash Shell Scripting](https://www.udemy.com/course/bash-mastery/learn/lecture/25412436#overview)
+- [Udemy: Bash Mastery: The Complete Guide to Bash Shell Scripting](https://www.udemy.com/course/bash-mastery/learn/lecture/25412436#overview)
 
 ## Workflow and SOP
 
@@ -24,18 +18,21 @@
 **Summary**: place all well-written bash script under `~/bin` and add `~/bin` to PATH so the bash scripts can be run just like any terminal command.
 
 - Make a new directory `$HOME/bin`
+
     ```sh
-    $ cd
-    $ mkdir bin
+    cd
+    mkdir bin
     ```
 
 - Add the directory to `.bashrc` as shown below. Restart terminal to add the new path, and check with `$ echo $PATH` to make sure it is added to PATH.
+
     ```text
     # add to the end of .bashrc
     PATH="$PATH:$HOME/bin"
     ```
 
-- Create a bash script, for example, `aaa.sh` 
+- Create a bash script, for example, `aaa.sh`
+
     ```bash
     #! /usr/bin/bash
     
@@ -44,29 +41,30 @@
     ls -ltr | tee all_files.txt
     ```
 
-- Convert to executable file, which can be run as `$ ./path/to/aaa` 
+- Convert to executable file, which can be run as `$ ./path/to/aaa`
+
     ```sh
-    $ chmod 777 aaa.sh          # change to executable file for owner, group, and other
+    chmod 777 aaa.sh          # change to executable file for owner, group, and other
     ```
 
 - To run it from anywhere as a terminal command, create a soft link in `$PATH/bin`, or copy the file to `bin/`.
+
     ```sh
-    $  cd ~/bin
-    $ ln -s path/to/aaa.sh aaa
+    cd ~/bin
+    ln -s path/to/aaa.sh aaa
     ```
 
 - Run command `aaa` from anywhere.
 
 ## QA ==========
 
-
 ### QA: how to display the differrence between two files from terminal?
 
 Use command `sdiff -s -w 200 pea1.R pea1_rosa.R | colordiff`, where
 
 - sdiff shows the difference
-    - `-s` difference only
-    - `-w 200` 200 characters each line
+  - `-s` difference only
+  - `-w 200` 200 characters each line
 - `color diff` show in color
 
 ### QA: how to find specific directories and files and process them one by one?
@@ -76,12 +74,15 @@ Use `find ... | while read ...`: The example below includs find directory and fi
 - `while read dir` corresponding to `-type d`.
 - `while read fname` corresponding to `-type f`.
 - to run the example in crontab, give full path to the bash script
+
     ```
     # min hour day month dayOfWeek command
     # 30  12   *   *     MON       echo "Hello World" >> ~/hellow.txt
       11   11   *   *     *         $HOME/bin/delete_clients_data $HOME/tmp 1
     ```
+
 - example: delete csv and xlsx file in xtmp* subdirectories in `$1` if the subdirectory has not been accesss in a given `$2` days.
+
     ```sh
     #!/bin/bash
     #
@@ -112,6 +113,7 @@ Use `find ... | while read ...`: The example below includs find directory and fi
     ```
 
 ### QA: how to delete all directories starting with "xtmp" that are not accessed within 2 weeks?
+
 Assume we only want to delete those in base direttory `/mnt/d/`, the following commands get the job done:
 
 - `$ find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +`
@@ -120,6 +122,7 @@ To do it automatically every day at 12:30pm, add to command to crontab:
 
 - `$ crontab -e` to edit the tasks
 - add the line to the list
+
     ```
     #  m    h    dom    mon    dow    command
        30   12      *      *    *     find /mnt/d/ -type d -name "xtmp*" -atime +14 -exec rm -rf {} +
@@ -130,30 +133,33 @@ To do it automatically every day at 12:30pm, add to command to crontab:
 
 - Run `$ lsblk` to check which is the USB drive, for example, `/dev/sdd/`
 - `sudo dd bs=4M if=archlinux-2023.09.01-x86_64.iso of=/dev/sdd status=progress oflag=sync` to burn the iso image to USB.
-    - be extremely careful. If a wrong disc, the data on the disc will be wiped out
-    - explain:
-        - `dd`: command that converts and copies a file
-        - `bs`: block size
-        - `if`: input file, an arch linux iso image in above example
-        - `of`: output file. Device is a file in Linux
-
+  - be extremely careful. If a wrong disc, the data on the disc will be wiped out
+  - explain:
+    - `dd`: command that converts and copies a file
+    - `bs`: block size
+    - `if`: input file, an arch linux iso image in above example
+    - `of`: output file. Device is a file in Linux
 
 ### QA: how to set system time?
 
 The ultimate solution is to install ntp
+
 - `$ sudo apt install ntp` which installs ntp services and it is enabled automatically. The system should be able to sync with the standard time.
 
 Ways to check and manually set
+
 - `$ timedatectl` to show system time
 - `$ sudo timedatectl set-time 2023-02-29` to set date
 - `$ sudo timedatectl set-time 17:23:55` to set time
 
 ### QA: how to use systemd to automatically start docker when computer starts?
-**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it. 
+
+**Use case**: docker is not automatically started in some Linux distros. User will have to manually start it with `sudo service docker start` to start it.
 
 **What is systemd**:
+
 - `systemd` is the first program to run when a Linux computer starts. It mamages all services at start.
-- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos) 
+- **ref: youtube video**: [Systemd Deep-Dive: A Complete, Easy to Understand Guide for Everyone](https://www.youtube.com/watch?v=Kzpm-rGAXos)
 
 **Most commonly used systemd commands**
     - `$ systemctl status docker` to check the status of a service
@@ -162,7 +168,6 @@ Ways to check and manually set
     - `$ sudo systemctl restart docker` to restart a stopped service with the same configuration
     - `$ sudo systemctl enable docker` to start the service when the computer starts
     - `$ sudo systemctl disable docker` to stop starting the service when computer starts
-
 
 ### QA: how to set up ssh key from terminal and use it for github or any Linux server?
 
@@ -178,16 +183,16 @@ Ways to check and manually set
 ### QA: how to set up computer so can be connected with ssh
 
 - Install on Debian host:
-    - `$ sudo apt install openssh-server`
-    - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
+  - `$ sudo apt install openssh-server`
+  - `$ sudo systemctl status ssh` to check status. Should be automatically enabled after installation.
 - Install on Ubuntu host:
-    - `$ sudo apt install openssh-server` on the host computer
-    - `$ sudo systemctl enable openssh` if not enabled automatically after installation
-- Install on Fedora host: 
-    - `$ sudo dnf install openssh-server`
-    - `$ sudo systemctl enable sshd`. It is named as `sshd`
+  - `$ sudo apt install openssh-server` on the host computer
+  - `$ sudo systemctl enable openssh` if not enabled automatically after installation
+- Install on Fedora host:
+  - `$ sudo dnf install openssh-server`
+  - `$ sudo systemctl enable sshd`. It is named as `sshd`
 - From client
-    - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
+  - `$ ssh usrname@192.168.0.12` to ssh to the host computer from another computer.
 
 ### QA: how to check hostname and ip address
 
@@ -204,12 +209,12 @@ Ways to check and manually set
 - `unzip -p xxx.zip file1` to see file1 in stdout
 
 ### How to download a file from terminal?
+
 For example, here is the file location of iris dataset: `https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`. To download it, we can use `curl` or `wget`:
 
 - `curl -o $HOME/Downloads/ttttt.csv https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv`
-    - `-o` for output file
+  - `-o` for output file
 - `wget https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv` to download `iris.csv` into current directory
-
 
 ### QA: where to store user-compiled executable files or symlinks?
 
@@ -224,7 +229,7 @@ Using `timeshift` app. To install, simply run `sudo apt install timeshift`. To u
 - `$ sudo timeshift --restore --snapshot "2023-06-13_07-37-08"` to restore to a snapshot named by date created.
 - `$ sudo timeshift --delete --snapshot "2023-06-13_07-37-08"` to delete a snapshot.
 
-### QA: how to back up files 
+### QA: how to back up files
 
 Using Unison.
 
@@ -235,14 +240,14 @@ Using Unison.
 **Note**: no space between elements in `{}` in brace expansion.
 
 ```shell
-$ touch {a,b,c}_{1,2,3}.{txt,pdf} # create files a1.txt, a2.txt, ..., c3.pdf
-$ rm {*.txt,*.pdf}                # delete all txt and pdf files
-$ echo a{11,22,33}b               # generate a11b, a22b, a33b
-$ echo {10..1}                    # 10, 9, 8, ..., 1
-$ echo {a..h}                     # a, b, c, d, e, f, g, h
-$ echo {1..10..3}                 # 1, 4, 7, 10
-$ echo {a..h..2}                  # a, c, e, g
-$ echo month_{01..12}             # month_01, month_02, ..., month_12
+touch {a,b,c}_{1,2,3}.{txt,pdf} # create files a1.txt, a2.txt, ..., c3.pdf
+rm {*.txt,*.pdf}                # delete all txt and pdf files
+echo a{11,22,33}b               # generate a11b, a22b, a33b
+echo {10..1}                    # 10, 9, 8, ..., 1
+echo {a..h}                     # a, b, c, d, e, f, g, h
+echo {1..10..3}                 # 1, 4, 7, 10
+echo {a..h..2}                  # a, c, e, g
+echo month_{01..12}             # month_01, month_02, ..., month_12
 ```
 
 ### Linux command wildcards `*`, `?`, and `[` in file / directory names
@@ -255,10 +260,10 @@ $ echo month_{01..12}             # month_01, month_02, ..., month_12
 - `[!abcd]` any one character not in string "abcd"
 
 ```shell
-$ man ? glob          # manual page of wildcard matching
-$ grep abc *.R        # find lines containing "abc" in all .R files
-$ grep abc file?.R    # find lines containing "abc" in file1, fileA, ...
-$ grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
+man ? glob          # manual page of wildcard matching
+grep abc *.R        # find lines containing "abc" in all .R files
+grep abc file?.R    # find lines containing "abc" in file1, fileA, ...
+grep abc file[0-3]  # find lines containing "abc" in file0, ..., file5
 ```
 
 ### Linux `locate` to search path names, update database before search
@@ -278,7 +283,7 @@ $ locate abc*.md        # the path start with abc and end with .md
 $ locate *abc*.md       # the path contains abc and end with .md
 ```
 
-### Linux `find` command to search files by name, type, size, ...
+### Linux `find` command to search files by name, type, size,
 
 **`find` has many options**
 
@@ -318,11 +323,10 @@ $ find -name "file1*" -exec sh -c `echo "abc 123" >> {}` \;
 find -name "file?" -exec sh -c 'sed -i "1 i\abcd efg hijk" {}' \;
 ```
 
-
 ### Linux: grep recursively in files whose names match a pattern
 
 ```shell
-$ grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
+grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not have "model" in path names under current directory
 ```
 
 ### Linux: sort command to sort lines
@@ -335,8 +339,8 @@ $ grep -r "Linux" --include=*.R --exclude=*model*  # all .R files that do not ha
 - `-k n` sort by nth column of table data
 
 ```shell
-$ ls -l | sort -k 5 -n   # sort by the 5th column
-$ ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
+ls -l | sort -k 5 -n   # sort by the 5th column
+ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
 ```
 
 ### Linux: tar command, tarball, archive, compression
@@ -344,15 +348,15 @@ $ ls -lh | sort -k 5 -h  # sort by the 5th column by using human-readable value
 Create a tar ball
 
 - `-c` create a new archive
--  `-v` verbose
+- `-v` verbose
 - `-f`, `--file=ARCHIVE` use archive file
 - `-z` compress with `gzip`
 - `-j` compress with `bzip2`
 
 ```shell
-$ tar -cvf xxx.tar file1 file2 ...
-$ tar -cvzf xxx.tar.gz file1 file2 ...
-$ tar -cvjf xxx.tar.bz2 file1 file2 ...
+tar -cvf xxx.tar file1 file2 ...
+tar -cvzf xxx.tar.gz file1 file2 ...
+tar -cvjf xxx.tar.bz2 file1 file2 ...
 ```
 
 To preserve the directories, for example, if we want to only back up `OneDrive` in home directory, we can create a bash script:
@@ -370,7 +374,7 @@ View files in a tarball
 - `-t`, `--list` list names in a tarball
 
 ```shell
-$ tar -tf xxx.tar
+tar -tf xxx.tar
 ```
 
 Extract from a tarball
@@ -378,10 +382,10 @@ Extract from a tarball
 - `-x` extract files
 
 ```shell
-$ tar -xvf xxx.tar
-$ tar -xvzf xxx.tar.gz   # extract file from gzip compressed tar ball
-$ tar -xvjf xxx.tar.bz2  # extract file from bzip2 compressed tar ball
-$ tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
+tar -xvf xxx.tar
+tar -xvzf xxx.tar.gz   # extract file from gzip compressed tar ball
+tar -xvjf xxx.tar.bz2  # extract file from bzip2 compressed tar ball
+tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
 ```
 
 ### Linux: gzip, bzip2 to compress tar balls, not for Windows and Mac
@@ -389,22 +393,22 @@ $ tar -xf xxx.tar.gz -C path/to/folder  # extract to specific folder
 `gzip` is faster but less compression
 
 ```shell
-$ gzip xxx.tar      # will create xxx.tar.gz and delete xxx.tar
-$ gunzip xxx.tar.gz # get xxx.tar back and delete xxx.tar.gz
+gzip xxx.tar      # will create xxx.tar.gz and delete xxx.tar
+gunzip xxx.tar.gz # get xxx.tar back and delete xxx.tar.gz
 ```
 
 `bzip2` usually gets more compression but slower
 
 ```shell
-$ bzip2 xxx.tar         # change to xxx.tar.bz2
-$ bunzip2 xxx.tar.bz2   # get back xxx.tar
+bzip2 xxx.tar         # change to xxx.tar.bz2
+bunzip2 xxx.tar.bz2   # get back xxx.tar
 ```
 
 ### Linux: zip files for share to Windows and Mac users
 
 ```shell
-$ zip xxx.zip file1 file2 ...
-$ unzip xxx.zip
+zip xxx.zip file1 file2 ...
+unzip xxx.zip
 ```
 
 ### Linux: bash script run as command
@@ -424,16 +428,16 @@ ls -ltr | tee all_files.txt
 Run it from terminal locally
 
 ```shell
-$ bash aaa.sh
+bash aaa.sh
 ```
 
 Convert to executable file, which can be run as `$ path/to/aaa` without `bash`
 
 ```shell
-$ cd                    # back to home diretory
-$ mkdir bin             # create a bin to hold all bash script
-$ mv aaa.sh aaa         # rename to just xxx
-$ chmod +x aaa          # change to executable file
+cd                    # back to home diretory
+mkdir bin             # create a bin to hold all bash script
+mv aaa.sh aaa         # rename to just xxx
+chmod +x aaa          # change to executable file
 ```
 
 To run it from anywhere as a terminal command, add the path to `.bashrc`. Restart terminal to add the new path.
@@ -443,7 +447,7 @@ To run it from anywhere as a terminal command, add the path to `.bashrc`. Restar
 PATH="$PATH:$HOME/bin"
 ```
 
-### Linux: crontab to schedule tasks, https://crontab.guru/ for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
+### Linux: crontab to schedule tasks, <https://crontab.guru/> for schedule, full path to executable script as cron restrict $PATH to /bin and /usr/bin
 
 A cron task include six elements
 
@@ -462,7 +466,7 @@ Create a crontab task that
 - every two hours, set h to `*/2`
 
 ```shell
-$ crontab -e                 # open crontab to edit tasks, use full path to bash scripts
+crontab -e                 # open crontab to edit tasks, use full path to bash scripts
 ```
 
 ```
@@ -470,7 +474,6 @@ $ crontab -e                 # open crontab to edit tasks, use full path to bash
   15   23      *      *    FRI    echo "Hello World!" >> ~/hello.txt
 0,30  */4      *      *    FRI    ~/bin/backup_onedrive
 ```
-
 
 ### comments best practice: 5 pieces of information to start a script
 
@@ -547,7 +550,7 @@ export PATH="$PATH:$HOME/any/directory"
 For the change to take effect, restart the terminal or source the file.
 
 ```shell
-$ source ~/.profile
+source ~/.profile
 ```
 
 ### bash: variables and shell expansion
@@ -631,24 +634,25 @@ echo "Hello $USER, the time right now is $time"
 ```
 
 ### mount and unmount a drive
+
 In a Linux without desktop enable, the system cannot recognize the newly plugged USB drive or other block devices. This is the time `mount` is used to mount the device to the file system.
 
 **View mounted drives**:
 
 ```shell
-$ lsblk
+lsblk
 ```
 
 **Unmount a partition**:
 
 ```shell
-$ sudo umount /dev/sdb1
+sudo umount /dev/sdb1
 ```
 
 **Rename the directory name of a mounted system**: simply rename the directory
 
 ```shell
-$ sudo mv oldname newnam
+sudo mv oldname newnam
 ```
 
 **Mount a new hard disk**: To mount a hard disk to  `/mnt/d/`.
@@ -725,9 +729,9 @@ Quoting is about removing special meanings. Backslash removes special meaning of
 - `"xxxxx"`: all character except dollar signs `$` and backtick and command substitution.
 
 ```shell
-$ echo aaa \& bbb # print aaa & bbb, backslash \ removes special meaning of &
-$ filepath="C:\Users\xxx"   # or single quote
-$ echo "My $filepath"       # double quote only as we have $
+echo aaa \& bbb # print aaa & bbb, backslash \ removes special meaning of &
+filepath="C:\Users\xxx"   # or single quote
+echo "My $filepath"       # double quote only as we have $
 ```
 
 ### Bash: token, metacharacter, word, operator
@@ -749,8 +753,8 @@ $ echo $NAME > file.txt
 **simple command**s: one line command, separeted by control operators
 
 ```shell
-$ echo a b echo c d  # print a b echo c d. The command is terminated by newline
-$ echo a b; echo c d # print a b then c d. The two commands are terminated by ";" and new line respectively
+echo a b echo c d  # print a b echo c d. The command is terminated by newline
+echo a b; echo c d # print a b then c d. The two commands are terminated by ";" and new line respectively
 ```
 
 **compound commands**: such as if statement and loops
@@ -761,7 +765,7 @@ if [[ 2 -gt 1]]; then
 fi
 ```
 
-### Bash: shell expansion stages, brace expansion cannot contain any other expansions.
+### Bash: shell expansion stages, brace expansion cannot contain any other expansions
 
 Expansion in later stage cannot be used in expansion in early stage.
 
@@ -818,9 +822,9 @@ Globbing is only performed on words. see section [Linux command wildcards `*`, `
 During quote removal, the shell removes all unquoted backslashes, single quote, and double quote that did not result from a shell expansion.
 
 ```shell
-$ echo \$HOME  # print $HOME, unquoted backslash is removed
-$ echo '\$HOME' # print \$HOME, single quote removed but backslash not as it is quoted
-$ echo "C:\Users\gl\Downloads"  # correct path
+echo \$HOME  # print $HOME, unquoted backslash is removed
+echo '\$HOME' # print \$HOME, single quote removed but backslash not as it is quoted
+echo "C:\Users\gl\Downloads"  # correct path
 ```
 
 ### Bash: redirection, data streams, `<` `>` `>>` `tee`, stdin stout, sterr
@@ -856,7 +860,7 @@ $ cd /root &> stdoutstderr.txt
 - `command1 && command2`: command2 runs only if comand1 has exit status 0.
 
   ```shell
-  $ cd /root && echo ok  # bash: cd: /root: Permission denied
+  cd /root && echo ok  # bash: cd: /root: Permission denied
   ```
 
 - `command1 || command2`: command2 runs only if command1 has non-zero exit status.
@@ -877,8 +881,8 @@ $ cd /root &> stdoutstderr.txt
 - `command1 &`: when ampersand & is at the end of a command, the command will run at background while you use the terminal for new commands
 
   ```shell
-  $ sleep 10 &     # sleep 10 sec and the terminal is ready for new command
-  $ sleep 10 & ls  # ls does not wait for sleep to finish
+  sleep 10 &     # sleep 10 sec and the terminal is ready for new command
+  sleep 10 & ls  # ls does not wait for sleep to finish
   ```
 
 - `command \`: end of line backslash indicates command input continuous on next line
@@ -888,7 +892,7 @@ $ cd /root &> stdoutstderr.txt
   > -ltr    # the two line equals to $ ls -ltr
   ```
 
-  ### Linux: command date, +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote
+### Linux: command date, +, %y, %Y, %b, %m, %d, %a, %H, %I, %M, %S, use plus sign and quote
 
   Check help page if not sure.
 
@@ -899,7 +903,7 @@ $ cd /root &> stdoutstderr.txt
   $ date +"%Y %b"  # 2022 Dec, format in quote
   ```
 
-  ### Bash: positional parameters $1, $2, $3, ..., ${10}, ${11}, ...
+### Bash: positional parameters $1, $2, $3, ..., ${10}, ${11},
 
   Allow bash script to read arguments from terminal. Note that when there are over 10 positional parameters, put double digit into {}. Otherwise the shell will interpret it as $1 and 0. Better keep the number of positional parameters no more than 9.
 
@@ -932,9 +936,9 @@ $ cd /root &> stdoutstderr.txt
 #!/bin/bash
 
 if [[ $# -ne 2]]; then
-	echo "You did not enter exactly 2 parameters"
-	echo "Usage: $0 param1 param1"
-	exit 1
+ echo "You did not enter exactly 2 parameters"
+ echo "Usage: $0 param1 param1"
+ exit 1
 fi
 ```
 
@@ -1016,7 +1020,7 @@ $ type -a shellcheck # ls is aliased to `ls --color=auto'
   - search command by keywords in its role
 
     ```shell
-    $ man -k compress    # search command by keywords compress
+    man -k compress    # search command by keywords compress
     ```
 
 - info: for external command only, more information with links to other sources
@@ -1028,8 +1032,8 @@ Select from options each separated by space, not `,`.  Keep in quote if not want
 ```bash
 PS3="What is the day of the week?: "       #$PS3 for the shell prompt of select
 select day in Mon Tue Wed Thu Fri Sat Sun; do
-	echo "The day of the week is $day"
-	break    # to break the do - done loop, other wise loop back to select.
+ echo "The day of the week is $day"
+ break    # to break the do - done loop, other wise loop back to select.
 done
 ```
 
@@ -1048,28 +1052,28 @@ Return exit status 0 if true, exit status 1 if false.
 **integer test operators** only for integers eq ne gt lt geq leq
 
 ```bash
-$ [ 2 -eq 2 ] ; echo $?    # 0
-$ [ ! 2 -eq 2 ] ; echo $?  # 1, ! for not
-$ [ 2 -eq 3 ] ; echo $?    # 1
+[ 2 -eq 2 ] ; echo $?    # 0
+[ ! 2 -eq 2 ] ; echo $?  # 1, ! for not
+[ 2 -eq 3 ] ; echo $?    # 1
 ```
 
 **string test operators**, =, !=, -z, -n
 
 ```bash
-$ a=hello
-$ b=world
-$ [ $a = $b ] ; echo $?
-$ [ -z $c ] ; echo $?       # -z to check if empty or null string
-$ [ -n $a ] ; echo $?       # -n to check if string exists
+a=hello
+b=world
+[ $a = $b ] ; echo $?
+[ -z $c ] ; echo $?       # -z to check if empty or null string
+[ -n $a ] ; echo $?       # -n to check if string exists
 ```
 
 **file test operators**, -e, -f, -d, -x, -r, -w
 
 ```shell
-$ [[ -e file1 ]]   # check if file1 exits
-$ [[ -f fname ]]   # check if a regular file, not directory
-$ [[ -d fname ]]   # check for directory
-$ [[ -x fname ]]   # check for executable file
+[[ -e file1 ]]   # check if file1 exits
+[[ -f fname ]]   # check if a regular file, not directory
+[[ -d fname ]]   # check for directory
+[[ -x fname ]]   # check for executable file
 ```
 
 ### Bash: if ... elif ... else ... fi
@@ -1079,13 +1083,13 @@ if statement check the exit status of a  command
 ```bash
 # dummy example
 if [ 2 -gt 1 ] ; then
-	echo "test passed"
+ echo "test passed"
 elif [ 2 -eq 0 ]; then
-	echo "test passed"
+ echo "test passed"
 elif [ 4 -ne 6 ] && [ 7 -lt 8 ]; then   # each [] for one simple test
-	echo "random try"
+ echo "random try"
 else
-	echo "test failed"
+ echo "test failed"
 fi
 
 # example 2
@@ -1093,9 +1097,9 @@ a=$(cat file1.txt)
 b=$(cat file2.txt)
 c=$(cat file3.txt)
 if [ $a = $b ] && [ $a = $c]; then
-	rm file2.txt file3.txt
+ rm file2.txt file3.txt
 else
-	echo "Files do not match"
+ echo "Files do not match"
 fi
 ```
 
@@ -1106,10 +1110,10 @@ Must put variable in double quote to prevent word splitting, each case must end 
 ```bash
 read -p "Please enter a number: " number
 case "$number" in
-	[0-9]) echo "you have entered a single digit number";;
-	[0-9][0-9]) echo "you have entered a double digit number";;
-	[0-9][0-9][0-9]) echo "you have entered a three digit number";;
-	*) echo "You have entered a number that is more than three digits";;
+ [0-9]) echo "you have entered a single digit number";;
+ [0-9][0-9]) echo "you have entered a double digit number";;
+ [0-9][0-9][0-9]) echo "you have entered a three digit number";;
+ *) echo "You have entered a number that is more than three digits";;
 esac
 ```
 
@@ -1119,8 +1123,8 @@ esac
 read -p "Enter your number: " num
 
 while [ $num -gt 10 ]; do
-	echo $num
-	num=$(( $num - 1 ))
+ echo $num
+ num=$(( $num - 1 ))
 done
 ```
 
@@ -1135,11 +1139,11 @@ Save the code as fc_converter, which convert temperature between F and C. The co
 # selection passed to variable temp_unit and
 # value is passed to OPTARG
 while getopts "f:c:" temp_unit; do    
-	case "$temp_unit" in
-		c) result=$(echo "scale=2; ($OPTARG * (9 / 5)) + 32" | bc);;
-		f) result=$(echo "scale=2; ($OPTARG -32) * (5 / 9)" | bc);;
-		\?) ;;   # for any other single character
-	esac
+ case "$temp_unit" in
+  c) result=$(echo "scale=2; ($OPTARG * (9 / 5)) + 32" | bc);;
+  f) result=$(echo "scale=2; ($OPTARG -32) * (5 / 9)" | bc);;
+  \?) ;;   # for any other single character
+ esac
 done
 echo "$result"
 ```
@@ -1147,8 +1151,8 @@ echo "$result"
 Run the command as
 
 ```shell
-$ fc_converter -c 0   # 32
-$ fc_converter -f 32  # 0
+fc_converter -c 0   # 32
+fc_converter -f 32  # 0
 ```
 
 **example**: count down by seconds from an input minutes (-m) and seconds (-s).
@@ -1161,16 +1165,16 @@ $ fc_converter -f 32  # 0
 # the code block adds up all time from selection -m and -s
 time=0
 while getopts "m:s:" opt; do
-	case "$opt" in
-		m) time=$(($time + 60 * $OPTARG));;
-		s) time=$(($time + $OPTARG));;
-	esac
+ case "$opt" in
+  m) time=$(($time + 60 * $OPTARG));;
+  s) time=$(($time + $OPTARG));;
+ esac
 done
 
 while [ $time -gt 0 ]; do
-	echo $time
-	sleep 1s
-	time=$(( $time - 1 ))
+ echo $time
+ sleep 1s
+ time=$(( $time - 1 ))
 done
 
 exit 0
@@ -1185,14 +1189,14 @@ This is fixed struct
 ```bash
 # read line by line of a file
 while read line; do
-	# do whatever by each line here
-	echo "$line"
+ # do whatever by each line here
+ echo "$line"
 done < "$1"      # put input file here
 
 # read line by line of a command output using process substitution
 while read line; do
-	# do whatever by each line here
-	echo "$line"
+ # do whatever by each line here
+ echo "$line"
 done < <( ls $HOME)
 ```
 
@@ -1241,19 +1245,19 @@ When use the index of an array in for loop, do not quote it.
 ```bash
 # using on-the-fly list
 for element in first second third; do
-	echo "This is $element"
+ echo "This is $element"
 done
 
 # using array
 readarray -t files < <(ls)
 for file in "${files[@]}"; do
-	if [ -f "$file" ]; then       # "" to avoid word splitting
-		echo "     File: $file"
-	elif [ -d "$file" ]; then
-		echo "Directory: $file"
-	else
-		echo "  Invalid: $file"
-	fi
+ if [ -f "$file" ]; then       # "" to avoid word splitting
+  echo "     File: $file"
+ elif [ -d "$file" ]; then
+  echo "Directory: $file"
+ else
+  echo "  Invalid: $file"
+ fi
 done
 
 ```
@@ -1267,8 +1271,8 @@ readarray -t urls < urls.txt
 readarray -t fnames < <(cut urls.txt -f 2 -d ".")
 indeces=${!urls[@]}
 for idx in ${indeces[@]}; do               # no quote, otherwise just "0 1 2 ...".
-	fname="${fnames[$idx]}.txt"            # We want word split here
-	curl --head "${urls[$idx]}" > "$fname"
+ fname="${fnames[$idx]}.txt"            # We want word split here
+ curl --head "${urls[$idx]}" > "$fname"
 done
 
 exit 0
@@ -1279,8 +1283,8 @@ exit 0
 Do not blindly follow its suggestions, even it says an error. Use it for a warning.
 
 ```shell
-$ sudo apt install shellcheck
-$ shellcheck my_bash_script
+sudo apt install shellcheck
+shellcheck my_bash_script
 ```
 
 Error message structure: command failed : what's wrong : reason of error
@@ -1341,7 +1345,7 @@ apt -y update
 apt -y upgrade
 # If `/var/run/reboot-required` file exists, reboot system after upgrade
 if [ -f /var/run/reboot-required ]; then
-	reboot
+ reboot
 fi
 ```
 
@@ -1354,7 +1358,7 @@ As upgrade affect the whole system, we will modify `/etc/crobtab` to schedule th
 For this to take effect, run
 
 ```shell
-$ sudo service cron restart
+sudo service cron restart
 ```
 
 ### anacron
@@ -1382,8 +1386,7 @@ cron requires machine to be on at the scheduled time. anacron can pickup missed 
 ### Linux, bash, remote server, ssh, scp
 
 ```shell
-$ ssh usename@12.345.678.90
-$ scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
-$ scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
+ssh usename@12.345.678.90
+scp /path/to/local/file username@12.345.678.90:/path/to/remote/directory
+scp username@12.345.678.90:/path/to/remote/file /path/to/local/directory
 ```
-
